@@ -5,4 +5,4 @@ StockChat: Agents Edition
 
 - Google Gemini which you can generate in AI Studio
 - Finnhub.io
-- Polygon.io
+- Massive.com (formerly Polygon.io)
