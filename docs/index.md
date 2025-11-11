@@ -4,11 +4,18 @@
 ```python
 # Setup the notebook based on running environment.
 import os
-# Optional: Enable telemetry in browser_use and chromadb
+# Optional: Enable telemetry in browser_use and chromadb.
 os.environ["ANONYMIZED_TELEMETRY"] = "false"
-try:
+# Check for kaggle environment.
+if os.getenv("KAGGLE_KERNEL_RUN_TYPE"):
+    # Kaggle Run: update the system.
+    !pip uninstall -qqy google-ai-generativelanguage pydrive2 tensorflow cryptography pyOpenSSL langchain langchain-core nltk ray click google-generativeai google-cloud-translate datasets cesium bigframes plotnine mlxtend fastai spacy thinc google-colab gcsfs jupyter-kernel-gateway
+    !pip install -qU posthog\<6.0.0 google-genai==1.45.0 chromadb==0.6.3 opentelemetry-proto==1.37.0
+    !pip install -qU langchain-community langchain-text-splitters wikipedia lmnr[all] google-adk
     from kaggle_secrets import UserSecretsClient # type: ignore
-except Exception as e:
+    from jupyter_server.serverapp import list_running_servers # type: ignore
+else:
+    # Mock the kaggle secrets client.
     class UserSecretsClient:
         @classmethod
         def set_secret(cls, id: str, value: str):
@@ -21,13 +28,8 @@ except Exception as e:
                 print(f"KeyError: authentication token for {id} is undefined")
     # Local Run: update the venv.
     %pip install -qU posthog\<6.0.0 google-genai==1.45.0 chromadb==0.6.3 opentelemetry-proto==1.37.0
-    %pip install -qU langchain-community langchain-text-splitters wikipedia pandas google-api-core lmnr[all] browser-use
+    %pip install -qU langchain-community langchain-text-splitters wikipedia pandas google-api-core "lmnr[all]" browser-use ollama google-adk
     from browser_use import Agent as BrowserAgent
-else:
-    # Kaggle Run: update the system.
-    !pip uninstall -qqy google-ai-generativelanguage pydrive2 tensorflow cryptography pyOpenSSL langchain langchain-core nltk ray click google-generativeai google-cloud-translate datasets cesium bigframes plotnine mlxtend fastai spacy thinc google-colab gcsfs jupyter-kernel-gateway
-    !pip install -qU posthog\<6.0.0 google-genai==1.45.0 chromadb==0.6.3 opentelemetry-proto==1.37.0
-    !pip install -qU langchain-community langchain-text-splitters wikipedia lmnr[all]
 
 import ast, chromadb, json, logging, pandas, platform, pytz, re, requests, time, warnings, wikipedia
 from bs4 import Tag
@@ -39,7 +41,7 @@ from google import genai
 from google.api_core import retry, exceptions
 from google.genai.models import Models
 from google.genai import types, errors
-from IPython.display import Markdown, display
+from IPython.display import Markdown, display, HTML
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_text_splitters.html import HTMLSemanticPreservingSplitter
 from langchain_text_splitters.json import RecursiveJsonSplitter
