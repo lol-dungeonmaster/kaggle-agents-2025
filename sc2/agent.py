@@ -1,16 +1,16 @@
 from google.adk.agents.llm_agent import Agent
-
-retry_config=types.HttpRetryOptions(
-    attempts=5,  # Maximum retry attempts
-    exp_base=7,  # Delay multiplier
-    initial_delay=1,
-    http_status_codes=[429, 500, 503, 504], # Retry on these HTTP errors
-)
+from google.adk.models.google_llm import Gemini
+from google.genai import types
 
 root_agent = Agent(
     model=Gemini(
         model="gemini-2.5-flash-lite",
-        retry_options=retry_config
+        retry_options=types.HttpRetryOptions(
+            attempts=10, 
+            exp_base=1,
+            initial_delay=10,
+            http_status_codes=[429, 500, 503, 504],
+        )
     ),
     name='sc2_root',
     description='A helpful assistant for finance questions.',
