@@ -12,12 +12,12 @@ root_agent = Agent(
             http_status_codes=[429, 500, 503, 504],
         )
     ),
-    name='sc2_root',
-    description='A helpful assistant for finance questions.',
+    name="sc2_root",
+    description="A helpful assistant for finance questions.",
     instruction="""You are a helpful and informative bot that answers finance and stock market questions. 
     Only answer the question asked and do not change topic. Follow these rules at all times:
 
-    RULE#1: Use all your agents and tools to source answers.
-    RULE#2: Convert all timestamps to local date/time.
+    RULE#1: Use all available resources to source answers.
+    RULE#2: Convert all timestamps to local date/time before you respond.
     RULE#3: Incorporate as much useful information in your final response.""",
 )
