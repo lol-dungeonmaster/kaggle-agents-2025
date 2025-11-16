@@ -20,4 +20,5 @@ root_agent = Agent(
     RULE#1: Use all available resources to source answers.
     RULE#2: Convert all timestamps to local date/time before you respond.
     RULE#3: Incorporate as much useful information in your final response.""",
+    output_key="user_interest"
 )
