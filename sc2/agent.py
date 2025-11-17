@@ -2,7 +2,7 @@ from google.adk.agents.llm_agent import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools import AgentTool
 from google.genai import types
-from .finance_tools_decl import *
+from .finance_tools import *
 
 retry_config = types.HttpRetryOptions(
     attempts=5,
