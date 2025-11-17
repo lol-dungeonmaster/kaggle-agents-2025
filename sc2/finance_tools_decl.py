@@ -1,9 +1,8 @@
 from google.adk.tools import FunctionTool
-from abc import ABC, abstractmethod
 
-class Docstrings(ABC):
-    @abstractmethod
-    def get_symbol_1(q: str, exchange: str, query: str) -> dict:
+class FnTools:
+    @classmethod
+    def get_symbol_1(cls, q: str, exchange: str, query: str) -> dict:
         """Search for the stock ticker symbol of a given company, security, isin or cusip.
 
         Each ticker entry provides a description, symbol, and asset type.
@@ -37,8 +36,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_symbols_1(exchange: str, query: str) -> list[dict]:
+    @classmethod
+    def get_symbols_1(cls, exchange: str, query: str) -> list[dict]:
         """List all supported symbols and tickers, filtered by exchange code.
 
         Args:
@@ -64,8 +63,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_name_1(q: str, exchange: str, query: str, company: str) -> list[dict]:
+    @classmethod
+    def get_name_1(cls, q: str, exchange: str, query: str, company: str) -> list[dict]:
         """Search for the name associated with a stock ticker or symbol's company, security, isin or cusip.
 
         Each ticker entry provides a description, matching symbol, and asset type.
@@ -99,8 +98,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_symbol_quote_1(symbol: str, query: str, exchange: str) -> dict:
+    @classmethod
+    def get_symbol_quote_1(cls, symbol: str, query: str, exchange: str) -> dict:
         """Search for the current price or quote of a stock ticker or symbol.
 
         The response is provided in JSON format. Each response contains the following key-value pairs:
@@ -136,8 +135,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_market_status_1(exchange: str) -> dict:
+    @classmethod
+    def get_market_status_1(cls, exchange: str) -> dict:
         """Get the current market status of global exchanges.
 
         Includes whether exchanges are open or closed, and holiday details if applicable.
@@ -183,8 +182,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_market_session_1(exchange: str) -> str | None:
+    @classmethod
+    def get_market_session_1(cls, exchange: str) -> str | None:
         """Get the current market session of global exchanges.
 
         Args:
@@ -204,8 +203,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_company_peers_1(symbol: str, grouping: str, exchange: str, query: str) -> dict:
+    @classmethod
+    def get_company_peers_1(cls, symbol: str, grouping: str, exchange: str, query: str) -> dict:
         """Search for a company's peers.
 
         Returns a list of peers operating in the same country and in the same sector, industry, or subIndustry.
@@ -249,8 +248,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_local_datetime(t: list[int]) -> list[str]:
+    @classmethod
+    def get_local_datetime(cls, t: list[int]) -> list[str]:
         """Converts an array of timestamps from epoch time to the local timezone format.
 
         The result is an array of date and time in locale appropriate format.
@@ -272,8 +271,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_last_market_close(exchange: str) -> str:
+    @classmethod
+    def get_last_market_close(cls, exchange: str) -> str:
         """Get the last market close of the specified exchange in Eastern Time.
 
         The response has already been converted by get_local_datetime, so this step should be skipped.
@@ -291,8 +290,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_exchange_codes_1() -> dict[str, str]:
+    @classmethod
+    def get_exchange_codes_1(cls) -> dict[str, str]:
         """Get a dictionary mapping all supported exchange codes to their names.
 
         Returns:
@@ -306,8 +305,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_exchange_code_1(q: str) -> str:
+    @classmethod
+    def get_exchange_code_1(cls, q: str) -> str:
         """Search for the exchange code to use when filtering by exchange.
 
         The result will be one or more exchange codes provided as a comma-separated string value.
@@ -322,8 +321,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_financials_1(symbol: str, metric: str, query: str) -> dict:
+    @classmethod
+    def get_financials_1(cls, symbol: str, metric: str, query: str) -> dict:
         """Get company basic financials such as margin, P/E ratio, 52-week high/low, etc.
 
         Parse the response for key-value pairs in JSON format and interpret their meaning as
@@ -352,8 +351,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_daily_candlestick_2(stocksTicker: str, date: str, adjusted: str, 
+    @classmethod
+    def get_daily_candlestick_2(cls, stocksTicker: str, date: str, adjusted: str, 
                                 exchange: str, query: str) -> dict:
         """Get a historical daily stock ticker candlestick / aggregate bar (OHLC).
 
@@ -391,8 +390,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_custom_candlestick_2(stocksTicker: str, multiplier: int, timespan: str,
+    @classmethod
+    def get_custom_candlestick_2(cls, stocksTicker: str, multiplier: int, timespan: str,
                                  from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
                                  to_date: str,    # Renamed 'to' to 'to_date' to avoid Python keyword conflict
                                  adjusted: str, sort: str, exchange: str, query: str) -> list[dict]:
@@ -440,8 +439,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_ticker_overview_2(ticker: str, query: str) -> dict:
+    @classmethod
+    def get_ticker_overview_2(cls, ticker: str, query: str) -> dict:
         """Retrieve comprehensive details for a single ticker symbol.
 
         It's a deep look into a company’s fundamental attributes, including its primary exchange,
@@ -489,8 +488,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_recommendation_trends_1(symbol: str, query: str) -> list[dict]:
+    @classmethod
+    def get_recommendation_trends_1(cls, symbol: str, query: str) -> list[dict]:
         """Get the latest analyst recommendation trends for a company.
 
         The data includes the latest recommendations as well as historical
@@ -535,8 +534,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_news_with_sentiment_2(limit: int, ticker: str, 
+    @classmethod
+    def get_news_with_sentiment_2(cls, limit: int, ticker: str, 
                                   published_utc_gte: str,  # Renamed from 'published_utc.gte' for valid Python argument name
                                   published_utc_lte: str,  # Renamed from 'published_utc.lte' for valid Python argument name
                                   order: str, sort: str, query: str) -> list[dict]:
@@ -595,8 +594,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_wiki_grounding(id: str, q: str) -> str:
+    @classmethod
+    def get_wiki_grounding(cls, id: str, q: str) -> str:
         """Search for answers to a question using wikipedia.
 
         Retrieve a wiki page related to a company, product, or service.
@@ -619,8 +618,8 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-    @abstractmethod
-    def get_search_grounding(q: str, id: str) -> str:
+    @classmethod
+    def get_search_grounding(cls, q: str, id: str) -> str:
         """Search for answers to a question using internet search.
 
         Retrieves internet search results related to a question.
@@ -638,25 +637,25 @@ class Docstrings(ABC):
         """
         pass # Function implementation would go here
 
-symbol_search = FunctionTool(func=Docstrings.get_symbol_1)
-filter_symbols = FunctionTool(func=Docstrings.get_symbols_1)
-symbol_name = FunctionTool(func=Docstrings.get_name_1)
-symbol_quote = FunctionTool(func=Docstrings.get_symbol_quote_1)
-market_status = FunctionTool(func=Docstrings.get_market_status_1)
-market_session = FunctionTool(func=Docstrings.get_market_session_1)
-symbol_peers = FunctionTool(func=Docstrings.get_company_peers_1)
-local_datetime = FunctionTool(func=Docstrings.get_local_datetime)
-last_market_close = FunctionTool(func=Docstrings.get_last_market_close)
-all_exchange_codes = FunctionTool(func=Docstrings.get_exchange_codes_1)
-exchange_code = FunctionTool(func=Docstrings.get_exchange_code_1)
-basic_financials = FunctionTool(func=Docstrings.get_financials_1)
-historical_candle = FunctionTool(func=Docstrings.get_daily_candlestick_2)
-custom_candle = FunctionTool(func=Docstrings.get_custom_candlestick_2)
-symbol_overview = FunctionTool(func=Docstrings.get_ticker_overview_2)
-symbol_trends = FunctionTool(func=Docstrings.get_recommendation_trends_1)
-scored_news = FunctionTool(func=Docstrings.get_news_with_sentiment_2)
-wiki_grounding = FunctionTool(func=Docstrings.get_wiki_grounding)
-search_grounding = FunctionTool(func=Docstrings.get_search_grounding)
+symbol_search = FunctionTool(func=FnTools.get_symbol_1)
+filter_symbols = FunctionTool(func=FnTools.get_symbols_1)
+symbol_name = FunctionTool(func=FnTools.get_name_1)
+symbol_quote = FunctionTool(func=FnTools.get_symbol_quote_1)
+market_status = FunctionTool(func=FnTools.get_market_status_1)
+market_session = FunctionTool(func=FnTools.get_market_session_1)
+symbol_peers = FunctionTool(func=FnTools.get_company_peers_1)
+local_datetime = FunctionTool(func=FnTools.get_local_datetime)
+last_market_close = FunctionTool(func=FnTools.get_last_market_close)
+all_exchange_codes = FunctionTool(func=FnTools.get_exchange_codes_1)
+exchange_code = FunctionTool(func=FnTools.get_exchange_code_1)
+basic_financials = FunctionTool(func=FnTools.get_financials_1)
+historical_candle = FunctionTool(func=FnTools.get_daily_candlestick_2)
+custom_candle = FunctionTool(func=FnTools.get_custom_candlestick_2)
+symbol_overview = FunctionTool(func=FnTools.get_ticker_overview_2)
+symbol_trends = FunctionTool(func=FnTools.get_recommendation_trends_1)
+scored_news = FunctionTool(func=FnTools.get_news_with_sentiment_2)
+wiki_grounding = FunctionTool(func=FnTools.get_wiki_grounding)
+search_grounding = FunctionTool(func=FnTools.get_search_grounding)
 
 finance_tools = [
     symbol_search, filter_symbols, symbol_name, symbol_quote,
