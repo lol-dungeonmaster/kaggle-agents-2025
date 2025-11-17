@@ -354,11 +354,11 @@ class FnTools:
     @classmethod
     def get_daily_candlestick_2(cls, stocksTicker: str, date: str, adjusted: str, 
                                 exchange: str, query: str) -> dict:
-        """Get a historical daily stock ticker candlestick / aggregate bar (OHLC).
+        """Get a daily stock ticker candlestick / aggregate bar (OHLC).
 
-        Includes historical daily open, high, low, and close prices.
-        Also includes historical daily trade volume and pre-market/after-hours trade prices.
-        It provides the last trading days' data after 11:59PM Eastern Time.
+        Includes a day's open, high, low, and close prices.
+        Also includes the day's trade volume and pre-market/after-hours trade prices.
+        It provides the last trading day data after 11:59PM Eastern Time.
 
         Args:
             stocksTicker: The stock ticker symbol of a company to search for.
@@ -395,10 +395,10 @@ class FnTools:
                                  from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
                                  to_date: str,    # Renamed 'to' to 'to_date' to avoid Python keyword conflict
                                  adjusted: str, sort: str, exchange: str, query: str) -> list[dict]:
-        """Get a historical stock ticker candlestick / aggregate bar (OHLC) over a custom date range and time interval in Eastern Time.
+        """Get a stock ticker candlestick / aggregate bar (OHLC) over a custom date range and time interval in Eastern Time.
 
-        Includes historical open, high, low, and close prices. Also includes historical daily trade
-        volume and pre-market/after-hours trade prices. It includes the last trading days' data after
+        Includes open, high, low, and close prices. Also includes daily trade volume and 
+        pre-market/after-hours trade prices. It includes the last trading days' data after 
         11:59PM Eastern Time.
 
         Args:
