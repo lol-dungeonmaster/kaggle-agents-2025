@@ -1,5 +1,7 @@
-class FnTools:
-    @classmethod
+from abc import ABC, abstractmethod
+
+class FnTools(ABC):
+    @abstractmethod
     def get_symbol_1(cls, q: str, exchange: str, query: str) -> dict:
         """Search for the stock ticker symbol of a given company, security, isin or cusip.
 
@@ -34,7 +36,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_symbols_1(cls, exchange: str, query: str) -> list[dict]:
         """List all supported symbols and tickers, filtered by exchange code.
 
@@ -61,7 +63,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_name_1(cls, q: str, exchange: str, query: str, company: str) -> list[dict]:
         """Search for the name associated with a stock ticker or symbol's company, security, isin or cusip.
 
@@ -96,7 +98,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_symbol_quote_1(cls, symbol: str, query: str, exchange: str) -> dict:
         """Search for the current price or quote of a stock ticker or symbol.
 
@@ -133,7 +135,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_market_status_1(cls, exchange: str) -> dict:
         """Get the current market status of global exchanges.
 
@@ -180,7 +182,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_market_session_1(cls, exchange: str) -> str | None:
         """Get the current market session of global exchanges.
 
@@ -201,7 +203,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_company_peers_1(cls, symbol: str, grouping: str, exchange: str, query: str) -> dict:
         """Search for a company's peers.
 
@@ -246,7 +248,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_local_datetime(cls, t: list[int]) -> list[str]:
         """Converts an array of timestamps from epoch time to the local timezone format.
 
@@ -269,7 +271,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_last_market_close(cls, exchange: str) -> str:
         """Get the last market close of the specified exchange in Eastern Time.
 
@@ -288,7 +290,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_exchange_codes_1(cls) -> dict[str, str]:
         """Get a dictionary mapping all supported exchange codes to their names.
 
@@ -303,7 +305,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_exchange_code_1(cls, q: str) -> str:
         """Search for the exchange code to use when filtering by exchange.
 
@@ -319,7 +321,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_financials_1(cls, symbol: str, metric: str, query: str) -> dict:
         """Get company basic financials such as margin, P/E ratio, 52-week high/low, etc.
 
@@ -349,7 +351,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_daily_candlestick_2(cls, stocksTicker: str, date: str, adjusted: str, 
                                 exchange: str, query: str) -> dict:
         """Get a daily stock ticker candlestick / aggregate bar (OHLC).
@@ -388,7 +390,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_custom_candlestick_2(cls, stocksTicker: str, multiplier: int, timespan: str,
                                  from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
                                  to_date: str,    # Renamed 'to' to 'to_date' to avoid Python keyword conflict
@@ -437,7 +439,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_ticker_overview_2(cls, ticker: str, query: str) -> dict:
         """Retrieve comprehensive details for a single ticker symbol.
 
@@ -486,7 +488,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_recommendation_trends_1(cls, symbol: str, query: str) -> list[dict]:
         """Get the latest analyst recommendation trends for a company.
 
@@ -532,7 +534,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_news_with_sentiment_2(cls, limit: int, ticker: str, 
                                   published_utc_gte: str,  # Renamed from 'published_utc.gte' for valid Python argument name
                                   published_utc_lte: str,  # Renamed from 'published_utc.lte' for valid Python argument name
@@ -592,7 +594,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_wiki_grounding(cls, id: str, q: str) -> str:
         """Search for answers to a question using wikipedia.
 
@@ -616,7 +618,7 @@ class FnTools:
         """
         pass # Function implementation would go here
 
-    @classmethod
+    @abstractmethod
     def get_search_grounding(cls, q: str, id: str) -> str:
         """Search for answers to a question using internet search.
 
