@@ -1,6 +1,6 @@
 import json
 from tqdm import tqdm
-from .rag import RetrievalAugmentedGeneration
+from rag import RetrievalAugmentedGeneration
 
 # Define subclass: search-augmented generation.
 class SearchRAG(RetrievalAugmentedGeneration):

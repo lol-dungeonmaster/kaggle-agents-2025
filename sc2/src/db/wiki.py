@@ -3,7 +3,7 @@ from google.genai import errors
 from tqdm import tqdm
 from typing import Optional
 from src import is_retriable
-from .rag import RetrievalAugmentedGeneration
+from rag import RetrievalAugmentedGeneration
 
 # Define subclass: wiki-augmented generation.
 class WikiRAG(RetrievalAugmentedGeneration):

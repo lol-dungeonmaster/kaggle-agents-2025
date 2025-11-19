@@ -1,16 +1,9 @@
 from google.adk.agents.llm_agent import Agent
 from google.adk.models.google_llm import Gemini as LLM
 from google.adk.tools import AgentTool
-from google.genai import types
-from .src.fntool_def import *
-from .src.fntool import local_datetime
-
-retry_config = types.HttpRetryOptions(
-    attempts=5,
-    exp_base=2,
-    initial_delay=3,
-    http_status_codes=[429, 500, 503, 504],
-)
+from src import retry_config
+from src.fntool_def import *
+from src.fntool import local_datetime
 
 planner_agent = Agent(
     model=LLM(

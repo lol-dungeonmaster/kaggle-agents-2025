@@ -1,5 +1,5 @@
 from google.adk.tools import FunctionTool
-from .fntool_def import FnToolDef
+from fntool_def import FnToolDef
 
 class FnTools(FnToolDef):
 

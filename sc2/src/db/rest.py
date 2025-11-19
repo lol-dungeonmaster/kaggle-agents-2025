@@ -11,7 +11,7 @@ from typing import Optional, NewType
 from src import is_retriable
 from src.api import Api
 from src.basemodel import ChromaDBResult, GeneratedEvent, MarketEvent, MarketSession
-from .rag import RetrievalAugmentedGeneration
+from rag import RetrievalAugmentedGeneration
 
 # Define subclass: rest-augmented generation.
 api = NewType("Gemini", None) # type: ignore (forward-decl)
