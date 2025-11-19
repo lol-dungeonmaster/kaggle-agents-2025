@@ -6,8 +6,8 @@ from google.genai import errors
 from math import inf
 from threading import Timer
 from typing import Callable, NewType, NamedTuple
-from src import is_retriable
-from secret import UserSecretsClient
+from . import is_retriable
+from .secret import UserSecretsClient
 
 class GeminiModel:
     def __init__(self, rpm: list, tpm: list, rpd: list):

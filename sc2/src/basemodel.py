@@ -4,7 +4,7 @@ from dateutil.parser import parse
 from enum import Enum
 from pydantic import BaseModel, field_validator
 from typing import Optional
-from api import Api
+from .api import Api
 
 # Validation BaseModels in pydantic schema.
 class RestStatus(Enum):

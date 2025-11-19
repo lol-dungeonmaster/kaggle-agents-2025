@@ -1,6 +1,6 @@
 from datetime import datetime
 from google.genai import types
-from basemodel import GeneratedEvent
+from .basemodel import GeneratedEvent
 
 # A contents-memory object.
 class Memory:

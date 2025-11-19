@@ -3,7 +3,7 @@ from google.genai.models import Models
 from google.genai import errors
 from google.genai import types
 from lmnr import Laminar
-from secret import UserSecretsClient
+from .secret import UserSecretsClient
 
 is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 Models.generate_content = retry.Retry(predicate=is_retriable)(Models.generate_content)

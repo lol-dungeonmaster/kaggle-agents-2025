@@ -4,11 +4,11 @@ from google.api_core import retry
 from pydantic import BaseModel
 from threading import Timer
 from tqdm import tqdm
-from typing import Optional, Callable, NewType, NamedTuple
-from src.api import Api
-from src.basemodel import *
-from src.secret import UserSecretsClient
-from src.db.rest import RestRAG
+from typing import Optional, Callable
+from ..api import Api
+from ..basemodel import *
+from ..secret import UserSecretsClient
+from ..db.rest import RestRAG
 
 # Rest api-helpers to manage request-per-minute limits.
 # - define an entry for each endpoint limit

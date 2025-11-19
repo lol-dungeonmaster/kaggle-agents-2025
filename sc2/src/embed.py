@@ -3,8 +3,8 @@ from chromadb import Documents, Embeddings
 from google.api_core import retry
 from google.genai import types
 from typing import NewType
-from src import is_retriable
-from api import Api
+from . import is_retriable
+from .api import Api
 
 # Define the embedding function.
 api = NewType("Api", None) # type: ignore (forward-decl)

@@ -3,8 +3,8 @@ from bs4 import Tag
 from langchain_text_splitters.html import HTMLSemanticPreservingSplitter
 from tqdm import tqdm
 from wikipedia.exceptions import DisambiguationError, PageError
-from src.api import Api
-from src.db.wiki import WikiRAG
+from ..api import Api
+from ..db.wiki import WikiRAG
 
 # Define tool: wiki-grounding generation.
 # - Creates new groundings by similarity to topic

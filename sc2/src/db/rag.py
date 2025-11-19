@@ -1,12 +1,12 @@
 import chromadb
 from google.api_core import retry
-from google.genai import types, errors
+from google.genai import types
 from typing import Optional, NewType
 from tqdm import tqdm
-from src import is_retriable
-from src.api import Api
-from src.basemodel import ChromaDBResult
-from src.embed import GeminiEmbedFunction
+from .. import is_retriable
+from ..api import Api
+from ..basemodel import ChromaDBResult
+from ..embed import GeminiEmbedFunction
 
 # Define parent class: retrieval-augmented generation.
 # - ChromaDB for storage and retrieval
