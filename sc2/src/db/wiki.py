@@ -2,12 +2,13 @@ from google.api_core import retry
 from tqdm import tqdm
 from typing import Optional
 from .. import is_retriable
+from ..api import Api
 from .rag import RetrievalAugmentedGeneration
 
 # Define subclass: wiki-augmented generation.
 class WikiRAG(RetrievalAugmentedGeneration):
-    def __init__(self, genai_client):
-        super().__init__(genai_client, "wikidocs")
+    def __init__(self, api: Api):
+        super().__init__(api, "wikidocs")
             
     def add_wiki_documents(self, title: str, wiki_chunks: list):
         self.embed_fn.document_mode = True # Switch to document mode.

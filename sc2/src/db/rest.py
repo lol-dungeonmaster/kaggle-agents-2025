@@ -6,22 +6,21 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_text_splitters.json import RecursiveJsonSplitter
 from pydantic import BaseModel
 from tqdm import tqdm
-from typing import Optional, NewType
+from typing import Optional
 from .. import is_retriable
 from ..api import Api
 from ..basemodel import ChromaDBResult, GeneratedEvent, MarketEvent, MarketSession
 from .rag import RetrievalAugmentedGeneration
 
 # Define subclass: rest-augmented generation.
-api = NewType("Gemini", None) # type: ignore (forward-decl)
 class RestRAG(RetrievalAugmentedGeneration):
     exchange_codes: Optional[dict] = None
     exchange_lists: dict = {}
     events: dict = {}
     holidays: dict = {}
 
-    def __init__(self, genai_client):
-        super().__init__(genai_client, "restdocs")
+    def __init__(self, api: Api):
+        super().__init__(api, "restdocs")
         logging.getLogger("chromadb").setLevel(logging.ERROR) # suppress warning on existing id
         self.add_exchanges_data()
         self.set_holidays("US", ["09-01-2025","10-13-2025","11-11-2025","11-27-2025","12-25-2025"])
@@ -107,8 +106,8 @@ class RestRAG(RetrievalAugmentedGeneration):
         response = self.get_exchanges_csv(prompt).candidates[0].content
         if Api.Const.Stop() in f"{response.parts[-1].text}":
             progress.close()
-            api.generation_fail()
-            time.sleep(api.dt_between)
+            self.api.generation_fail()
+            time.sleep(self.api.dt_between)
             return self.generate_event(exchange_code, event)
         else:
             response = self.get_event_date(response.parts[-1].text, exchange_code, event)

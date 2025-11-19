@@ -7,8 +7,9 @@ from tqdm import tqdm
 from typing import Optional, Callable
 from ..api import Api
 from ..basemodel import *
-from ..secret import UserSecretsClient
 from ..db.rest import RestRAG
+from ..fntool_def import RestFnDef
+from ..secret import UserSecretsClient
 
 # Rest api-helpers to manage request-per-minute limits.
 # - define an entry for each endpoint limit
@@ -56,12 +57,13 @@ class BlockingUrlQueue:
 # Define tool: rest-grounding generation.
 # - Parses the json response from rest api's
 # - Prevents concurrent http requests
-class RestGroundingTool:
+class RestGroundingTool(RestFnDef):
     limits = None
 
-    def __init__(self, genai_client, with_limits: bool):
-        self.client = genai_client
-        self.rag = RestRAG(genai_client)
+    def __init__(self, api: Api, with_limits: bool):
+        self.api = api
+        self.client = api.args.CLIENT
+        self.rag = RestRAG(api)
         self.MASS_AUTH = UserSecretsClient().get_secret("POLYGON_API_KEY") # todo: check this throws on kaggle
         self.FINN_AUTH = UserSecretsClient().get_secret("FINNHUB_API_KEY")
         if with_limits:
@@ -133,9 +135,9 @@ class RestGroundingTool:
                 if max_failed_match > 0:
                     desc = [with_content["q"].upper(), obj.description.split("-", -1)[0]]
                     symb = [with_content["q"].upper(), obj.symbol]
-                    if by_name and api.similarity(desc) > p_desc_match: 
+                    if by_name and self.api.similarity(desc) > p_desc_match: 
                         matches.append(obj.symbol)
-                    elif not by_name and api.similarity(symb) > p_symb_match:
+                    elif not by_name and self.api.similarity(symb) > p_symb_match:
                         matches.append(obj.description)
                         max_failed_match = 0
                     else:
@@ -161,7 +163,7 @@ class RestGroundingTool:
         for key in model.series.keys():
             series = list(model.series[key].items())
             for s in series:
-                if api.token_count(s) <= Api.Const.ChunkMax():
+                if self.api.token_count(s) <= Api.Const.ChunkMax():
                     chunks.append({"question": with_content["query"], "answer": s})
                 else:
                     k = s[0]
@@ -223,8 +225,8 @@ class RestGroundingTool:
             metas = [{
                 "timespan": with_content["timespan"],
                 "adjusted": with_content["adjusted"],
-                "from": with_content["from"],
-                "to": with_content["to"]}]*model.count
+                "from": with_content["from_date"],
+                "to": with_content["to_date"]}]*model.count
             candles = [candle.model_dump_json() for candle in model.get()]
             self.rag.add_rest_chunks(
                 chunks=candles,
@@ -350,7 +352,7 @@ class RestGroundingTool:
 
     def get_custom_candle(self, content):
         return self.try_url(
-            f"https://api.polygon.io/v2/aggs/ticker/{content['stocksTicker']}/range/{content['multiplier']}/{content['timespan']}/{content['from']}/{content['to']}?adjusted={content['adjusted']}&sort={content['sort']}&limit={content['limit']}&apiKey={self.MASS_AUTH}",
+            f"https://api.polygon.io/v2/aggs/ticker/{content['stocksTicker']}/range/{content['multiplier']}/{content['timespan']}/{content['from_date']}/{content['to_date']}?adjusted={content['adjusted']}&sort={content['sort']}&limit={content['limit']}&apiKey={self.MASS_AUTH}",
             schema=CustomCandle,
             as_lambda=False,
             with_limit=self.get_limit(ApiLimit.POLY),
@@ -374,3 +376,133 @@ class RestGroundingTool:
             with_limit=self.get_limit(ApiLimit.FINN),
             success_fn=self.parse_trends,
             with_content=content)
+    
+    def get_symbol_1(self, q: str, exchange: str, query: str, by_name: bool = True):
+        stored = self.rag.get_api_documents(query, q, "get_symbol_1")
+        if len(stored) == 0:
+            return self.get_symbol(locals(), by_name)
+        return json.loads(stored[0].docs)
+
+    def get_symbols_1(self, exchange: str, query: str) -> list[dict]:
+        return None # todo
+
+    def get_name_1(self, q: str, exchange: str, query: str):
+        return self.get_symbol_1(q, exchange, query, by_name = False)
+
+    def get_symbol_quote_1(self, symbol: str, query: str, exchange: str):
+        stored = self.rag.get_api_documents(query, symbol, "get_quote_1")
+        if self.rag.generated_events(exchange).is_open():
+            return self.get_current_price(locals())
+        elif len(stored) > 0:
+            last_close = parse(self.rag.last_market_close(exchange)).timestamp()
+            for quote in stored:
+                if quote.meta["timestamp"] >= last_close:
+                    return [quote.docs for quote in stored]
+        return self.get_current_price(locals())
+
+    def get_market_status_1(self, exchange: str) -> dict:
+        stored, has_update = self.rag.get_market_status(exchange)
+        if has_update:
+            with_id = stored[0].store_id if len(stored) > 0 else None
+            return self.get_market_status(locals(), with_id)
+        return stored[0].docs
+
+    def get_market_session_1(self, exchange: str) -> str | None:
+        return json.loads(self.get_market_status_1(exchange))["session"]
+
+    def get_company_peers_1(self, symbol: str, grouping: str, exchange: str, query: str) -> dict:
+        stored = self.rag.get_peers_document(query, symbol, grouping)
+        if len(stored) == 0:
+            peers = self.get_peers(locals())
+            if peers.count > 0:
+                names = []
+                for peer in peers.get():
+                    if peer == symbol:
+                        continue # skip including the query symbol in peers
+                    name = self.get_name_1(dict(q=peer, exchange=exchange, query=query))
+                    if name != Api.Const.Stop():
+                        data = {"symbol": peer, "name": name}
+                        names.append(data)
+                self.rag.add_peers_document(query, names, symbol, "get_peers_1", grouping)
+                return names
+            return Api.Const.Stop()
+        return json.loads(stored[0].docs)["peers"]
+
+    def get_last_market_close(self, exchange: str) -> str:
+        return self.rag.last_market_close(exchange)
+
+    def get_exchange_codes_1(self) -> dict[str, str]:
+        return self.rag.get_exchange_codes()
+
+    def get_exchange_code_1(self, q: str) -> str:
+        return self.rag.get_exchange_codes(with_query=q)
+
+    def get_financials_1(self, symbol: str, metric: str, query: str) -> dict:
+        stored = self.rag.get_basic_financials(query, symbol, "get_financials_1")
+        if len(stored) == 0:
+            return self.get_basic_financials(locals())
+        return [chunk.docs for chunk in stored]
+
+    def get_daily_candlestick_2(self, stocksTicker: str, from_date: str, adjusted: str, 
+                                exchange: str, query: str) -> dict:
+        stored = self.rag.get_api_documents(
+            query=query, topic=stocksTicker, source="daily_candle_2", 
+            meta_opt=[{"from_date": from_date, "adjusted": adjusted}])
+        if len(stored) == 0:
+            candle = self.rest.get_daily_candle(locals())
+            # Attempt to recover from choosing a holiday.
+            candle_date = parse(from_date)
+            if candle.status is RestStatus.NONE and candle_date.weekday() == 0 or candle_date.weekday() == 4:
+                content = dict(locals())
+                if candle_date.weekday() == 0: # index 0 is monday, index 4 is friday
+                    content["from_date"] = candle_date.replace(day=candle_date.day-3).strftime("%Y-%m-%d")
+                else:
+                    content["from_date"] = candle_date.replace(day=candle_date.day-1).strftime("%Y-%m-%d")
+                return self.get_daily_candlestick_2(**content)
+            return candle.model_dump_json()
+        return [json.loads(candle.docs) for candle in stored]
+
+    def get_custom_candlestick_2(self, stocksTicker: str, multiplier: int, timespan: str,
+                                 from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
+                                 to_date: str,    # Renamed 'to' to 'to_date' to avoid Python keyword conflict
+                                 adjusted: str, sort: str, limit: str, exchange: str, query: str) -> list[dict]:
+        stored = self.rag.get_api_documents(
+            query=query, topic=stocksTicker, source="custom_candle_2", 
+            meta_opt=[{
+                "timespan": timespan,
+                "adjusted": adjusted,
+                "from": from_date,
+                "to": to_date}])
+        if len(stored) == 0:
+            return self.get_custom_candle(locals())
+        return [json.loads(candle.docs) for candle in stored]
+
+    def get_ticker_overview_2(self, ticker: str, query: str) -> dict:
+        stored = self.rag.get_api_documents(query, ticker, "ticker_overview_2")
+        if len(stored) == 0:
+            return self.get_overview(locals())
+        return json.loads(stored[0].docs)
+
+    def get_recommendation_trends_1(self, symbol: str, query: str) -> list[dict]:
+        stored = self.rag.get_api_documents(query, symbol, "trends_1")
+        if len(stored) == 0:
+            return self.get_trends_simple(locals())
+        return [json.loads(trend.docs) for trend in stored]
+
+    def get_news_with_sentiment_2(self, limit: int, ticker: str, 
+                                  published_utc_gte: str,  # Renamed from 'published_utc.gte' for valid Python argument name
+                                  published_utc_lte: str,  # Renamed from 'published_utc.lte' for valid Python argument name
+                                  order: str, sort: str, query: str) -> list[dict]:
+        timestamp_from = parse(published_utc_gte).timestamp()
+        timestamp_to = parse(published_utc_lte).timestamp()
+        news_from = self.rag.get_api_documents(
+            query, ticker, "get_news_2", [{"published_utc": timestamp_from}])
+        news_to = self.rag.get_api_documents(
+            query, ticker, "get_news_2", [{"published_utc": timestamp_to}])
+        if len(news_from) > 0 and len(news_to) > 0:
+            stored = self.rag.get_api_documents(
+                query, ticker, "get_news_2",
+                [{"published_utc": {"$gte": timestamp_from}},
+                {"published_utc": {"$lte": timestamp_to}}])
+            return [NewsTypePoly.model_validate_json(news.docs).summary().model_dump_json() for news in stored]
+        return self.get_news_tagged(locals())

@@ -92,7 +92,6 @@ class MarketCondition(Enum):
     BEARN = "cautiously bearish"
     BEAR = "bearish"
 
-api = NewType("Api", None) # type: ignore (forward-decl)
 class GeneratedEvent(BaseModel):
     last_close: str
     pre_open: str
@@ -153,7 +152,7 @@ class GeneratedEvent(BaseModel):
         return pytz.timezone('US/Eastern') # Exchanges data is in eastern time.
     
     @classmethod
-    def apply_fix(cls, value, fix: datetime) -> tuple[str, datetime]:
+    def apply_fix(cls, api: Api, value, fix: datetime) -> tuple[str, datetime]:
         api.validation_fail()
         value = fix.strftime('%c')
         return value, fix

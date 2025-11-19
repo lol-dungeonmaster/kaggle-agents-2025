@@ -1,7 +1,7 @@
 from google.adk.tools import FunctionTool
 from abc import ABC, abstractmethod
 
-class FnToolDef(ABC):
+class RestFnDef(ABC):
     @classmethod
     @abstractmethod
     def get_symbol_1(cls, q: str, exchange: str, query: str) -> dict:
@@ -68,7 +68,7 @@ class FnToolDef(ABC):
 
     @classmethod
     @abstractmethod
-    def get_name_1(cls, q: str, exchange: str, query: str, company: str) -> list[dict]:
+    def get_name_1(cls, q: str, exchange: str, query: str) -> list[dict]:
         """Search for the name associated with a stock ticker or symbol's company, security, isin or cusip.
 
         Each ticker entry provides a description, matching symbol, and asset type.
@@ -81,7 +81,6 @@ class FnToolDef(ABC):
                       Search for an exchange code to use by calling get_exchange_code_1, specifying the
                       exchange code to search for.
             query: The question you're attempting to answer.
-            company: The company you're searching for.
 
         Returns:
             A list of dictionaries, where each dictionary represents a ticker entry
@@ -258,30 +257,6 @@ class FnToolDef(ABC):
 
     @classmethod
     @abstractmethod
-    def get_local_datetime(cls, t: list[int]) -> list[str]:
-        """Converts an array of timestamps from epoch time to the local timezone format.
-
-        The result is an array of date and time in locale appropriate format.
-        Suitable for use in a locale appropriate response.
-        Treat this function as a vector function. Always prefer to batch timestamps for conversion.
-        Use this function to format date and time in your responses.
-
-        Args:
-            t: An array of timestamps in seconds since epoch to be converted.
-            The order of timestamps matches the order of conversion.
-
-        Returns:
-            A list of strings, where each string is a date and time in locale-appropriate format.
-            Example:
-            [
-            "March 15, 2023 12:00:00 PM",
-            "March 16, 2023 09:30:00 AM"
-            ]
-        """
-        pass # Function implementation would go here
-
-    @classmethod
-    @abstractmethod
     def get_last_market_close(cls, exchange: str) -> str:
         """Get the last market close of the specified exchange in Eastern Time.
 
@@ -409,7 +384,7 @@ class FnToolDef(ABC):
     def get_custom_candlestick_2(cls, stocksTicker: str, multiplier: int, timespan: str,
                                  from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
                                  to_date: str,    # Renamed 'to' to 'to_date' to avoid Python keyword conflict
-                                 adjusted: str, sort: str, exchange: str, query: str) -> list[dict]:
+                                 adjusted: str, sort: str, limit: str, exchange: str, query: str) -> list[dict]:
         """Get a stock ticker candlestick / aggregate bar (OHLC) over a custom date range and time interval in Eastern Time.
 
         Includes open, high, low, and close prices. Also includes daily trade volume and 
@@ -428,6 +403,8 @@ class FnToolDef(ABC):
                       Use 'true' unless told otherwise.
             sort: The order to sort the results by. This parameter may be one of the following values:
                   'asc' or 'desc'. Always use 'asc' unless told otherwise.
+            limit: Set the number of base aggregates used to create this candlestick. This must be 5000 
+                   unless told to set the limit to something else.
             exchange: The exchange code used to filter results. When not specified the default exchange
                       code you should use is 'US' for the US exchanges. A dictionary mapping all supported
                       exchange codes to their names be retrieved by calling get_exchange_codes_1.
@@ -612,9 +589,10 @@ class FnToolDef(ABC):
         """
         pass # Function implementation would go here
 
+class WikiFnDef(ABC):
     @classmethod
     @abstractmethod
-    def get_wiki_grounding(cls, id: str, q: str) -> str:
+    def get_wiki_grounding(cls, q: str, id: str) -> str:
         """Search for answers to a question using wikipedia.
 
         Retrieve a wiki page related to a company, product, or service.
@@ -622,8 +600,8 @@ class FnToolDef(ABC):
         It can be used at the same time as get_search_grounding and get_rest_grounding.
 
         Args:
-            id: The question's company or product. Just the name and no other details.
             q: The full unaltered question string.
+            id: The question's company or product. Just the name and no other details.
 
         Returns:
             A string containing the content of the wiki page, which includes detailed
@@ -637,6 +615,7 @@ class FnToolDef(ABC):
         """
         pass # Function implementation would go here
 
+class SearchFnDef(ABC):
     @classmethod
     @abstractmethod
     def get_search_grounding(cls, q: str, id: str) -> str:
@@ -658,50 +637,55 @@ class FnToolDef(ABC):
         """
         pass # Function implementation would go here
 
+class DateFnDef(ABC):
     @classmethod
     @abstractmethod
-    def get_rest_grounding(cls, q: str, id: str) -> str:
-        """Search for answers to a question using the REST api.
+    def get_local_datetime(cls, t: list[int]) -> list[str]:
+        """Converts an array of timestamps from epoch time to the local timezone format.
 
-        Retrieves REST api results related to a question.
-        This information is the most trustworthy of any available sources.
-        It first checks a local cache of answers before using REST api requests.
-        It can be used at the same time as get_wiki_grounding and get_search_grounding.
+        The result is an array of date and time in locale appropriate format.
+        Suitable for use in a locale appropriate response.
+        Treat this function as a vector function. Always prefer to batch timestamps for conversion.
+        Use this function to format date and time in your responses.
 
         Args:
-            q: The question needing an answer. Asked as a simple string.
-            id: The question's company or product. In one word. Just the name and no other details.
+            t: An array of timestamps in seconds since epoch to be converted.
+            The order of timestamps matches the order of conversion.
 
         Returns:
-            A string containing the answer to the question, previously retrieved from a REST api.
+            A list of strings, where each string is a date and time in locale-appropriate format.
+            Example:
+            [
+            "March 15, 2023 12:00:00 PM",
+            "March 16, 2023 09:30:00 AM"
+            ]
         """
         pass # Function implementation would go here
 
-symbol_search_def = FunctionTool(func=FnToolDef.get_symbol_1)
-filter_symbols_def = FunctionTool(func=FnToolDef.get_symbols_1)
-symbol_name_def = FunctionTool(func=FnToolDef.get_name_1)
-symbol_quote_def = FunctionTool(func=FnToolDef.get_symbol_quote_1)
-market_status_def = FunctionTool(func=FnToolDef.get_market_status_1)
-market_session_def = FunctionTool(func=FnToolDef.get_market_session_1)
-symbol_peers_def = FunctionTool(func=FnToolDef.get_company_peers_1)
-local_datetime_def = FunctionTool(func=FnToolDef.get_local_datetime)
-last_market_close_def = FunctionTool(func=FnToolDef.get_last_market_close)
-all_exchange_codes_def = FunctionTool(func=FnToolDef.get_exchange_codes_1)
-exchange_code_def = FunctionTool(func=FnToolDef.get_exchange_code_1)
-basic_financials_def = FunctionTool(func=FnToolDef.get_financials_1)
-historical_candle_def = FunctionTool(func=FnToolDef.get_daily_candlestick_2)
-custom_candle_def = FunctionTool(func=FnToolDef.get_custom_candlestick_2)
-symbol_overview_def = FunctionTool(func=FnToolDef.get_ticker_overview_2)
-symbol_trends_def = FunctionTool(func=FnToolDef.get_recommendation_trends_1)
-scored_news_def = FunctionTool(func=FnToolDef.get_news_with_sentiment_2)
-wiki_grounding_def = FunctionTool(func=FnToolDef.get_wiki_grounding)
-search_grounding_def = FunctionTool(func=FnToolDef.get_search_grounding)
-rest_grounding_def = FunctionTool(func=FnToolDef.get_rest_grounding)
+symbol_search_def = FunctionTool(func=RestFnDef.get_symbol_1)
+filter_symbols_def = FunctionTool(func=RestFnDef.get_symbols_1)
+symbol_name_def = FunctionTool(func=RestFnDef.get_name_1)
+symbol_quote_def = FunctionTool(func=RestFnDef.get_symbol_quote_1)
+market_status_def = FunctionTool(func=RestFnDef.get_market_status_1)
+market_session_def = FunctionTool(func=RestFnDef.get_market_session_1)
+symbol_peers_def = FunctionTool(func=RestFnDef.get_company_peers_1)
+local_datetime_def = FunctionTool(func=DateFnDef.get_local_datetime)
+last_market_close_def = FunctionTool(func=RestFnDef.get_last_market_close)
+all_exchange_codes_def = FunctionTool(func=RestFnDef.get_exchange_codes_1)
+exchange_code_def = FunctionTool(func=RestFnDef.get_exchange_code_1)
+basic_financials_def = FunctionTool(func=RestFnDef.get_financials_1)
+historical_candle_def = FunctionTool(func=RestFnDef.get_daily_candlestick_2)
+custom_candle_def = FunctionTool(func=RestFnDef.get_custom_candlestick_2)
+symbol_overview_def = FunctionTool(func=RestFnDef.get_ticker_overview_2)
+symbol_trends_def = FunctionTool(func=RestFnDef.get_recommendation_trends_1)
+scored_news_def = FunctionTool(func=RestFnDef.get_news_with_sentiment_2)
+wiki_grounding_def = FunctionTool(func=WikiFnDef.get_wiki_grounding)
+search_grounding_def = FunctionTool(func=SearchFnDef.get_search_grounding)
 
 finance_tools_def = [
     symbol_search_def, filter_symbols_def, symbol_name_def, symbol_quote_def,
     market_status_def, market_session_def, symbol_peers_def, local_datetime_def,
     last_market_close_def, all_exchange_codes_def, exchange_code_def, basic_financials_def,
     historical_candle_def, custom_candle_def, symbol_overview_def, symbol_trends_def,
-    scored_news_def, wiki_grounding_def, search_grounding_def, rest_grounding_def
+    scored_news_def, wiki_grounding_def, search_grounding_def
 ]

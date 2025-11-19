@@ -1,11 +1,12 @@
 import json
 from tqdm import tqdm
+from ..api import Api
 from .rag import RetrievalAugmentedGeneration
 
 # Define subclass: search-augmented generation.
 class SearchRAG(RetrievalAugmentedGeneration):
-    def __init__(self, genai_client):
-        super().__init__(genai_client, "searchdocs")
+    def __init__(self, api: Api):
+        super().__init__(api, "searchdocs")
 
     def add_grounded_document(self, query: str, topic: str, result):
         self.embed_fn.document_mode = True # Switch to document mode.

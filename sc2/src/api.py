@@ -1,11 +1,12 @@
-import json, logging, platform, requests, threading, time
+import json, logging, pandas, platform, requests, threading, time
+from chromadb import Documents, Embeddings
 from enum import Enum
 from google import genai
 from google.api_core import retry, exceptions
-from google.genai import errors
+from google.genai import errors, types
 from math import inf
 from threading import Timer
-from typing import Callable, NewType, NamedTuple
+from typing import Callable, NamedTuple
 from . import is_retriable
 from .secret import UserSecretsClient
 
@@ -17,7 +18,6 @@ class GeminiModel:
         self.err = [0,0] # validation, api_related
 
 # A python api-helper with model fail-over/chaining/retry support.
-GeminiEmbedFunction = NewType("GeminiEmbedFunction", None) # forward-decl
 class Api:
     gen_limit_in = 1048576
     emb_limit_in = 2048
@@ -105,20 +105,27 @@ class Api:
         API_LIMIT: int
         GEN_DEFAULT: str
 
-    def __init__(self, with_limit: Limit, default_model: str):
+    def __init__(self, with_limit: Limit | int, default_model: str):
         if default_model in self.gen_model.keys():
             self.write_lock = threading.RLock()
-            self.args = Api.Env(
-                genai.Client(api_key=UserSecretsClient().get_secret("GOOGLE_API_KEY")),
-                with_limit.value,
-                default_model)
+            try:
+                if isinstance(with_limit, int) and with_limit in [id.value for id in Api.Limit]:
+                    limit = with_limit
+                else:
+                    limit = with_limit.value
+            except Exception as e:
+                print(f"Api.__init__: {with_limit} is not a valid limit")
+            else:
+                self.args = Api.Env(
+                    genai.Client(api_key=UserSecretsClient().get_secret("GOOGLE_API_KEY")),
+                    limit, default_model)
             self.m_id = list(self.gen_model.keys()).index(default_model)
             self.default_model.append(default_model)
             self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
-            self.s_embed = GeminiEmbedFunction(self.args.CLIENT, semantic_mode = True) # type: ignore
+            self.s_embed = GeminiEmbedFunction(self, semantic_mode = True) # type: ignore
             logging.getLogger("google_genai").setLevel(logging.WARNING) # suppress info on generate
         else:
-            print(f"{default_model} not found in gen_model.keys()")
+            print(f"Api.__init__: {default_model} not found in gen_model.keys()")
         
 
     def __call__(self, model: Model) -> str:
@@ -239,3 +246,57 @@ class Api:
     )
     def similarity(self, content: list):
         return self.s_embed.sts(content) # type: ignore
+    
+# Define the embedding function.
+class GeminiEmbedFunction:
+    document_mode = True  # Generate embeddings for documents (T,F), or queries (F,F).
+    semantic_mode = False # Semantic text similarity mode is exclusive (F,T).
+    
+    def __init__(self, api: Api, semantic_mode: bool = False):
+        self.api = api
+        self.client = api.args.CLIENT
+        if semantic_mode:
+            self.document_mode = False
+            self.semantic_mode = True
+
+    @retry.Retry(
+        predicate=is_retriable,
+        initial=2.0,
+        maximum=64.0,
+        multiplier=2.0,
+        timeout=600,
+    )
+    def __embed__(self, input: Documents) -> Embeddings:
+        if self.document_mode:
+            embedding_task = "retrieval_document"
+        elif not self.document_mode and not self.semantic_mode:
+            embedding_task = "retrieval_query"
+        elif not self.document_mode and self.semantic_mode:
+            embedding_task = "semantic_similarity"
+        partial = self.client.models.embed_content(
+            model=self.api(Api.Model.EMB),
+            contents=input,
+            config=types.EmbedContentConfig(task_type=embedding_task)) # type: ignore
+        return [e.values for e in partial.embeddings]
+    
+    @retry.Retry(
+        predicate=is_retriable,
+        initial=2.0,
+        maximum=64.0,
+        multiplier=2.0,
+        timeout=600,
+    )
+    def __call__(self, input: Documents) -> Embeddings:
+        try:
+            response = []
+            for i in range(0, len(input), Api.Const.EmbedBatch()):  # Gemini max-batch-size is 100.
+                response += self.__embed__(input[i:i + Api.Const.EmbedBatch()])
+            return response
+        except Exception as e:
+            print(f"caught exception of type {type(e)}\n{e}")
+            raise e
+
+    def sts(self, content: list) -> float:
+        df = pandas.DataFrame(self(content), index=content)
+        score = df @ df.T
+        return score.iloc[0].iloc[1]

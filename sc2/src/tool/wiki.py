@@ -5,15 +5,16 @@ from tqdm import tqdm
 from wikipedia.exceptions import DisambiguationError, PageError
 from ..api import Api
 from ..db.wiki import WikiRAG
+from ..fntool_def import WikiFnDef
 
 # Define tool: wiki-grounding generation.
 # - Creates new groundings by similarity to topic
 # - Retrieves existing groundings by similarity to topic
-api = NewType("Api", None) # type: ignore (forward-decl)
-class WikiGroundingTool:   
-    def __init__(self, genai_client):
-        self.client = genai_client
-        self.rag = WikiRAG(genai_client)
+class WikiGroundingTool(WikiFnDef):   
+    def __init__(self, api: Api):
+        self.api = api
+        self.client = api.args.CLIENT
+        self.rag = WikiRAG(api)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore") # suppress beta-warning
             self.splitter = HTMLSemanticPreservingSplitter(
@@ -39,7 +40,7 @@ class WikiGroundingTool:
             if len(pages) > 0:
                 p_topic_match = 0.80
                 for i in range(len(pages)):
-                    if tqdm(api.similarity([topic + " company", pages[i]]) > p_topic_match, 
+                    if tqdm(self.api.similarity([topic + " company", pages[i]]) > p_topic_match, 
                             desc= "Score wiki search by similarity to topic"):
                         page_html = Api.get(f"https://en.wikipedia.org/wiki/{pages[i]}")
                         chunks = [chunk.page_content for chunk in self.splitter.split_text(page_html)]
@@ -51,3 +52,6 @@ class WikiGroundingTool:
         data_lang = element.get("data-lang")
         code_format = f"<code:{data_lang}>{element.get_text()}</code>"
         return code_format
+    
+    def get_wiki_grounding(self, q: str, id: str):
+        self.generate_answer(query=q, topic=id)
