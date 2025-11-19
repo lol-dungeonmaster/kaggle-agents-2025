@@ -1,6 +1,8 @@
+from google.adk.tools import FunctionTool
 from abc import ABC, abstractmethod
 
-class FnTools(ABC):
+class FnToolDef(ABC):
+    @classmethod
     @abstractmethod
     def get_symbol_1(cls, q: str, exchange: str, query: str) -> dict:
         """Search for the stock ticker symbol of a given company, security, isin or cusip.
@@ -36,6 +38,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_symbols_1(cls, exchange: str, query: str) -> list[dict]:
         """List all supported symbols and tickers, filtered by exchange code.
@@ -63,6 +66,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_name_1(cls, q: str, exchange: str, query: str, company: str) -> list[dict]:
         """Search for the name associated with a stock ticker or symbol's company, security, isin or cusip.
@@ -98,6 +102,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_symbol_quote_1(cls, symbol: str, query: str, exchange: str) -> dict:
         """Search for the current price or quote of a stock ticker or symbol.
@@ -135,6 +140,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_market_status_1(cls, exchange: str) -> dict:
         """Get the current market status of global exchanges.
@@ -182,6 +188,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_market_session_1(cls, exchange: str) -> str | None:
         """Get the current market session of global exchanges.
@@ -203,6 +210,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_company_peers_1(cls, symbol: str, grouping: str, exchange: str, query: str) -> dict:
         """Search for a company's peers.
@@ -248,6 +256,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_local_datetime(cls, t: list[int]) -> list[str]:
         """Converts an array of timestamps from epoch time to the local timezone format.
@@ -271,6 +280,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_last_market_close(cls, exchange: str) -> str:
         """Get the last market close of the specified exchange in Eastern Time.
@@ -290,6 +300,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_exchange_codes_1(cls) -> dict[str, str]:
         """Get a dictionary mapping all supported exchange codes to their names.
@@ -305,6 +316,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_exchange_code_1(cls, q: str) -> str:
         """Search for the exchange code to use when filtering by exchange.
@@ -321,6 +333,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_financials_1(cls, symbol: str, metric: str, query: str) -> dict:
         """Get company basic financials such as margin, P/E ratio, 52-week high/low, etc.
@@ -351,6 +364,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_daily_candlestick_2(cls, stocksTicker: str, date: str, adjusted: str, 
                                 exchange: str, query: str) -> dict:
@@ -390,6 +404,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_custom_candlestick_2(cls, stocksTicker: str, multiplier: int, timespan: str,
                                  from_date: str,  # Renamed 'from' to 'from_date' to avoid Python keyword conflict
@@ -439,6 +454,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_ticker_overview_2(cls, ticker: str, query: str) -> dict:
         """Retrieve comprehensive details for a single ticker symbol.
@@ -488,6 +504,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_recommendation_trends_1(cls, symbol: str, query: str) -> list[dict]:
         """Get the latest analyst recommendation trends for a company.
@@ -534,6 +551,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_news_with_sentiment_2(cls, limit: int, ticker: str, 
                                   published_utc_gte: str,  # Renamed from 'published_utc.gte' for valid Python argument name
@@ -594,13 +612,14 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_wiki_grounding(cls, id: str, q: str) -> str:
         """Search for answers to a question using wikipedia.
 
         Retrieve a wiki page related to a company, product, or service.
-        Each web page includes detailed company information, financial indicators,
-        tickers, symbols, history, and products and services.
+        Each web page includes detailed company information, financial indicators, tickers, symbols, history, and products and services.
+        It can be used at the same time as get_search_grounding and get_rest_grounding.
 
         Args:
             id: The question's company or product. Just the name and no other details.
@@ -618,6 +637,7 @@ class FnTools(ABC):
         """
         pass # Function implementation would go here
 
+    @classmethod
     @abstractmethod
     def get_search_grounding(cls, q: str, id: str) -> str:
         """Search for answers to a question using internet search.
@@ -625,6 +645,7 @@ class FnTools(ABC):
         Retrieves internet search results related to a question.
         This information is less trustworthy than other sources.
         It can be used as a secondary source of answers.
+        It can be used at the same time as get_wiki_grounding and get_rest_grounding.
 
         Args:
             q: The question needing an answer. Asked as a simple string.
@@ -636,3 +657,51 @@ class FnTools(ABC):
             Example: "The latest news indicates that the company 'Acme Corp' is developing new AI technology."
         """
         pass # Function implementation would go here
+
+    @classmethod
+    @abstractmethod
+    def get_rest_grounding(cls, q: str, id: str) -> str:
+        """Search for answers to a question using the REST api.
+
+        Retrieves REST api results related to a question.
+        This information is the most trustworthy of any available sources.
+        It first checks a local cache of answers before using REST api requests.
+        It can be used at the same time as get_wiki_grounding and get_search_grounding.
+
+        Args:
+            q: The question needing an answer. Asked as a simple string.
+            id: The question's company or product. In one word. Just the name and no other details.
+
+        Returns:
+            A string containing the answer to the question, previously retrieved from a REST api.
+        """
+        pass # Function implementation would go here
+
+symbol_search_def = FunctionTool(func=FnToolDef.get_symbol_1)
+filter_symbols_def = FunctionTool(func=FnToolDef.get_symbols_1)
+symbol_name_def = FunctionTool(func=FnToolDef.get_name_1)
+symbol_quote_def = FunctionTool(func=FnToolDef.get_symbol_quote_1)
+market_status_def = FunctionTool(func=FnToolDef.get_market_status_1)
+market_session_def = FunctionTool(func=FnToolDef.get_market_session_1)
+symbol_peers_def = FunctionTool(func=FnToolDef.get_company_peers_1)
+local_datetime_def = FunctionTool(func=FnToolDef.get_local_datetime)
+last_market_close_def = FunctionTool(func=FnToolDef.get_last_market_close)
+all_exchange_codes_def = FunctionTool(func=FnToolDef.get_exchange_codes_1)
+exchange_code_def = FunctionTool(func=FnToolDef.get_exchange_code_1)
+basic_financials_def = FunctionTool(func=FnToolDef.get_financials_1)
+historical_candle_def = FunctionTool(func=FnToolDef.get_daily_candlestick_2)
+custom_candle_def = FunctionTool(func=FnToolDef.get_custom_candlestick_2)
+symbol_overview_def = FunctionTool(func=FnToolDef.get_ticker_overview_2)
+symbol_trends_def = FunctionTool(func=FnToolDef.get_recommendation_trends_1)
+scored_news_def = FunctionTool(func=FnToolDef.get_news_with_sentiment_2)
+wiki_grounding_def = FunctionTool(func=FnToolDef.get_wiki_grounding)
+search_grounding_def = FunctionTool(func=FnToolDef.get_search_grounding)
+rest_grounding_def = FunctionTool(func=FnToolDef.get_rest_grounding)
+
+finance_tools_def = [
+    symbol_search_def, filter_symbols_def, symbol_name_def, symbol_quote_def,
+    market_status_def, market_session_def, symbol_peers_def, local_datetime_def,
+    last_market_close_def, all_exchange_codes_def, exchange_code_def, basic_financials_def,
+    historical_candle_def, custom_candle_def, symbol_overview_def, symbol_trends_def,
+    scored_news_def, wiki_grounding_def, search_grounding_def, rest_grounding_def
+]

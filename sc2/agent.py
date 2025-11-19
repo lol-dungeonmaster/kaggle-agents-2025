@@ -1,8 +1,9 @@
 from google.adk.agents.llm_agent import Agent
-from google.adk.models.google_llm import Gemini
+from google.adk.models.google_llm import Gemini as LLM
 from google.adk.tools import AgentTool
 from google.genai import types
-from .finance_tools import *
+from .src.fntool_def import *
+from .src.fntool import local_datetime
 
 retry_config = types.HttpRetryOptions(
     attempts=5,
@@ -12,7 +13,7 @@ retry_config = types.HttpRetryOptions(
 )
 
 planner_agent = Agent(
-    model=Gemini(
+    model=LLM(
         model="gemini-2.5-flash",
         retry_options=retry_config),
     name="sc2_planner",
@@ -53,12 +54,12 @@ planner_agent = Agent(
     ]
     ```
     """,
-    tools=finance_tools,
+    tools=finance_tools_def,
     output_key="interest_plan"
 )
 
 summary_agent = Agent(
-    model=Gemini(
+    model=LLM(
         model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_summary",
@@ -78,7 +79,7 @@ summary_agent = Agent(
 )
 
 root_agent = Agent(
-    model=Gemini(
+    model=LLM(
         model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_root",
