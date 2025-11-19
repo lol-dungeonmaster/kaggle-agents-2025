@@ -2,10 +2,9 @@ import ast, re
 from google.api_core import retry
 from google.genai import types, errors
 from tqdm import tqdm
+from src import is_retriable
 from src.api import Api
 from src.db.search import SearchRAG
-
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 
 # Define tool: search-grounding generation.
 # - Creates new groundings by exact match to topic

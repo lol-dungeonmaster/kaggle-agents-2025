@@ -8,11 +8,10 @@ from langchain_text_splitters.json import RecursiveJsonSplitter
 from pydantic import BaseModel
 from tqdm import tqdm
 from typing import Optional, NewType
+from src import is_retriable
 from src.api import Api
 from src.basemodel import ChromaDBResult, GeneratedEvent, MarketEvent, MarketSession
 from .rag import RetrievalAugmentedGeneration
-
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 
 # Define subclass: rest-augmented generation.
 api = NewType("Gemini", None) # type: ignore (forward-decl)

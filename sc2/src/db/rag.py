@@ -3,11 +3,10 @@ from google.api_core import retry
 from google.genai import types, errors
 from typing import Optional, NewType
 from tqdm import tqdm
+from src import is_retriable
 from src.api import Api
 from src.basemodel import ChromaDBResult
 from src.embed import GeminiEmbedFunction
-
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 
 # Define parent class: retrieval-augmented generation.
 # - ChromaDB for storage and retrieval

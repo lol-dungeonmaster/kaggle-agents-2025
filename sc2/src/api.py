@@ -3,11 +3,11 @@ from enum import Enum
 from google import genai
 from google.api_core import retry, exceptions
 from google.genai import errors
+from math import inf
 from threading import Timer
 from typing import Callable, NewType, NamedTuple
+from src import is_retriable
 from .secret import UserSecretsClient
-
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 
 class GeminiModel:
     def __init__(self, rpm: list, tpm: list, rpd: list):

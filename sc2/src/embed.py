@@ -3,9 +3,8 @@ from chromadb import Documents, Embeddings
 from google.api_core import retry
 from google.genai import types, errors
 from typing import NewType
+from src import is_retriable
 from .api import Api
-
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 
 # Define the embedding function.
 api = NewType("Api", None) # type: ignore (forward-decl)
