@@ -231,7 +231,7 @@ class Api:
 
     def update_quota(self):
         self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
-        self.token_quota = list(self.gen_model.values())[self.m_id].tpm[self.args.API_LIMIT]
+        self.token_quota = list(self.gen_model.values())[self.m_id].tpm[self.args.API_LIMIT]*1_000_000
 
     def token_count(self, expr: str):
         count = self.args.CLIENT.models.count_tokens(
