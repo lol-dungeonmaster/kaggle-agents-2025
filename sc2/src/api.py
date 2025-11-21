@@ -24,10 +24,10 @@ class Api:
     gen_model = {
         "gemini-2.0-flash": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # stable wo/thinking: 15 RPM/1M TPM/200 RPD
         "gemini-2.0-flash-exp": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # latest w/thinking: 15 RPM/1M TPM/200 RPD
-        "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # stable: 10 RPM/250K TPM/250 RPD
-        "gemini-2.5-flash-lite-preview-09-2025": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # exp: 15 RPM/250K TPM/1K RPD
+        "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash-lite": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # stable: 15 RPM/250K TPM/1K RPD
+        "gemini-2.5-flash-lite-preview-09-2025": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # exp: 15 RPM/250K TPM/1K RPD
         "gemini-2.5-pro": GeminiModel([5,150,1000,2000],[.25,2,5,8],[100,10000,50000,inf]), # stable: 5 RPM/250K TPM/100 RPD
     }
     gen_local = ["gemma3n:e4b","gemma3:12b-it-qat"]
@@ -37,6 +37,7 @@ class Api:
     embed_local = False
     error_total = 0
     min_rpm = 3
+    min_tpm = 20000
     dt_between = 2.0
     errored = False
     running = False
@@ -57,7 +58,7 @@ class Api:
         try:
             request = requests.get(url, headers={'User-Agent': system_ua})
             if request.status_code != requests.codes.ok:
-                print(f"Gemini.get() returned status {request.status_code}")
+                print(f"Api.get() returned status {request.status_code}")
             return request.text
         except Exception as e:
             raise e
@@ -121,7 +122,7 @@ class Api:
                     limit, default_model)
             self.m_id = list(self.gen_model.keys()).index(default_model)
             self.default_model.append(default_model)
-            self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
+            self.update_quota()
             self.s_embed = GeminiEmbedFunction(self, semantic_mode = True) # type: ignore
             logging.getLogger("google_genai").setLevel(logging.WARNING) # suppress info on generate
         else:
@@ -158,7 +159,9 @@ class Api:
         for attempt in range(len(self.gen_model.keys())):
             try:
                 self.write_lock.acquire()
-                if self.gen_rpm > self.min_rpm:
+                token_use = self.token_count(kwargs["contents"])
+                if self.gen_rpm > self.min_rpm and token_use <= self.token_quota and self.token_quota > self.min_tpm:
+                    self.token_quota -= self.token_count(kwargs["contents"])
                     self.gen_rpm -= 1
                 else:
                     self.on_error(kwargs)
@@ -170,11 +173,16 @@ class Api:
             except (errors.APIError, exceptions.RetryError) as api_error:
                 if isinstance(api_error, errors.APIError):
                     is_retry = api_error.code in {429, 503, 500, 400} # code 400 when TPM exceeded
-                    if not is_retry or attempt == len(self.gen_model.keys())-1:
+                    if api_error.code == 400:
+                        print("retriable.api_error: token limit exceeded")
+                    else:
+                        print(f"retriable.api_error({api_error.code}): {str(api_error)}")
+                    if not is_retry or attempt == 3*len(self.gen_model.keys())-1:
                         raise api_error
                 self.on_error(kwargs)
             except Exception as e:
-                raise e
+                print(f"retriable.exception: {str(e)}")
+                self.on_error(kwargs) # raise e
             finally:
                 self.write_lock.release()
 
@@ -196,7 +204,7 @@ class Api:
         self.stop_running()
         self.save_error()
         self.next_model()
-        print("api.generation_fail.next_model: model is now ", list(self.gen_model.keys())[self.m_id])
+        print("Api.generation_fail.next_model: model is now", list(self.gen_model.keys())[self.m_id])
         if not self.errored:
             self.error_timer = Timer(self.dt_err, self.zero_error)
             self.error_timer.start()
@@ -208,18 +216,22 @@ class Api:
 
     def next_model(self):
         self.m_id = (self.m_id+1)%len(self.gen_model.keys())
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
+        self.update_quota()
 
     def refill_rpm(self):
         self.running = False
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
-        print("api.refill_rpm ", self.gen_rpm)
+        self.update_quota()
+        print("Api.refill_rpm", self.gen_rpm)
 
     def zero_error(self):
         self.errored = False
         self.m_id = list(self.gen_model.keys()).index(self.default_model[-1])
+        self.update_quota()
+        print("Api.zero_error: model is now", list(self.gen_model.keys())[self.m_id])
+
+    def update_quota(self):
         self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
-        print("api.zero_error: model is now ", list(self.gen_model.keys())[self.m_id])
+        self.token_quota = list(self.gen_model.values())[self.m_id].tpm[self.args.API_LIMIT]
 
     def token_count(self, expr: str):
         count = self.args.CLIENT.models.count_tokens(
