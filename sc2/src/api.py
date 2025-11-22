@@ -161,7 +161,7 @@ class Api:
                 self.write_lock.acquire()
                 token_use = self.token_count(kwargs["contents"])
                 if self.gen_rpm > self.min_rpm and token_use <= self.token_quota and self.token_quota > self.min_tpm:
-                    self.token_quota -= self.token_count(kwargs["contents"])
+                    self.token_quota -= token_use
                     self.gen_rpm -= 1
                 else:
                     self.on_error(kwargs)
@@ -233,10 +233,10 @@ class Api:
         self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
         self.token_quota = list(self.gen_model.values())[self.m_id].tpm[self.args.API_LIMIT]*1_000_000
 
-    def token_count(self, expr: str):
+    def token_count(self, expr: str | list):
         count = self.args.CLIENT.models.count_tokens(
             model=self(Api.Model.GEN),
-            contents=json.dumps(expr))
+            contents=json.dumps(expr) if isinstance(expr, str) else str(expr))
         return count.total_tokens
 
     def errors(self):

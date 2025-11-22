@@ -104,15 +104,21 @@ class RestRAG(RetrievalAugmentedGeneration):
             Omit all other chat and details. Do not use sentences."""
         progress = tqdm(total=1, desc=f"Generate {exchange_code}->{event}")
         response = self.get_exchanges_csv(prompt).candidates[0].content
-        if Api.Const.Stop() in f"{response.parts[-1].text}":
-            progress.close()
-            self.api.generation_fail()
-            time.sleep(self.api.dt_between)
-            return self.generate_event(exchange_code, event)
-        else:
-            response = self.get_event_date(response.parts[-1].text, exchange_code, event)
-            progress.update(1)
-            return response
+        try:
+            if Api.Const.Stop() in f"{response.parts[-1].text}":
+                self.generate_event_failed(progress, exchange_code, event)
+            else:
+                response = self.get_event_date(response.parts[-1].text, exchange_code, event)
+                progress.update(1)
+                return response
+        except Exception as e:
+            self.generate_event_failed(progress, exchange_code, event)
+
+    def generate_event_failed(self, progress: tqdm, exchange_code: str, event: MarketEvent):
+        progress.close()
+        api.generation_fail()
+        time.sleep(api.dt_between)
+        return self.generate_event(exchange_code, event)
 
     def generated_events(self, exchange_code: str) -> GeneratedEvent:
         # Check for an existing GeneratedEvent object having updates.
