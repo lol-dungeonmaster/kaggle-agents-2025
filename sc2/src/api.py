@@ -28,7 +28,7 @@ class Api:
         "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash-lite": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # stable: 15 RPM/250K TPM/1K RPD
         "gemini-2.5-flash-lite-preview-09-2025": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # exp: 15 RPM/250K TPM/1K RPD
-        "gemini-2.5-pro": GeminiModel([5,150,1000,2000],[.25,2,5,8],[100,10000,50000,inf]), # stable: 5 RPM/250K TPM/100 RPD
+        "gemini-2.5-pro": GeminiModel([5,150,1000,2000],[.125,2,5,8],[100,10000,50000,inf]), # stable: 5 RPM/250K TPM/100 RPD
     }
     gen_local = ["gemma3n:e4b","gemma3:12b-it-qat"]
     default_local = 0
