@@ -23,7 +23,7 @@ class Api:
     emb_limit_in = 2048
     gen_model = {
         "gemini-2.0-flash": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # stable wo/thinking: 15 RPM/1M TPM/200 RPD
-        "gemini-2.0-flash-exp": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # latest w/thinking: 15 RPM/1M TPM/200 RPD
+        "gemini-2.0-flash-exp": GeminiModel([10,10,10,10],[.25,.25,.25,.25],[200,500,500,500]), # latest w/thinking: 10 RPM/250K TPM/200 RPD
         "gemini-2.5-flash": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # stable: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash-lite": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # stable: 15 RPM/250K TPM/1K RPD
@@ -156,7 +156,8 @@ class Api:
             self.write_lock.release()
 
     def retriable(self, retry_fn: Callable, *args, **kwargs):
-        for attempt in range(len(self.gen_model.keys())):
+        tries = 3*len(self.gen_model.keys())
+        for attempt in range(tries):
             try:
                 self.write_lock.acquire()
                 token_use = self.token_count(kwargs["contents"])
@@ -174,15 +175,15 @@ class Api:
                 if isinstance(api_error, errors.APIError):
                     is_retry = api_error.code in {429, 503, 500, 400} # code 400 when TPM exceeded
                     if api_error.code == 400:
-                        print("retriable.api_error: token limit exceeded")
+                        print(f"retriable.api_error: token limit exceeded ({token_use})")
                     else:
                         print(f"retriable.api_error({api_error.code}): {str(api_error)}")
-                    if not is_retry or attempt == 3*len(self.gen_model.keys())-1:
+                    if not is_retry or attempt == tries:
                         raise api_error
                 self.on_error(kwargs)
             except Exception as e:
                 print(f"retriable.exception: {str(e)}")
-                self.on_error(kwargs) # raise e
+                self.on_error(kwargs)
             finally:
                 self.write_lock.release()
 

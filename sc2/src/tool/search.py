@@ -41,9 +41,9 @@ class SearchGroundingTool:
     def get_grounding(self, query: str, topic: str):
         contents = [types.Content(role="user", parts=[types.Part(text=query)])]
         contents += f"""
-        You're a search assistant that provides grounded answers to questions about {topic}. You will provide only 
-        results that discuss {topic}. Be brief and specific in answering and omit extra details.
-        If an answer is not possible respond with: I don't know."""
+        You're a search assistant that provides answers to questions about only {topic}.
+        Do not discuss alternative topics of interest. Do not discuss similar topics.
+        You will provide only answers that discuss {topic}. Otherwise respond with: I don't know."""
         response = self.api.retriable(self.client.models.generate_content, 
                                       model=self.api(Api.Model.GEN), 
                                       config=self.config_ground,

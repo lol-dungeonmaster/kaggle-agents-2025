@@ -11,7 +11,7 @@ class RestFnDef(ABC):
         If this doesn't help you should try calling get_wiki_tool_response next.
 
         Args:
-            q: The company, security, isin or cusip to search for a symbol.
+            q: A ticker symbol to search for.
             exchange: The exchange code used to filter results. When not specified the default exchange
                       code you should use is 'US' for the US exchanges. A dictionary mapping all supported
                       exchange codes to their names be retrieved by calling get_exchange_codes_1.
