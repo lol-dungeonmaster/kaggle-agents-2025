@@ -22,10 +22,10 @@ class Api:
     gen_limit_in = 1048576
     emb_limit_in = 2048
     gen_model = {
-        "gemini-2.0-flash": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # stable wo/thinking: 15 RPM/1M TPM/200 RPD
-        "gemini-2.0-flash-exp": GeminiModel([10,10,10,10],[.25,.25,.25,.25],[200,500,500,500]), # latest w/thinking: 10 RPM/250K TPM/200 RPD
         "gemini-2.5-flash": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # stable: 10 RPM/250K TPM/250 RPD
         "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
+        "gemini-2.0-flash-exp": GeminiModel([10,10,10,10],[.25,.25,.25,.25],[200,500,500,500]), # latest w/thinking: 10 RPM/250K TPM/200 RPD
+        "gemini-2.0-flash": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # stable wo/thinking: 15 RPM/1M TPM/200 RPD
         "gemini-2.5-flash-lite": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # stable: 15 RPM/250K TPM/1K RPD
         "gemini-2.5-flash-lite-preview-09-2025": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # exp: 15 RPM/250K TPM/1K RPD
         "gemini-2.5-pro": GeminiModel([5,150,1000,2000],[.125,2,5,8],[100,10000,50000,inf]), # stable: 5 RPM/250K TPM/100 RPD
@@ -37,11 +37,11 @@ class Api:
     embed_local = False
     error_total = 0
     min_rpm = 3
-    min_tpm = 20000
+    min_tpm = 40000
     dt_between = 2.0
     errored = False
     running = False
-    dt_err = 60.0
+    dt_err = 45.0
     dt_rpm = 60.0
 
     @classmethod

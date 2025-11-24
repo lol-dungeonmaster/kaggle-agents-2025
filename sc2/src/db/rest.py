@@ -116,8 +116,8 @@ class RestRAG(RetrievalAugmentedGeneration):
 
     def generate_event_failed(self, progress: tqdm, exchange_code: str, event: MarketEvent):
         progress.close()
-        api.generation_fail()
-        time.sleep(api.dt_between)
+        self.api.generation_fail()
+        time.sleep(self.api.dt_between)
         return self.generate_event(exchange_code, event)
 
     def generated_events(self, exchange_code: str) -> GeneratedEvent:
