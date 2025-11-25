@@ -57,6 +57,7 @@ class WikiGroundingTool:
 
         Retrieve a wiki page related to a company, product, or service.
         Each web page includes detailed company information, financial indicators, tickers, symbols, history, and products and services.
+        It can be used at the same time as get_search_grounding and get_rest_grounding.
 
         Args:
             q: The full unaltered question string.

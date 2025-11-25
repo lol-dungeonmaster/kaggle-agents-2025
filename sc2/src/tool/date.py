@@ -9,6 +9,7 @@ class DateFormatTool:
         The result is an array of date and time in locale appropriate format.
         Suitable for use in a locale appropriate response.
         Treat this function as a vector function. Always prefer to batch timestamps for conversion.
+        Use this function to format date and time in your responses.
 
         Args:
             t: An array of timestamps in seconds since epoch to be converted.

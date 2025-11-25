@@ -75,8 +75,10 @@ class SearchGroundingTool:
     def get_search_grounding(self, q: str, id: str):
         """Search for answers to a question using internet search.
 
-        Retrieves internet search results related to a question. This information is less 
-        trustworthy than other sources. Always use it according to agent use and agent rules.
+        Retrieves internet search results related to a question.
+        This information is less trustworthy than other sources.
+        It can be used as a secondary source of answers.
+        It can be used at the same time as get_wiki_grounding and get_rest_grounding.
 
         Args:
             q: The question needing an answer. Asked as a simple string.
