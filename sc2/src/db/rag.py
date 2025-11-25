@@ -100,7 +100,7 @@ class RetrievalAugmentedGeneration:
                         store_id=result["ids"][0][i])
                     results.append(obj)
             else:
-                results.append(self.ChromaDBResult(
+                results.append(ChromaDBResult(
                     docs=result["documents"][0],
                     dist=result["distances"][0] if is_query else None,
                     meta=result["metadatas"][0],
