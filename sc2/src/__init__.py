@@ -61,5 +61,8 @@ from .tool.search import SearchGroundingTool
 from .tool.wiki import WikiGroundingTool
 
 RGT = RestGroundingTool(api, with_limits=True)
+log.info("sc2.__init__: RestGroundingTool is ready")
 SGT = SearchGroundingTool(api)
+log.info("sc2.__init__: SearchGroundingTool is ready")
 WGT = WikiGroundingTool(api)
+log.info("sc2.__init__: WikiGrounding is ready")
