@@ -45,6 +45,7 @@ fnplan_agent = Agent(
         }
     ]
     ```
+
     """,
     tools=finance_tools,
     output_key="interest_fnplan"
@@ -64,8 +65,10 @@ fncall_agent = Agent(
     RULE#1: Always consult your other functions before get_search_grounding.
     RULE#2: Always consult get_wiki_grounding before get_search_grounding.
     RULE#3: Always consult get_search_grounding last.
-    RULE#4: Always convert timestamps with get_local_datetime and use the converted date/time in your response.
-    RULE#5: Always incorporate as much useful information from tools and functions in your response.""",
+    RULE#4: Always convert any timestamps to local datetime before including them.
+    RULE#5: Always incorporate as much useful information from tools and functions in your response.
+    
+    """,
     tools=finance_tools,
     output_key="interest_fncall"
 )
@@ -78,9 +81,12 @@ summary_agent = Agent(
     description="An expert proof-reader and writer that knows HTML, JSON and Markdown.",
     instruction="""
     Give a concise, and detailed summary. Proof-read any markdown and correct all formatting errors.
-    Convert any all-upper case identifiers to proper case in your response. 
-    Convert any abbreviated or shortened identifiers to their full forms. 
-    Convert any timestamps to local datetime before including them.""",
+    Convert all all-upper case identifiers to proper case in your response. 
+    Convert all abbreviated or shortened identifiers to their full forms. 
+    Convert all currency to consistent currency format with two decimal places.
+    Convert all timestamps to local datetime before including them.
+    
+    """,
     tools=[local_datetime],
     output_key="interest_summary",
 )
@@ -92,7 +98,8 @@ memory_agent = Agent(
     name="sc2_memory",
     description="An expert writer that knows HTML, JSON and Markdown.",
     instruction="""
-    You know nothing at the moment and must always respond with: I don't know."""
+    You know nothing at the moment and must always respond with: I don't know.
+    """
 )
 
 fncall_pipe = ParallelAgent(
@@ -108,15 +115,15 @@ root_agent = Agent(
     description="A helpful assistant for finance and stock market questions.",
     instruction="""
     You are a helpful and informative bot that accepts only finance and stock market questions. 
-    Your goal is to answer the user's question by orchestrating a workflow. You must follow these 
-    rules when choosing tools:
+    Your goal is to answer the user's question by orchestrating a workflow. You can skip the workflow
+    for usage-related questions or definitions you already know. Otherwise follow this workflow:
     
-    RULE#1: You must use sc2_summary after either sc2_memory or fncall_pipeline.
-    RULE#2: You must use sc2_memory before fncall_pipeline.
-    RULE#3: You are allowed to answer without tools for simple usage-related questions.
-    RULE#4: You are allowed to answer without tools for implementation-related questions.
-    RULE#5: You must NOT use get_search_grounding except for simple definition-related questions.""",
-    tools=[AgentTool(agent=memory_agent), AgentTool(agent=fncall_pipe), 
-           AgentTool(agent=summary_agent), search_grounding],
+    1. First, call the `sc2_memory` tool to find relevant information on the topic.
+    2. Next, call `fncall_pipeline` if `sc2_memory` cannot assist.
+    3. Next, call the `sc2_summary` tool to create a concise summary.
+    4. Finally, present the final summary clearly to the user as your response.
+    
+    """,
+    tools=[AgentTool(agent=memory_agent), AgentTool(agent=fncall_pipe), AgentTool(agent=summary_agent)],
     output_key="user_interest"
 )
