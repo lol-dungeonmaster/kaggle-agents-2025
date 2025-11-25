@@ -35,7 +35,9 @@ class RetrievalAugmentedGeneration:
         ids = list(map(str, range(self.db.count(), self.db.count()+len(docs))))
         metas=[{"source": doc.metadata["source"]} for doc in docs]
         content=[doc.page_content for doc in docs]
-        tqdm(self.db.add(ids=ids, documents=content, metadatas=metas), desc="Generate document embedding")
+        progress = tqdm(total=1, desc="Generate document embedding")
+        self.db.add(ids=ids, documents=content, metadatas=metas)
+        progress.update(1)
 
     @retry.Retry(
         predicate=is_retriable,
