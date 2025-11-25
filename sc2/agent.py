@@ -1,4 +1,6 @@
 from google.adk.agents import Agent, ParallelAgent
+from google.adk.apps.app import App, EventsCompactionConfig
+from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models.google_llm import Gemini as LLM
 from google.adk.tools import AgentTool
 from .src import retry_config
@@ -70,7 +72,7 @@ fncall_agent = Agent(
     
     """,
     tools=finance_tools,
-    output_key="interest_fncall"
+    output_key="interest_result"
 )
 
 summary_agent = Agent(
@@ -85,7 +87,8 @@ summary_agent = Agent(
     Convert all abbreviated or shortened identifiers to their full forms. 
     Convert all currency to consistent currency format with two decimal places.
     Convert all timestamps to local datetime before including them.
-    
+
+    {interest_result}    
     """,
     tools=[local_datetime],
     output_key="interest_summary",
@@ -99,7 +102,8 @@ memory_agent = Agent(
     description="An expert writer that knows HTML, JSON and Markdown.",
     instruction="""
     You know nothing at the moment and must always respond with: I don't know.
-    """
+    """,
+    output_key="interest_result"
 )
 
 fncall_pipe = ParallelAgent(
@@ -126,4 +130,14 @@ root_agent = Agent(
     """,
     tools=[AgentTool(agent=memory_agent), AgentTool(agent=fncall_pipe), AgentTool(agent=summary_agent)],
     output_key="user_interest"
+)
+
+app = App(
+    name="agents",
+    root_agent=root_agent,
+    events_compaction_config=EventsCompactionConfig(
+        summarizer=LlmEventSummarizer(LLM(model="gemini-2.5-flash")),
+        compaction_interval=3,
+        overlap_size=1,
+    ),
 )
