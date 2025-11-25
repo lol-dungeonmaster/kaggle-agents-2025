@@ -1,8 +1,11 @@
+import logging
 from google.api_core import retry
 from google.genai.models import Models
 from google.genai import errors
 from google.genai import types
 from lmnr import Laminar
+
+log = logging.getLogger()
 
 is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
 Models.generate_content = retry.Retry(predicate=is_retriable)(Models.generate_content)
@@ -21,7 +24,7 @@ from .secret import UserSecretsClient
 try:
     Laminar.initialize(project_api_key=UserSecretsClient().get_secret("LMNR_PROJECT_API_KEY"))
 except:
-    print("Skipping Laminar.initialize()")
+    log.info("Skipping Laminar.initialize()")
 
 import os
 from .api import Api
@@ -29,9 +32,9 @@ from .api import Api
 try:
     api = Api(with_limit=int(os.environ["API_LIMIT"]), default_model=os.environ["GEN_DEFAULT"])
 except KeyError as e:
-    print("sc2.__init__: cannot start api-helper / incomplete environment")
+    log.error("sc2.__init__: incomplete .env (API_LIMIT/GEN_DEFAULT)")
 else:
-    print("sc2.__init__: the api-helper is ready")
+    log.info("sc2.__init__: the api-helper is ready")
 
 from .tool.rest import RestGroundingTool
 from .tool.search import SearchGroundingTool

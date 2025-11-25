@@ -1,4 +1,5 @@
 import os
+from . import log
 
 class UserSecretsClient:
     @classmethod
@@ -9,4 +10,4 @@ class UserSecretsClient:
         try:
             return os.environ[id]
         except KeyError as e:
-            print(f"KeyError: authentication token for {id} is undefined")
+            log.warning(f"KeyError: authentication token for {id} is undefined")

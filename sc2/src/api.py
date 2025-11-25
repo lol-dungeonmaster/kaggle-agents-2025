@@ -7,7 +7,7 @@ from google.genai import errors, types
 from math import inf
 from threading import Timer
 from typing import Callable, NamedTuple
-from . import is_retriable
+from . import is_retriable, log
 from .secret import UserSecretsClient
 
 class GeminiModel:
@@ -58,7 +58,7 @@ class Api:
         try:
             request = requests.get(url, headers={'User-Agent': system_ua})
             if request.status_code != requests.codes.ok:
-                print(f"Api.get() returned status {request.status_code}")
+                log.error(f"Api.get() returned status {request.status_code}")
             return request.text
         except Exception as e:
             raise e
@@ -115,7 +115,7 @@ class Api:
                 else:
                     limit = with_limit.value
             except Exception as e:
-                print(f"Api.__init__: {with_limit} is not a valid limit")
+                log.error(f"Api.__init__: {with_limit} is not a valid limit")
             else:
                 self.args = Api.Env(
                     genai.Client(api_key=UserSecretsClient().get_secret("GOOGLE_API_KEY")),
@@ -126,7 +126,7 @@ class Api:
             self.s_embed = GeminiEmbedFunction(self, semantic_mode = True) # type: ignore
             logging.getLogger("google_genai").setLevel(logging.WARNING) # suppress info on generate
         else:
-            print(f"Api.__init__: {default_model} not found in gen_model.keys()")
+            log.error(f"Api.__init__: {default_model} not found in gen_model.keys()")
         
 
     def __call__(self, model: Model) -> str:
@@ -145,7 +145,7 @@ class Api:
             self.m_id = list(self.gen_model.keys()).index(model_id)
             self.write_lock.release()
         else:
-            print(f"{model_id} not found in gen_model.keys()")
+            log.error(f"{model_id} not found in gen_model.keys()")
 
     def pop_default_model(self):
         if len(self.default_model) > 1:
@@ -175,14 +175,14 @@ class Api:
                 if isinstance(api_error, errors.APIError):
                     is_retry = api_error.code in {429, 503, 500, 400} # code 400 when TPM exceeded
                     if api_error.code == 400:
-                        print(f"retriable.api_error: token limit exceeded ({token_use})")
+                        log.error(f"retriable.api_error: token limit exceeded ({token_use})")
                     else:
-                        print(f"retriable.api_error({api_error.code}): {str(api_error)}")
+                        log.error(f"retriable.api_error({api_error.code}): {str(api_error)}")
                     if not is_retry or attempt == tries:
                         raise api_error
                 self.on_error(kwargs)
             except Exception as e:
-                print(f"retriable.exception: {str(e)}")
+                log.error(f"retriable.exception: {str(e)}")
                 self.on_error(kwargs)
             finally:
                 self.write_lock.release()
@@ -205,7 +205,7 @@ class Api:
         self.stop_running()
         self.save_error()
         self.next_model()
-        print("Api.generation_fail.next_model: model is now", list(self.gen_model.keys())[self.m_id])
+        log.error(f"Api.generation_fail.next_model: model is now {list(self.gen_model.keys())[self.m_id]}")
         if not self.errored:
             self.error_timer = Timer(self.dt_err, self.zero_error)
             self.error_timer.start()
@@ -222,13 +222,13 @@ class Api:
     def refill_rpm(self):
         self.running = False
         self.update_quota()
-        print("Api.refill_rpm", self.gen_rpm)
+        log.info(f"Api.refill_rpm {self.gen_rpm}")
 
     def zero_error(self):
         self.errored = False
         self.m_id = list(self.gen_model.keys()).index(self.default_model[-1])
         self.update_quota()
-        print("Api.zero_error: model is now", list(self.gen_model.keys())[self.m_id])
+        log.info(f"Api.zero_error: model is now {list(self.gen_model.keys())[self.m_id]}")
 
     def update_quota(self):
         self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.args.API_LIMIT]
@@ -306,7 +306,7 @@ class GeminiEmbedFunction:
                 response += self.__embed__(input[i:i + Api.Const.EmbedBatch()])
             return response
         except Exception as e:
-            print(f"caught exception of type {type(e)}\n{e}")
+            log.error(f"caught exception of type {type(e)}\n{e}")
             raise e
 
     def sts(self, content: list) -> float:

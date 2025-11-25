@@ -7,7 +7,7 @@ from langchain_text_splitters.json import RecursiveJsonSplitter
 from pydantic import BaseModel
 from tqdm import tqdm
 from typing import Optional
-from .. import is_retriable
+from .. import is_retriable, log
 from ..api import Api
 from ..basemodel import ChromaDBResult, GeneratedEvent, MarketEvent, MarketSession
 from .rag import RetrievalAugmentedGeneration
@@ -30,7 +30,7 @@ class RestRAG(RetrievalAugmentedGeneration):
         try:
             df = pandas.read_csv("/kaggle/input/exchanges/exchanges_src.csv") if os.getenv("KAGGLE_KERNEL_RUN_TYPE") else pandas.read_csv("exchanges_src.csv")
         except FileNotFoundError as e:
-            print("restrag.add_exchanges_data: file not found")
+            log.error("restrag.add_exchanges_data: file not found")
         df = df.drop(["close_date"], axis=1).fillna("")
         df.to_csv("exchanges.csv", index=False)
         exchanges = CSVLoader(file_path="exchanges.csv", encoding="utf-8", csv_args={"delimiter": ","}).load()

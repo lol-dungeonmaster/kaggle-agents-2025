@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from threading import Timer
 from tqdm import tqdm
 from typing import Optional, Callable
+from .. import log
 from ..api import Api
 from ..basemodel import *
 from ..db.rest import RestRAG
@@ -40,7 +41,7 @@ class BlockingUrlQueue:
             time.sleep(0.034) # ~30 requests per second
             return self.rest_fn(rest_url)
         else:
-            print(f"limited {self.per_minute_max}/min, waiting {self.limit_expiry()}s")
+            log.info(f"limited {self.per_minute_max}/min, waiting {self.limit_expiry()}s")
             time.sleep(max(self.limit_expiry(),0.5))
             return self.push(rest_url)
 
@@ -116,11 +117,11 @@ class RestGroundingTool(RestFnDef):
                 model = self.basemodel(data, schema, as_lambda)
         except Exception as e:
             try:
-                print(f"try_url exception: {e}")
+                log.warning(f"try_url exception: {e}")
                 if issubclass(schema, RestResultPoly):
                     return success_fn(*args, **kwargs, result=self.basemodel(data, RestResultPoly))
             except Exception as not_a_result:
-                print(not_a_result)
+                log.error(str(not_a_result))
             return Api.Const.Stop()
         else:
             return success_fn(*args, **kwargs, model=model)
