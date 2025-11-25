@@ -1,15 +1,15 @@
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent, ParallelAgent
 from google.adk.models.google_llm import Gemini as LLM
 from google.adk.tools import AgentTool
 from .src import retry_config
 from .src.fntool_def import *
-from .src.fntool import local_datetime
+from .src.fntool import *
 
-planner_agent = Agent(
+fnplan_agent = Agent(
     model=LLM(
         model="gemini-2.5-flash",
         retry_options=retry_config),
-    name="sc2_planner",
+    name="sc2_fnplan",
     description="A highly intelligent FunctionTool call planner.",
     instruction="""
     You are a highly intelligent FunctionTool call planner. Your sole purpose is to analyze a user's request
@@ -48,7 +48,27 @@ planner_agent = Agent(
     ```
     """,
     tools=finance_tools_def,
-    output_key="interest_plan"
+    output_key="interest_fnplan"
+)
+
+fncall_agent = Agent(
+    model=LLM(
+        model="gemini-2.5-flash",
+        retry_options=retry_config),
+    name="sc2_fncall",
+    description="A highly intelligent FunctionTool caller.",
+    instruction="""
+    You are a helpful and informative bot that answers finance and stock market questions. 
+    Only answer the question asked and do not change topic. While the answer is still 
+    unknown you must follow these rules for predicting function call order:
+    
+    RULE#1: Always consult your other functions before get_search_grounding.
+    RULE#2: Always consult get_wiki_grounding before get_search_grounding.
+    RULE#3: Always consult get_search_grounding last.
+    RULE#4: Always convert timestamps with get_local_datetime and use the converted date/time in your response.
+    RULE#5: Always incorporate as much useful information from tools and functions in your response.""",
+    tools=finance_tools,
+    output_key="interest_fncall"
 )
 
 summary_agent = Agent(
@@ -56,19 +76,29 @@ summary_agent = Agent(
         model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_summary",
-    description="An expert writer that knows HTML, JSON and Markdown.",
+    description="An expert proof-reader and writer that knows HTML, JSON and Markdown.",
     instruction="""
-    Read the provided interest_plan and create a concise summary.
-    Follow these rules at all times:
-
-    RULE#0: Parse interest_plan into a summary of FunctionTool calls to answer the question.
-    RULE#1: Convert all timestamps to local date/time before you respond.
-    RULE#2: Incorporate as much useful information in your final response.
-    
-    interest_plan:
-    {interest_plan}""",
+    Give a concise, and detailed summary. Proof-read any markdown and correct all formatting errors.
+    Convert any all-upper case identifiers to proper case in your response. 
+    Convert any abbreviated or shortened identifiers to their full forms. 
+    Convert any timestamps to local datetime before including them.""",
     tools=[local_datetime],
     output_key="interest_summary",
+)
+
+memory_agent = Agent(
+    model=LLM(
+        model="gemini-2.5-flash-lite",
+        retry_options=retry_config),
+    name="sc2_memory",
+    description="An expert writer that knows HTML, JSON and Markdown.",
+    instruction="""
+    You know nothing at the moment and must always respond with: I don't know."""
+)
+
+fncall_pipe = ParallelAgent(
+    name="fncall_pipeline",
+    sub_agents=[fnplan_agent, fncall_agent]
 )
 
 root_agent = Agent(
@@ -76,14 +106,18 @@ root_agent = Agent(
         model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_root",
-    description="A helpful assistant for finance questions.",
+    description="A helpful assistant for finance and stock market questions.",
     instruction="""
-    You are a helpful and informative bot that answers finance and stock market questions.
-    Your goal is to answer the user's question by orchestrating a workflow. Follow these steps at all times:
-
-    STEP#1: You MUST call the `sc2_planner` tool to obtain a function call plan.
-    STEP#2: Next you MUST call the `sc2_summary` tool to create a concise summary.
-    STEP#3: Lastly, present the final summary clearly to the user as your response.""",
-    tools=[AgentTool(agent=planner_agent), AgentTool(agent=summary_agent)],
+    You are a helpful and informative bot that accepts only finance and stock market questions. 
+    Your goal is to answer the user's question by orchestrating a workflow. You must follow these 
+    rules when choosing tools:
+    
+    RULE#1: You must use sc2_summary after either sc2_memory or fncall_pipeline.
+    RULE#2: You must use sc2_memory before fncall_pipeline.
+    RULE#3: You are allowed to answer without tools for simple usage-related questions.
+    RULE#4: You are allowed to answer without tools for implementation-related questions.
+    RULE#5: You must NOT use get_search_grounding except for simple definition-related questions.""",
+    tools=[AgentTool(agent=memory_agent), AgentTool(agent=fncall_pipe), 
+           AgentTool(agent=summary_agent), search_grounding],
     output_key="user_interest"
 )
