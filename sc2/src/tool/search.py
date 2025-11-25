@@ -53,7 +53,7 @@ class SearchGroundingTool:
         if response.candidates[0].grounding_metadata.grounding_supports is not None:
             if self.is_consistent(query, topic, response.text):
                 self.rag.add_grounded_document(query, topic, response)
-                return response.text 
+                return response.text
         return Api.Const.Stop() # Empty grounding supports or not consistent in response
 
     def is_consistent(self, query: str, topic: str, model_response: str) -> bool:
@@ -73,4 +73,18 @@ class SearchGroundingTool:
         return True # all prefix matches contained topic
     
     def get_search_grounding(self, q: str, id: str):
+        """Search for answers to a question using internet search.
+
+        Retrieves internet search results related to a question. This information is less 
+        trustworthy than other sources. Always use it according to agent use and agent rules.
+
+        Args:
+            q: The question needing an answer. Asked as a simple string.
+            id: The question's company or product. In one word. Just the name and no other details.
+
+        Returns:
+            A string containing the answer to the question, retrieved from a general search.
+            Example: "According to a recent search, the capital of France is Paris."
+            Example: "The latest news indicates that the company 'Acme Corp' is developing new AI technology."
+        """
         self.generate_answer(query=q, topic=id)

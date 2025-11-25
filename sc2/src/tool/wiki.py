@@ -5,12 +5,11 @@ from tqdm import tqdm
 from wikipedia.exceptions import DisambiguationError, PageError
 from ..api import Api
 from ..db.wiki import WikiRAG
-from ..fntool_def import WikiFnDef
 
 # Define tool: wiki-grounding generation.
 # - Creates new groundings by similarity to topic
 # - Retrieves existing groundings by similarity to topic
-class WikiGroundingTool(WikiFnDef):   
+class WikiGroundingTool:
     def __init__(self, api: Api):
         self.api = api
         self.client = api.args.CLIENT
@@ -54,4 +53,23 @@ class WikiGroundingTool(WikiFnDef):
         return code_format
     
     def get_wiki_grounding(self, q: str, id: str):
+        """Search for answers to a question using wikipedia.
+
+        Retrieve a wiki page related to a company, product, or service.
+        Each web page includes detailed company information, financial indicators, tickers, symbols, history, and products and services.
+
+        Args:
+            q: The full unaltered question string.
+            id: The question's company or product. Just the name and no other details.
+
+        Returns:
+            A string containing the content of the wiki page, which includes detailed
+            company information, financial indicators, tickers, symbols, history,
+            and products and services.
+            Example: "Apple Inc. (AAPL) is an American multinational technology company
+                     headquartered in Cupertino, California. It designs, develops, and
+                     sells consumer electronics, computer software, and online services.
+                     Its products include the iPhone, iPad, Mac, Apple Watch, and Apple TV.
+                     Key financial indicators include... (rest of the wiki page content)"
+        """
         self.generate_answer(query=q, topic=id)

@@ -2,7 +2,6 @@ from google.adk.agents import Agent, ParallelAgent
 from google.adk.models.google_llm import Gemini as LLM
 from google.adk.tools import AgentTool
 from .src import retry_config
-from .src.fntool_def import *
 from .src.fntool import *
 
 fnplan_agent = Agent(
@@ -47,7 +46,7 @@ fnplan_agent = Agent(
     ]
     ```
     """,
-    tools=finance_tools_def,
+    tools=finance_tools,
     output_key="interest_fnplan"
 )
 
