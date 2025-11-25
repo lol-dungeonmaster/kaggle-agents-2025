@@ -22,9 +22,8 @@ class RestRAG(RetrievalAugmentedGeneration):
     def __init__(self, api: Api):
         super().__init__(api, "restdocs")
         logging.getLogger("chromadb").setLevel(logging.ERROR) # suppress warning on existing id
-        self.add_exchanges_data()
         self.set_holidays("US", ["09-01-2025","10-13-2025","11-11-2025","11-27-2025","12-25-2025"])
-        self.generated_events("US")
+        self.add_exchanges_data()
 
     def add_exchanges_data(self):
         try:
@@ -214,15 +213,16 @@ class RestRAG(RetrievalAugmentedGeneration):
             return stored, True
         # Check for a daily market status update.
         status = json.loads(stored[0].docs)
-        gen_day = parse(self.generated_events(exchange_code).timestamp).day
+        events = self.generated_events(exchange_code)
+        gen_day = parse(events.timestamp).day
         store_day = parse(stored[0].meta['timestamp']).day
         if status["holiday"] != MarketSession.NA.value and gen_day == store_day:
             return stored, False
         elif gen_day > store_day:
             return stored, True
         # Update with generated events to avoid rest api requests.
-        status["session"] = self.generated_events(exchange_code).session().value
-        status["isOpen"] = self.generated_events(exchange_code).is_open()
+        status["session"] = events.session().value
+        status["isOpen"] = events.is_open()
         stored[0].docs = json.dumps(status)
         return stored, False
 
