@@ -2,8 +2,9 @@ from google.adk.agents import Agent, ParallelAgent
 from google.adk.apps.app import App, EventsCompactionConfig
 from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models.google_llm import Gemini as LLM
-from google.adk.tools import AgentTool
+from google.adk.tools import AgentTool, google_search
 from .src import retry_config
+from .src.api import Api
 from .src.fntool import *
 
 fnplan_agent = Agent(
@@ -106,6 +107,20 @@ memory_agent = Agent(
     output_key="interest_result"
 )
 
+terms_agent = Agent(
+    model=LLM(
+        model="gemini-2.5-flash-lite",
+        retry_config=retry_config),
+    name="sc2_terms",
+    description="An expert terminologist in the field of finance, money, and stock markets.",
+    instruction=f"""
+    You're an expert in terminology relating to finance, money, and stock markets.
+    You will provide an informative response to terminology within your field of expertise.
+    For questions not within your field of expertise you will respond with: {Api.Const.Stop()}""",
+    tools=[google_search],
+    output_key="interest_result"
+)
+
 fncall_pipe = ParallelAgent(
     name="fncall_pipeline",
     description="A function caller with functions defined in sub-agent `sc2_fnplan`.",
@@ -124,12 +139,14 @@ root_agent = Agent(
     for usage-related questions or definitions you already know. Otherwise follow this workflow:
     
     1. First, call the `sc2_memory` tool to find relevant information on the topic.
-    2. Next, call `fncall_pipeline` if `sc2_memory` cannot assist.
+    2. Next, call `fncall_pipeline` or `sc2_terms` if `sc2_memory` cannot assist.
     3. Next, call the `sc2_summary` tool to create a concise summary.
     4. Finally, present the final summary clearly to the user as your response.
     
     """,
-    tools=[AgentTool(agent=memory_agent), AgentTool(agent=fncall_pipe), AgentTool(agent=summary_agent)],
+    tools=[AgentTool(agent=memory_agent), 
+           AgentTool(agent=fncall_pipe), AgentTool(agent=terms_agent),
+           AgentTool(agent=summary_agent)],
     output_key="user_interest"
 )
 
