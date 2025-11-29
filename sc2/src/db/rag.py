@@ -14,10 +14,10 @@ class RetrievalAugmentedGeneration:
     chroma_client = chromadb.PersistentClient(path="vector_db")
     config_temp = types.GenerateContentConfig(temperature=0.0)
 
-    def __init__(self, api: Api, collection_name):
+    def __init__(self, api: Api, collection_name, similarity_task: bool = False):
         self.api = api
         self.client = api.args.CLIENT
-        self.embed_fn = GeminiEmbedFunction(api)
+        self.embed_fn = GeminiEmbedFunction(api, semantic_mode=similarity_task)
         self.db = self.chroma_client.get_or_create_collection(
             name=collection_name, 
             embedding_function=self.embed_fn, # type: ignore
