@@ -169,8 +169,9 @@ root_agent = Agent(
     
     1. First, call the `sc2_memory` tool to find relevant information on the topic.
     2. Next, call `fncall_pipeline` or `sc2_terms` if `sc2_memory` cannot assist.
-    3. Next, call the `sc2_summary` tool to create a concise summary.
-    4. Finally, present the final summary clearly to the user as your response.
+    3. If you use `sc2_terms` you must then call `sc2_memory` to save them.
+    4. Next, call the `sc2_summary` tool to create a concise summary.
+    5. Finally, present the final summary clearly to the user as your response.
     
     """,
     tools=[AgentTool(agent=memory_agent), AgentTool(agent=prefs_agent),
