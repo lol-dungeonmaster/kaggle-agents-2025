@@ -1,6 +1,5 @@
 from typing import Optional
 from tqdm import tqdm
-from .. import log
 from ..api import Api
 from .rag import RetrievalAugmentedGeneration
 
@@ -11,15 +10,16 @@ class MemoryService(RetrievalAugmentedGeneration):
     def add_memory(self, key: str, value: str) -> str:
         """Create a memory in key-value format.
 
-        Adds or updates the value associated with the provided key.
+        Adds the memory by key or updates it with value.
 
         Args:
-            key: A topic (id) within the backing vector store. It must be short 
-                 and abstract a personal attribute or preference.
-            value: A memory associated with the provided key.
+            key: A topic (key) within the key-value store. It must be short 
+                 and abstract a general attribute or preference.
+            value: The memory describing the topic's answer in full and descriptive
+                   sentences. Includes role-designation and/or the key content.
         
         Returns:
-            The memory (value) associated with the provided key.
+            The memory (value).
         """
         progress = tqdm(total=1, desc=f"Generate memory embedding ({key})")
         self.db.upsert(ids=[key], documents=[value], metadatas=[{"key": key}])
@@ -32,7 +32,7 @@ class MemoryService(RetrievalAugmentedGeneration):
         Recalls the memory (value) associated with the provided key.
 
         Args:
-            key: A topic (id) within the backing vector store.
+            key: A topic (key) within the key-value store.
 
         Returns:
             The memory (value) associated with the provided key, or None.
