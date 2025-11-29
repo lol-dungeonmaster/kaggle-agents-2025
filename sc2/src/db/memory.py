@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import Optional
 from tqdm import tqdm
 from ..api import Api
+from ..basemodel import GeneratedEvent
 from .rag import RetrievalAugmentedGeneration
 
 class MemoryService(RetrievalAugmentedGeneration):
@@ -22,7 +24,10 @@ class MemoryService(RetrievalAugmentedGeneration):
             The memory (value).
         """
         progress = tqdm(total=1, desc=f"Generate memory embedding ({key})")
-        self.db.upsert(ids=[key], documents=[value], metadatas=[{"key": key}])
+        dt_now = datetime.now(GeneratedEvent.tz()).strftime('%c')
+        self.db.upsert(ids=[key], 
+                       documents=[value], 
+                       metadatas=[{"key": key, "date": dt_now}])
         progress.update(1)
         return value
 
