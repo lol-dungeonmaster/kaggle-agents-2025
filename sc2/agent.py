@@ -100,8 +100,8 @@ memory_agent = Agent(
         retry_options=retry_config),
     name="sc2_memory",
     description="An expert writer that knows HTML, JSON and Markdown.",
-    instruction="""
-    You know nothing at the moment and must always respond with: I don't know.
+    instruction=f"""
+    You know nothing at the moment and must always respond with: {Api.Const.Stop()}
     """,
     output_key="interest_result"
 )
