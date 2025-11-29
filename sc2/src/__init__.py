@@ -23,8 +23,8 @@ class StderrToLog:
                 log.info(msg)
             elif (exp_mark := "UserWarning:") in msg: # google experimental warnings
                 log.warning(msg.partition(exp_mark)[2].lstrip())
-            elif "['function_call']" in msg: # google function call warnings
-                log.debug("Generated a function call but it's not included...")
+            elif "function_call" in msg or "thought_signature" in msg: # google a2a warnings
+                log.debug("Generated a2a message but it's not included...")
             else:
                 logging.getLogger("stderr").error(msg)
     
