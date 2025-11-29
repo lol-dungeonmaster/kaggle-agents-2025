@@ -14,7 +14,8 @@ fnplan_agent = Agent(
     name="sc2_fnplan",
     description="A highly intelligent FunctionTool call planner.",
     instruction="""
-    You are a highly intelligent FunctionTool call planner. Your sole purpose is to analyze a user's request
+    You are a highly intelligent FunctionTool call planner. You can provide implementation details without 
+    planning along with tool docstrings. Otherwise, your sole purpose is to analyze a user's request
     and generate a plan of FunctionTool calls that would be necessary to fulfill that request.
 
     **IMPORTANT INSTRUCTIONS:**
@@ -153,7 +154,7 @@ fncall_pipe = ParallelAgent(
 
 root_agent = Agent(
     model=LLM(
-        model="gemini-2.5-flash",
+        model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_root",
     description="A helpful assistant in the field of finance, money, and stock markets.",
@@ -172,8 +173,8 @@ root_agent = Agent(
     
     """,
     tools=[AgentTool(agent=memory_agent), AgentTool(agent=prefs_agent),
-           AgentTool(agent=fncall_pipe), AgentTool(agent=terms_agent),
-           AgentTool(agent=summary_agent)],
+           AgentTool(agent=fncall_pipe), AgentTool(agent=fnplan_agent), 
+           AgentTool(agent=terms_agent), AgentTool(agent=summary_agent)],
     output_key="user_interest"
 )
 
