@@ -68,7 +68,7 @@ class RetrievalAugmentedGeneration:
         prompt = f"""You're an expert writer. You understand how to interpret html and markdown. You will accept the
         question below and answer based only on the passages. Never mention the passages in your answers. Be sure to 
         respond in concise sentences. Include all relevant background information when possible. If a passage is not 
-        relevant to the answer you must ignore it. If no passage answers the question respond with: I don't know.
+        relevant to the answer you must ignore it. If no passage answers the question respond with: {Api.Const.Stop()}
 
         QUESTION: {query_oneline}
         
