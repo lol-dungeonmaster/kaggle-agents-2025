@@ -108,6 +108,7 @@ memory_agent = Agent(
 
 fncall_pipe = ParallelAgent(
     name="fncall_pipeline",
+    description="A function caller with functions defined in sub-agent `sc2_fnplan`.",
     sub_agents=[fnplan_agent, fncall_agent]
 )
 
