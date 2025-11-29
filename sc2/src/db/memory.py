@@ -39,4 +39,16 @@ class MemoryService(RetrievalAugmentedGeneration):
         """
         stored = self.stored_result(self.db.get(ids=[key]))
         return stored[0].docs if stored else None
-        
+    
+    def topic_search(self, question: str) -> str:
+        f"""Search for a memory by topic.
+
+        Searches for a memory about question within the key-value store.
+
+        Args:
+            question: The question to be answered by values within the key-value store.
+
+        Returns:
+            The memory (str) answering question, or {Api.Const.Stop()}.
+        """
+        return self.generate_answer(question, max_sources=2).text
