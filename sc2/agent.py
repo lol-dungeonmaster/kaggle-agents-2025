@@ -138,6 +138,6 @@ app = App(
     events_compaction_config=EventsCompactionConfig(
         summarizer=LlmEventSummarizer(LLM(model="gemini-2.5-flash")),
         compaction_interval=3,
-        overlap_size=1,
+        overlap_size=0,
     ),
 )
