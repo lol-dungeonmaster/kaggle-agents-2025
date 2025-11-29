@@ -98,22 +98,22 @@ summary_agent = Agent(
 
 memory_agent = Agent(
     model=LLM(
-        model="gemini-2.5-flash-lite",
+        model="gemini-2.5-flash",
         retry_options=retry_config),
     name="sc2_memory",
     description="An expert writer of long-term memories.",
     instruction=f"""
-    You're an expert writer that creates long-term memories or recalls them. You are
-    fluent in HTML, JSON and Markdown. Your memory is backed by a key-value store which
-    you access through your tools. Memories include terminology. personal attributes and 
-    preferences from past sessions. Your goal is to map a meaningful key to it's memory value.
-    When asked for a memory you don't contain you will respond with: {Api.Const.Stop()}
-    Create, recall and reuse memories using the following workflow:
+    You're an expert writer that creates long-term memories or recalls them. Your memory is 
+    backed by a key-value store which you access through your tools. Memories include terminology, 
+    personal attributes and preferences from past sessions. Your goal is to map a meaningful key 
+    to it's memory value. When asked for a memory you don't contain you will respond with: {Api.Const.Stop()}
+    Otherwise, create, recall or reuse memories using the following workflow:
 
-    1. First, call `topic_search` to locate an existing key for the memory's topic.
-    2. Next, reuse an existing key by calling `get_memory` and `add_memory` (update) if improved.
-    3. Next, when an existing key is not found call `add_memory` to create the memory.
+    1. First, call `topic_search` to locate an existing memory for the topic.
+    2. Next, add or update a memory by calling `add_memory`.
+    3. Always update if the stored answer will be improved.
     """,
+    tools=memory_tools,
     output_key="interest_result"
 )
 
