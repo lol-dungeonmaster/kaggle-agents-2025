@@ -1,5 +1,5 @@
 from google.adk.tools import FunctionTool
-from . import RGT, SGT, WGT
+from . import RGT, SGT, WGT, MEMORY
 from .tool.date import DateFormatTool
 
 symbol_search = FunctionTool(func=RGT.get_symbol_1)
@@ -29,3 +29,9 @@ finance_tools = [
     historical_candle, custom_candle, symbol_overview, symbol_trends,
     scored_news, wiki_grounding, search_grounding
 ]
+
+add_memory = FunctionTool(func=MEMORY.add_memory)
+get_memory = FunctionTool(func=MEMORY.get_memory)
+topic_search = FunctionTool(func=MEMORY.topic_search)
+
+memory_tools = [add_memory, get_memory, topic_search]
