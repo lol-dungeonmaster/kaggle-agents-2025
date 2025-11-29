@@ -154,7 +154,7 @@ fncall_pipe = ParallelAgent(
 
 root_agent = Agent(
     model=LLM(
-        model="gemini-2.5-flash-lite",
+        model="gemini-2.5-flash",
         retry_options=retry_config),
     name="sc2_root",
     description="A helpful assistant in the field of finance, money, and stock markets.",
@@ -163,7 +163,8 @@ root_agent = Agent(
     The user may tell you profile data or ask you questions within your field of expertise.
     You must identify if the user is telling you their profile or asking a question within your field.
     Your goal is to store profile data with `sc2_prefs` or answer the user's question by orchestrating 
-    a workflow. You can skip the workflow for usage-related questions or terms you already know. 
+    a workflow. You can skip the workflow for usage-related questions or terms you already know. Questions 
+    related to `fncall_pipeline` can be answered by tool `sc2_fnplan`.
     Otherwise follow this workflow:
     
     1. First, call the `sc2_memory` tool to find relevant information on the topic.
