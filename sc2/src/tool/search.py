@@ -79,6 +79,7 @@ class SearchGroundingTool:
         This information is less trustworthy than other sources.
         It can be used as a secondary source of answers.
         It can be used at the same time as get_wiki_grounding and get_rest_grounding.
+        It can always be used for definitions.
 
         Args:
             q: The question needing an answer. Asked as a simple string.
@@ -86,7 +87,7 @@ class SearchGroundingTool:
 
         Returns:
             A string containing the answer to the question, retrieved from a general search.
-            Example: "According to a recent search, the capital of France is Paris."
-            Example: "The latest news indicates that the company 'Acme Corp' is developing new AI technology."
+            Example: "A short trade is defined as..."
+            Example: "Your bank's local operating hours are..."
         """
         self.generate_answer(query=q, topic=id)
