@@ -765,7 +765,7 @@ class RestGroundingTool:
             query=query, topic=stocksTicker, source="daily_candle_2", 
             meta_opt=[{"from_date": from_date, "adjusted": adjusted}])
         if len(stored) == 0:
-            candle = self.rest.get_daily_candle(locals())
+            candle = self.get_daily_candle(locals())
             # Attempt to recover from choosing a holiday.
             candle_date = parse(from_date)
             if candle.status is RestStatus.NONE and candle_date.weekday() == 0 or candle_date.weekday() == 4:
