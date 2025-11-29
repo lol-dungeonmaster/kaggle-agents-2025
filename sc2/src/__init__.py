@@ -65,6 +65,7 @@ else:
 from .tool.rest import RestGroundingTool
 from .tool.search import SearchGroundingTool
 from .tool.wiki import WikiGroundingTool
+from .db.memory import MemoryService
 
 RGT = RestGroundingTool(api, with_limits=True)
 log.info("sc2.__init__: RestGroundingTool is ready")
@@ -72,3 +73,5 @@ SGT = SearchGroundingTool(api)
 log.info("sc2.__init__: SearchGroundingTool is ready")
 WGT = WikiGroundingTool(api)
 log.info("sc2.__init__: WikiGroundingTool is ready")
+MEMORY = MemoryService(api)
+log.info("sc2.__init__: MemoryService is ready")
