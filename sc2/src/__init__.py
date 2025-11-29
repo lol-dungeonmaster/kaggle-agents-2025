@@ -6,6 +6,8 @@ from google.genai import types
 from lmnr import Laminar
 
 log = logging.getLogger()
+logging.getLogger("google_adk.google.adk.models.google_llm").setLevel(logging.WARNING)
+logging.getLogger("google_adk.google.adk.runners").setLevel(logging.WARNING)
 
 # Tqdm sends output to stderr which doesn't mix well with logger output.
 # Define a stderr wrapper to forward output to logger.
