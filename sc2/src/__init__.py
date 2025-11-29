@@ -21,6 +21,10 @@ class StderrToLog:
             caller_name = inspect.stack()[1].frame.f_code.co_name
             if caller_name in ["inner","outer"]: # tqdm internals
                 log.info(msg)
+            elif (exp_mark := "UserWarning:") in msg: # google experimental warnings
+                log.warning(msg.partition(exp_mark)[2].lstrip())
+            elif "['function_call']" in msg: # google function call warnings
+                log.debug("Generated a function call but it's not included...")
             else:
                 logging.getLogger("stderr").error(msg)
     
