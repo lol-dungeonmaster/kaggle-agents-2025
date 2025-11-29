@@ -89,7 +89,7 @@ summary_agent = Agent(
     Convert all currency to consistent currency format with two decimal places.
     Convert all timestamps to local datetime before including them.
 
-    {interest_result}    
+    {interest_result}
     """,
     tools=[local_datetime],
     output_key="interest_summary",
@@ -100,9 +100,18 @@ memory_agent = Agent(
         model="gemini-2.5-flash-lite",
         retry_options=retry_config),
     name="sc2_memory",
-    description="An expert writer that knows HTML, JSON and Markdown.",
+    description="An expert writer of long-term memories.",
     instruction=f"""
-    You know nothing at the moment and must always respond with: {Api.Const.Stop()}
+    You're an expert writer that creates long-term memories or recalls them. You are
+    fluent in HTML, JSON and Markdown. Your memory is backed by a key-value store which
+    you access through your tools. Memories include terminology. personal attributes and 
+    preferences from past sessions. Your goal is to map a meaningful key to it's memory value.
+    When asked for a memory you don't contain you will respond with: {Api.Const.Stop()}
+    Create, recall and reuse memories using the following workflow:
+
+    1. First, call `topic_search` to locate an existing key for the memory's topic.
+    2. Next, reuse an existing key by calling `get_memory` and `add_memory` (update) if improved.
+    3. Next, when an existing key is not found call `add_memory` to create the memory.
     """,
     output_key="interest_result"
 )
@@ -129,10 +138,11 @@ prefs_agent = Agent(
     description="An expert profile analyst in the field of finance, money, and stock markets.",
     instruction=f"""
     You're a specialist who studies and accurately identifies personal attributes and preferences.
-    You will note any location-specific attributes or preferences for long-term memory.
-    You will also identify any preferences within your field of expertise.
+    You will note all location-specific attributes or preferences for long-term memory.
+    You will also identify any preferences within your field of expertise by their topic.
     When you cannot find any attributes or preferences you will respond with: {Api.Const.Stop()}""",
-    output_key="user_prefs"
+    tools=[AgentTool(agent=memory_agent)],
+    output_key="interest_result"
 )
 
 fncall_pipe = ParallelAgent(
