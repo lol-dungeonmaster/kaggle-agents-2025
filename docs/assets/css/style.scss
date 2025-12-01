@@ -34,8 +34,12 @@ header {
   list-style: none;
   font-weight: bolder;
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  font-size: 21px;
+  font-size: 18px;
   color: #cbcbcb;
+}
+
+.main-nav ul ul {
+  font-size: 15px;
 }
 
 .main-nav ul li {
@@ -52,7 +56,7 @@ header {
 }
 
 .main-nav li a:hover {
-  text-shadow: 0 0 5px #cbcbcb;
+  text-shadow: 0 0 5px #b5e853;
 }
 
 #main_content h1 {
