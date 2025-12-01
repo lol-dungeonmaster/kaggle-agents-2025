@@ -2,6 +2,7 @@ from google.adk.agents import Agent, ParallelAgent
 from google.adk.apps.app import App, EventsCompactionConfig
 from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models.google_llm import Gemini as LLM
+from google.adk.plugins import ReflectAndRetryToolPlugin
 from google.adk.tools import AgentTool, google_search
 from .src import retry_config
 from .src.api import Api
@@ -183,6 +184,7 @@ root_agent = Agent(
 app = App(
     name="agents",
     root_agent=root_agent,
+    plugins=[ReflectAndRetryToolPlugin(max_retries=1)],
     events_compaction_config=EventsCompactionConfig(
         summarizer=LlmEventSummarizer(LLM(model="gemini-2.5-flash")),
         compaction_interval=3,
