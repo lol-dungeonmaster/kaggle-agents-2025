@@ -1,0 +1,131 @@
+{
+  "eval_set_id": "sc2_eval_suite",
+  "eval_cases": [
+    {
+      "eval_id": "tool_aware",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "What tools do you know how to use?"
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I can use the following tools: sc2_memory, sc2_prefs, fncall_pipeline, sc2_fnplan, sc2_terms, sc2_summary."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "function_aware",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "Ask `sc2_fnplan` what functions fncall_pipeline knows."
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "`fncall_pipeline` knows the following functions: get_symbol_1, get_symbols_1, get_name_1, get_symbol_quote_1, get_market_status_1, get_market_session_1, get_company_peers_1, get_local_datetime, get_last_market_close, get_exchange_codes_1, get_exchange_code_1, get_financials_1, get_daily_candlestick_2, get_custom_candlestick_2, get_ticker_overview_2, get_recommendation_trends_1, get_news_with_sentiment_2, get_wiki_grounding, get_search_grounding."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "term_discovery_1",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "What is a short trade?"
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "A short trade, also known as short-selling or going-short is an investment strategy where an investor anticipates a decline in the price of an asset, typically a stock."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "term_discovery_2",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "What is gambler's ruin?"
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "Gambler's Ruin is a concept in probability theory. It describes a scenario where a gambler, beginning with a finite sum of money, will inevitably lose all of their funds."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "create_memory_1",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "My local advisor is SC at JPMorgan Chase, 212-736-2001."
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I have stored your local advisor's information."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "create_memory_2",
+      "conversation": [
+        {
+          "user_content": {
+            "parts": [
+              {
+                "text": "I live in Brooklyn, New York."
+              }
+            ]
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I have saved where you live in memory."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
