@@ -405,7 +405,7 @@ Skipping Laminar.initialize()
 
 <h1 id="stockchat-agents-edition"><strong>StockChat: Agents Edition</strong></h1>
 
-<p>It was during Kaggle’s 5-day Generative AI course in 2025 that StockChat first existed as a simple search-connected LLM. There were two observations from that initial build. First being the need for a real-time source of grounding truth. Even with google-search data was more often incomplete. The second observation, which still exists today, is the tendency toward hallucinations in finance data. Ticker symbols can imitate the name of another company, and it also possible for the LLM to confuse a company name for a wrong symbol. This happens even when the context of the question matches the immediate discussion history and should be self-evident.</p>
+<p>It was during Kaggle’s 5-day Generative AI course in 2025 that StockChat first existed as a simple search-connected LLM. There were two observations from that initial build. First being the need for a real-time source of grounding truth. Even with google-search data was more often incomplete. The second observation, which still exists today, is the tendency toward hallucinations in finance data. Ticker symbols can imitate the name of another company, and it's also possible for the LLM to confuse a company name for a wrong symbol. This happens even when the context of the question matches the immediate discussion history and should be self-evident.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="p">.</span><span class="nf">send_message</span><span class="p">(</span><span class="sh">'''</span><span class="s">What is MGM Studio</span><span class="sh">'</span><span class="s">s stock ticker symbol?</span><span class="sh">'''</span><span class="p">)</span>
 <span class="nc">Markdown</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
@@ -428,22 +428,22 @@ The stock symbol for its parent company, Amazon, is AMZN.
 
 <p>While big and capable, StockChat (SC1) became limited by it’s single agent design.</p>
 <ul>
-  <li>There’s no parallelism or asynchronous operation because parallel function calling is agent-wide. Some of the functions may have unmet dependencies when run parallel (by an LLM). In other cases the degree of parallelism is determined by whether you have paid for finance api access. As I’m building a toy I wanted to keep free-tier as an option. Effectively SC1 is a big LLM-guided loop with serial operations, and a single rest api request at a time. It makes SC1 stable at the cost of performance.</li>
-  <li>The lack of context management means it can handle months worth of pre-scored news data. As a synchronous operation.</li>
+  <li>There’s no parallelism or asynchronous operation because parallel function calling is agent-wide. Some of the functions may have unmet dependencies when run parallel (by an LLM). In other cases the degree of parallelism is determined by whether you have paid for finance api access. As I’m building a toy I wanted to keep free-tier as an option. SC1 is essentially an LLM-guided loop of serial operations, with a single rest api request at a time. It makes SC1 stable at the cost of performance.</li>
+  <li>The lack of context management means SC1 can handle months worth of pre-scored news data. Although as a synchronous operation.</li>
   <li>There’s a single vector store with all acquired data, requiring metadata management to compensate.</li>
-  <li>It has no facility to determine user interest. It’s a giant cache of previously searched finance data.</li>
-  <li>It has no systematic evaluation except to run baseline queries.</li>
+  <li>SC1 has no facility to determine user interest. It's a giant cache of previously searched finance data.</li>
+  <li>There's no systematic evaluation except to run baseline queries.</li>
 </ul>
 
 <p>With these issues in mind my goal during Kaggle’s 5-day Agents course was to apply Google’s agentic framework to free SC1 from these limitations.</p>
 <ul>
-  <li>SC2 uses async runners while maintaining some minimal thread synchronization on shared data.</li>
+  <li>SC2 uses async runners while maintaining minimal thread synchronization on shared data.</li>
   <li>LLM-assisted context compaction runs at regular intervals.</li>
   <li>All the sub-tools have their own vector stores.</li>
-  <li>A memory tool stores long-term memories with semantic meaning preserved, and tagged with date of creation.</li>
-  <li>A user profile expert is added to extract user attributes for long-term memory.</li>
+  <li>A memory tool stores long-term memories with semantic meaning preserved. Each memory is tagged with date of creation.</li>
+  <li>A user profile expert extracts user attributes and preferences for long-term memory.</li>
   <li>Session state keys are used to pass user interest along to other agents.</li>
-  <li>A summary writing expert ensures large generations aren’t blemished by erratic markdown, currency or timestamp formatting.</li>
+  <li>A summary writing expert ensures large generations aren't blemished by erratic formatting.</li>
   <li>The ADK CLI is used to run an evaluation suite with LLM-as-judge.</li>
 </ul>
 
@@ -563,9 +563,9 @@ WARNING  [root] [EXPERIMENTAL] EventsCompactionConfig: This feature is experimen
 
 <h2 id="test-the-runner">Test the Runner</h2>
 
-<p>The initial two-questions are used to test the agents self-awareness of tools. This was particularly problematic for the parallel <code class="language-plaintext highlighter-rouge">fncall_pipeline</code>. The goal is to have a parallel operating planner and executor of function calls. The function tool definition are tricky to access reliably when nested inside workflow agents like the ParallelAgent. In the end I exposed the planner and it’s containing pipeline, then told Gemini where to look.</p>
+<p>The two initial questions are used to test the agents self-awareness of tools. This was particularly problematic for the parallel <code class="language-plaintext highlighter-rouge">fncall_pipeline</code>. The goal is to have a parallel operating planner and executor of function calls. The function tool definition are tricky to access reliably when nested inside workflow agents like the ParallelAgent. In the end I exposed the planner and it’s containing pipeline, then told Gemini where to look.</p>
 
-<p>My goal is ultimately to make SC2 a more capable assistant in addition to removing existing limits. To that end I also added a Terminology expert to make use of the built-in google-search. Meanwhile a user profile expert dynamically extracts preferences and user attributes. These two types of data are stored in long-term memory.</p>
+<p>Another objective is to make SC2 a more capable assistant in addition to removing existing limits. To that end I also added a Terminology expert to make use of the built-in google-search. Meanwhile a user profile expert dynamically extracts preferences and user attributes. These two types of data are stored in long-term memory.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create a session service and run some test queries.
 </span><span class="n">s_svc</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>
@@ -1087,7 +1087,7 @@ connector: &lt;aiohttp.connector.TCPConnector object at 0x7b392a778e90&gt;
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>In applying Google’s ADK to SC1, the result is a more capable SC2 which is ready to grow beyond it’s first edition roots. Unresolved issues from SC1 remain. Parallelism will enable large work loads, like a stack of news requiring analysis, or background processes to drive self-improvement. This will enable a better user experience when locally running models are later employed to scale further. With the addition of agentic capabilities StockChat has room to grow again.</p>
+<p>In applying Google's ADK to SC1, the result is a more capable SC2 which is ready to grow beyond it's first edition roots. Unresolved issues from SC1 remain. Parallelism will enable large work loads, like a stack of news requiring analysis, or background processes to drive self-improvement. This will result in a better user experience when local models are employed to scale futher. With the addition of agentic capabilities StockChat has room to grow again.</p>
 
 <p><strong>I hope you’ll stick around to see how far the project gets! Thanks for taking the time to check out my notebook!</strong></p>
 
