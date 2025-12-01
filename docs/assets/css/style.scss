@@ -1,0 +1,47 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.btn {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+pre {
+  background: rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.collapsible-code {
+  padding-bottom: 1.0rem; 
+}
+
+.collapsible-code pre {
+  display: none;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.1);
+  color: #d2ccc2;
+}
+
+.collapsible-code button {
+  color: #cbcbcb;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid #838383;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.collapsible-code button::after {
+  content: " ▶";
+}
+
+.collapsible-code button.expanded {
+  color: rgb(0, 0, 0);
+  background: #cbcbcb;
+}
+
+.collapsible-code button.expanded::after {
+  content: " ▼";
+}
