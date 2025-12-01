@@ -5,10 +5,24 @@
 
 header {
   border-bottom: 1px dashed #cbcbcb;
+  background: rgba(0, 0, 0, 0.3);
   margin: 0 0 0 0;
   padding: 20px 2rem 0rem 2rem;
   width: 100%;
   margin: 0 auto;
+}
+
+body {
+  color: #fff7f3;
+  background: #00312b;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+}
+
+header h2 {
+  color: #cbcbcb;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
 .wrapper {
@@ -18,7 +32,7 @@ header {
 
 .main-nav {
   flex: 0 1 auto;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -56,7 +70,7 @@ header {
 }
 
 .main-nav li a:hover {
-  text-shadow: 0 0 5px #b5e853;
+  text-shadow: 0 0 10px #b5e853;
 }
 
 #main_content h1 {
@@ -115,7 +129,7 @@ header .container {
 }
 
 pre {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
   overflow-x: auto;
 }
 
@@ -126,7 +140,7 @@ pre {
 .collapsible-code pre {
   display: none;
   margin: 0;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
   color: #cbcbcb;
 }
 
