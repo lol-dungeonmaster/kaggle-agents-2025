@@ -439,6 +439,7 @@ With these issues in mind my goal during Kaggle's 5-day Agents course was to app
 - A memory tool stores long-term memories with semantic meaning preserved, and tagged with date of creation.
 - A user profile expert is added to extract user attributes for long-term memory.
 - Session state keys are used to pass user interest along to other agents.
+- A summary writing expert ensures large generations aren't blemished by erratic markdown, currency or timestamp formatting.
 - The ADK CLI is used to run an evaluation suite with LLM-as-judge.
 
 ## Setup working directory
@@ -1117,36 +1118,159 @@ response = chat.send_message('Do you know anything about the stock market?')
 Markdown(response.text)
 ```
 
+The stock market is a global network of exchanges and over-the-counter (OTC) marketplaces where investors buy and sell shares of publicly traded companies. These shares, also known as equities, represent fractional ownership in a company.
+
+**Purpose of the Stock Market**
+The stock market serves two primary functions:
+*   **For Companies:** It allows companies to raise capital (money) by issuing shares to the public through a process called an Initial Public Offering (IPO). This capital can then be used to fund and expand their businesses.
+*   **For Investors:** It provides individuals and institutions with an opportunity to invest in businesses and potentially grow their wealth over time. Investors can profit through dividends (a share of the company's profits) or by selling their shares at a higher price than they bought them for (capital gains).
+
+**How the Stock Market Works**
+The stock market operates through two main types of markets:
+*   **Primary Market:** This is where new stocks are first issued. When a private company decides to go public, it lists its shares on an exchange through an IPO, selling them directly to investors to raise capital.
+*   **Secondary Market:** After the initial issuance, these shares are traded among investors on stock exchanges (like the New York Stock Exchange or Nasdaq). The company is not directly involved in these subsequent transactions.
+
+Stock prices are primarily determined by the forces of supply and demand. If more investors want to buy a stock than sell it, the price tends to rise, and vice versa. This process is known as price discovery.
+
+**Key Components and Participants**
+*   **Stock Exchanges:** These are organized and regulated platforms (often virtual) where stocks and other securities are bought and sold.
+*   **Brokers:** These are intermediaries who execute buy and sell orders on behalf of investors.
+*   **Investors and Traders:** Participants range from individual retail investors to large institutional investors like pension funds, mutual funds, insurance companies, and hedge funds.
+
+**Types of Investments in the Stock Market**
+Beyond just common stocks, the stock market offers various investment instruments:
+*   **Stocks (Equities):**
+    *   **Common Stock:** Represents partial ownership, gives voting rights on corporate decisions, and offers potential for higher returns, but also higher risk.
+    *   **Preferred Stock:** Typically offers fixed dividend payments before common stockholders receive theirs, but usually does not come with voting rights.
+    *   **Categorized by Market Capitalization:** Large-cap (companies with market capitalization of $10 billion or more, generally stable), Mid-cap ($2 billion to $10 billion), and Small-cap (less than $2 billion, higher growth potential but riskier).
+    *   **Categorized by Investment Style:** Growth stocks (companies with strong potential for rapid growth), Value stocks (undervalued companies that investors believe will rise in price), and Income stocks (companies that pay regular, often higher-than-average, dividends).
+*   **Bonds:** These are debt securities where investors essentially lend money to governments or corporations for a set period, receiving regular interest payments.
+*   **Mutual Funds:** These pool money from many investors to invest in a diversified portfolio of stocks, bonds, or other securities, managed by a professional fund manager.
+*   **Exchange-Traded Funds (ETFs):** Similar to mutual funds, but they trade like individual stocks on exchanges throughout the day.
+*   **Derivatives:** Complex financial instruments whose value is derived from an underlying asset, such as stocks. These are generally considered high-risk and not recommended for beginners.
+
+**Factors Influencing Stock Prices**
+Stock market movements are influenced by a variety of factors, including company performance (earnings reports, product launches), macroeconomic indicators (interest rates, inflation, GDP growth), political events, international trade policies, and overall investor sentiment.
 
 ```python
 response = chat.send_message('I have an interest in AMZN stock')
 Markdown(response.text)
 ```
+Amazon.com Inc. (NASDAQ: AMZN) is a widely followed stock, known for its dominant presence in e-commerce, cloud computing (Amazon Web Services - AWS), and digital advertising.
 
+Here's a snapshot of AMZN stock as of December 1, 2025:
+
+**Current Price and Performance:**
+*   The current price of AMZN stock is approximately $233.22 USD.
+*   It has seen a 1.77% increase in the past 24 hours.
+*   Over the past week, AMZN stock has risen by 7.80%, and over the last year, it has shown a 12.68% increase.
+*   The stock's 52-week high is $258.60 and its 52-week low is $161.38.
+
+**Key Financials and Metrics:**
+*   Amazon's market capitalization is approximately $2.49 trillion.
+*   The company's Price-to-Earnings (P/E) ratio is around 32.95.
+*   Amazon does not currently pay dividends to shareholders, as it reinvests earnings into growth areas.
+*   AMZN stock has a beta coefficient of 1.41, indicating its volatility.
+
+**Analyst Outlook:**
+*   The overall consensus from 34 analysts over the last three months is a "Strong Buy" for AMZN.
+*   The average price target for Amazon.com Inc. is around $298.13, with a maximum estimate of $360.00 and a minimum estimate of $250.00. Oppenheimer recently raised its price target to $305.00 from $290.00, maintaining an "Outperform" rating.
+
+**Business Segments and Growth Drivers:**
+*   Amazon's revenue primarily comes from its retail operations (approximately 74%), followed by Amazon Web Services (AWS) (17%), and advertising services (9%).
+*   AWS is a significant growth driver, with its revenue growing by 20.2% year-over-year in the third quarter of 2025 and a reported $200 billion backlog.
+*   The company continues to expand in areas such as artificial intelligence (AI), cloud computing, global e-commerce, streaming, and logistics automation.
+
+**Recent News and Influencing Factors:**
+*   Amazon Web Services recently launched a new multicloud service to enhance data movement with Google Cloud, following an outage in October that caused significant losses for U.S. companies.
+*   Amazon is participating in a $400 billion investment in AI by 2025, which is expected to significantly impact the U.S. economy.
+*   AI shopping tools, including Amazon's Rufus, are projected to boost traffic to U.S. retail sites by 670% this holiday season compared to last year.
+*   Oppenheimer's analysis suggests significant upside potential for AWS through 2027, with plans to double its capacity.
+*   Amazon's stock price can be influenced by quarterly earnings, changes in cloud computing demand, consumer spending trends, new business initiatives, and broader economic conditions like inflation and interest rates.
+
+**Historical Context:**
+*   AMZN reached its all-time high on November 2, 2025, with a price of $258.60 USD.
+*   The company conducted a 20-for-1 stock split in June 2022 to make shares more accessible to retail investors.
 
 ```python
 response = chat.send_message('''Tell me about AMZN current share price, short-term trends, and bullish versus bearish predictions''')
 Markdown(response.text)
 ```
+Amazon.com Inc. (NASDAQ: AMZN) is currently trading at approximately $233.22 USD as of December 1, 2025. The stock has shown an increase of 1.77% in the past 24 hours, a 7.80% rise over the last week, and a 0.67% increase over the past month. Over the last year, AMZN has seen a 12.68% increase. The stock's 52-week high is $258.60, and its 52-week low is $161.38.
 
+**Short-Term Trends**
+
+In the short term, AMZN stock is exhibiting signs of strength. It has risen by 7.39% since a pivot bottom point on Thursday, November 20, 2025, with further increases indicated until a new top pivot is found. The stock holds buy signals from both short and long-term Moving Averages, suggesting a positive forecast. Technical analysis indicates that AMZN is breaking out above a horizontal support zone and shows enough bullish momentum for a break-in above its ascending Fibonacci Retracement Fan. The Bull Bear Power Indicator has also turned bullish with an ascending trendline, and average bullish trading volumes have been higher than bearish trading volumes over the past week.
+
+However, some short-term forecasts suggest potential minor fluctuations. One prediction indicates that the value of AMZN shares could drop by -2.60% to $227.12 per share by December 30, 2025. Another short-term forecast suggests a slight decrease to $230.68 by December 2, 2025, and $229.65 by December 3, 2025, before potentially rising to $233.80 by December 5, 2025. Despite these minor predicted dips, the overall sentiment based on technical indicators is bullish.
+
+**Bullish Versus Bearish Predictions**
+
+The overwhelming sentiment from analysts regarding AMZN stock is bullish. A consensus of 43 analysts over the last three months rates AMZN as a "Strong Buy," with 41 assigning a "Buy" rating and two a "Hold" rating. The average price target from 44 Wall Street analysts for the next 12 months is around $295.23, representing a potential upside of 28.83% from the current price, with a high forecast of $340.00 and a low forecast of $250.00. Other analyst targets range from an average of $282.48 to $298.13, all suggesting significant upside potential.
+
+Key drivers for these bullish predictions include:
+*   **Accelerated AWS Growth:** Amazon Web Services (AWS) revenue accelerated to 20.2% year-over-year growth in the third quarter of 2025, up from 17.5% in the second quarter. AWS also has a reported $200 billion backlog. Analysts project AWS revenue to reach $128.1 billion in 2025, growing to $348.5 billion in 2030.
+*   **AI Demand:** Amazon is well-positioned amid surging AI demand and cloud infrastructure growth. The company's recent multi-year deal with OpenAI, involving a $38 billion commitment for OpenAI to leverage AWS compute, further highlights its role in the AI space. AWS's Trainium chips business is also experiencing rapid growth.
+*   **E-commerce and Advertising:** Amazon's retail operations continue to be a primary revenue source, and its advertising business is expected to continue outperforming expectations.
+*   **Warehouse Automation:** Robotics deployment across fulfillment centers is expected to deliver substantial cost savings and improve fulfillment costs by 20% to 40%.
+
+While the overall outlook is strongly bullish, some potential bearish considerations exist. Concerns about the company's enormous AI capital expenditures remain. Additionally, while AWS growth is strong, it may not be as fast as competing cloud services like Microsoft Azure and Google Cloud, posing a risk of market share losses before 2030 if Amazon cannot maintain its competitive edge. Some short-term technical indicators have also shown a "general sell signal" from the relation between long-term and short-term moving averages, where the long-term average is above the short-term average. However, this is largely overshadowed by other positive signals.
 
 ```python
 response = chat.send_message('''What is mgm studio's stock ticker symbol?''')
 Markdown(response.text)
 ```
+MGM Studios, as an independent entity, does not have a publicly traded stock ticker symbol. MGM Holdings, the parent company of MGM Studios, was acquired by Amazon in 2022. Therefore, MGM Studios is now part of Amazon, and its financial performance is reflected within Amazon's overall operations (NASDAQ: AMZN).
 
+However, there is a publicly traded company called **MGM Resorts International**, which operates casinos and resorts and uses the stock ticker symbol **MGM** on the New York Stock Exchange (NYSE). This company is distinct from the film and television studio.
 
 ```python
 response = chat.send_message('''What was the last open,close,high,low data for AMZN again?''')
 Markdown(response.text)
 ```
+As of Friday, November 28, 2025, the last recorded trading day, Amazon (AMZN) stock had the following data:
 
+*   **Close/Last Price:** $233.22
+*   **Open Price:** $231.24
+*   **High Price:** $233.28
+*   **Low Price:** $230.22
 
 ```python
 response = chat.send_message('''What is AMZN open,close,high,low data for the past month? 
 Present the data with multiple columns for display in markdown.''')
 Markdown(response.text)
 ```
+Here is the open, close, high, and low data for Amazon (AMZN) stock for the past month, from October 31, 2025, to November 28, 2025:
+
+| Date         | Open (USD) | Close (USD) | High (USD) | Low (USD) |
+| :----------- | :--------- | :---------- | :--------- | :-------- |
+| Nov 28, 2025 | $231.24    | $233.22     | $233.28    | $230.22   |
+| Nov 26, 2025 | $230.74    | $229.16     | $231.75    | $228.77   |
+| Nov 25, 2025 | $226.38    | $229.67     | $230.52    | $223.80   |
+| Nov 24, 2025 | $222.56    | $226.28     | $227.33    | $222.27   |
+| Nov 21, 2025 | $216.34    | $220.69     | $222.21    | $215.18   |
+| Nov 20, 2025 | $227.05    | $217.14     | $227.41    | $216.74   |
+| Nov 19, 2025 | $223.74    | $222.69     | $223.74    | $218.52   |
+| Nov 18, 2025 | $228.10    | $222.55     | $230.20    | $222.42   |
+| Nov 17, 2025 | $233.25    | $232.87     | $234.60    | $229.19   |
+| Nov 14, 2025 | $235.06    | $234.69     | $238.73    | $232.89   |
+| Nov 13, 2025 | $243.05    | $237.58     | $243.75    | $236.50   |
+| Nov 12, 2025 | $250.24    | $244.20     | $250.37    | $243.75   |
+| Nov 11, 2025 | $248.41    | $249.10     | $249.75    | $247.23   |
+| Nov 10, 2025 | $248.34    | $248.40     | $251.75    | $245.59   |
+| Nov 07, 2025 | $242.90    | $244.41     | $244.90    | $238.49   |
+| Nov 06, 2025 | $249.16    | $243.04     | $250.38    | $242.17   |
+| Nov 05, 2025 | $249.03    | $250.20     | $251.00    | $246.16   |
+| Nov 04, 2025 | $250.38    | $249.32     | $257.01    | $248.66   |
+| Nov 03, 2025 | $255.36    | $254.00     | $258.60    | $252.90   |
+| Oct 31, 2025 | $250.10    | $244.22     | $250.50    | $243.98   |
+| Oct 30, 2025 | $227.06    | $222.86     | $228.44    | $222.75   |
+| Oct 29, 2025 | $231.67    | $230.30     | $231.67    | $228.22   |
+| Oct 28, 2025 | $228.22    | $229.25     | $231.49    | $226.21   |
+| Oct 27, 2025 | $227.66    | $226.97     | $228.40    | $225.54   |
+| Oct 26, 2025 | $221.09    | $224.21     | $224.21    | $221.09   |
+
+Please note that stock market data can fluctuate rapidly, and the prices provided are based on the last available information from the specified dates.
 
 ## Previously on Kaggle: StockChat 1.0
 
@@ -3489,6 +3613,99 @@ response = tool_rag.get_exchanges_csv(
 print(response.candidates[0].content.parts[-1].text)
 ```
 
+```
+{
+    "VN": "Vietnam exchanges including HOSE, HNX and UPCOM",
+    "AD": "ABU DHABI SECURITIES EXCHANGE",
+    "US": "US exchanges (NYSE, Nasdaq)",
+    "CO": "OMX NORDIC EXCHANGE COPENHAGEN A/S",
+    "QA": "QATAR EXCHANGE",
+    "BA": "BOLSA DE COMERCIO DE BUENOS AIRES",
+    "MX": "BOLSA MEXICANA DE VALORES (MEXICAN STOCK EXCHANGE)",
+    "PR": "PRAGUE STOCK EXCHANGE",
+    "HK": "HONG KONG EXCHANGES AND CLEARING LTD",
+    "CA": "Egyptian Stock Exchange",
+    "AX": "ASX - ALL MARKETS",
+    "SX": "DEUTSCHE BOERSE Stoxx",
+    "KQ": "KOREA EXCHANGE (KOSDAQ)",
+    "DB": "DUBAI FINANCIAL MARKET",
+    "PM": "Philippine Stock Exchange",
+    "KS": "KOREA EXCHANGE (STOCK MARKET)",
+    "ST": "NASDAQ OMX NORDIC STOCKHOLM",
+    "DU": "BOERSE DUESSELDORF",
+    "TL": "NASDAQ OMX TALLINN",
+    "AT": "ATHENS EXCHANGE S.A. CASH MARKET",
+    "SW": "SWISS EXCHANGE",
+    "LS": "NYSE EURONEXT - EURONEXT LISBON",
+    "SI": "SINGAPORE EXCHANGE",
+    "RG": "NASDAQ OMX RIGA",
+    "CR": "CARACAS STOCK EXCHANGE",
+    "SA": "Brazil Bolsa - Sao Paolo",
+    "BH": "BAHRAIN BOURSE",
+    "NZ": "NEW ZEALAND EXCHANGE LTD",
+    "L": "LONDON STOCK EXCHANGE",
+    "SZ": "SHENZHEN STOCK EXCHANGE",
+    "IC": "NASDAQ OMX ICELAND",
+    "KW": "Kuwait Stock Exchange",
+    "JK": "INDONESIA STOCK EXCHANGE",
+    "BE": "BOERSE BERLIN",
+    "TA": "TEL AVIV STOCK EXCHANGE",
+    "PA": "NYSE EURONEXT - MARCHE LIBRE PARIS",
+    "V": "TSX VENTURE EXCHANGE - NEX",
+    "SN": "SANTIAGO STOCK EXCHANGE",
+    "BD": "BUDAPEST STOCK EXCHANGE",
+    "KL": "BURSA MALAYSIA",
+    "CN": "CANADIAN NATIONAL STOCK EXCHANGE",
+    "VS": "NASDAQ OMX VILNIUS",
+    "ME": "MOSCOW EXCHANGE",
+    "CS": "CASABLANCA STOCK EXCHANGE",
+    "NL": "Nigerian Stock Exchange",
+    "BR": "NYSE EURONEXT - EURONEXT BRUSSELS",
+    "NS": "NATIONAL STOCK EXCHANGE OF INDIA",
+    "DE": "XETRA",
+    "WA": "WARSAW STOCK EXCHANGE/EQUITIES/MAIN MARKET",
+    "AS": "NYSE EURONEXT - EURONEXT AMSTERDAM",
+    "TG": "DEUTSCHE BOERSE TradeGate",
+    "IR": "IRISH STOCK EXCHANGE - ALL MARKET",
+    "OL": "OSLO BORS ASA",
+    "BO": "BSE LTD",
+    "MT": "MALTA STOCK EXCHANGE",
+    "BC": "BOLSA DE VALORES DE COLOMBIA",
+    "F": "DEUTSCHE BOERSE AG",
+    "HE": "NASDAQ OMX HELSINKI LTD",
+    "MU": "BOERSE MUENCHEN",
+    "IS": "BORSA ISTANBUL",
+    "SR": "SAUDI STOCK EXCHANGE",
+    "NE": "AEQUITAS NEO EXCHANGE",
+    "MI": "Italian Stock Exchange",
+    "SS": "SHANGHAI STOCK EXCHANGE",
+    "MC": "BOLSA DE MADRID",
+    "HA": "Hanover Stock Exchange",
+    "VI": "Vienna Stock Exchange",
+    "TWO": "TPEx",
+    "HM": "HANSEATISCHE WERTPAPIERBOERSE HAMBURG",
+    "TW": "TAIWAN STOCK EXCHANGE",
+    "TO": "TORONTO STOCK EXCHANGE",
+    "SC": "BOERSE_FRANKFURT_ZERTIFIKATE",
+    "JO": "JOHANNESBURG STOCK EXCHANGE",
+    "SG": "BOERSE STUTTGART",
+    "RO": "BUCHAREST STOCK EXCHANGE",
+    "T": "TOKYO STOCK EXCHANGE-TOKYO PRO MARKET",
+    "BK": "STOCK EXCHANGE OF THAILAND"
+}
+```
+DE, F, TG, SX, BE, DU, HA, HM, MU, SC, SG 
+
+The Germany exchanges and their corresponding exchange codes are: XETRA (DE), DEUTSCHE BOERSE AG (F), Hanover Stock Exchange (HA), DEUTSCHE BOERSE TradeGate (TG), BOERSE BERLIN (BE), BOERSE DUESSELDORF (DU), HANSEATISCHE WERTPAPIERBOERSE HAMBURG (HM), BOERSE MUENCHEN (MU), DEUTSCHE BOERSE Stoxx (SX), BOERSE_FRANKFURT_ZERTIFIKATE (SC), and BOERSE STUTTGART (SG). 
+
+I don't know. 
+
+I don't know. 
+
+US exchanges, including NYSE and Nasdaq, operate from 09:30 to 16:00 in the America/New_York timezone. 
+
+Fri Nov 28 20:00:00 2025
+
 ## SC1 Baseline Check
 
 
@@ -3499,58 +3716,159 @@ if api.args.API_LIMIT is Api.Limit.FREE.value:
     time.sleep(59)
 ```
 
+Gemini API limit is FREE. Waiting 59s...
+Api.refill_rpm 10
 
 ```python
 send_message("What is the current session for US exchanges?")
 ```
 
+The US market is currently **open** for the **regular** session.
+
+The current market status was last updated on **Mon Dec 1 11:35:58 2025** (Eastern Time). There are no holidays affecting the market today.
 
 ```python
 send_message("What is the US market status?")
 ```
 
+The US market is currently **open** for the **regular** session.
+
+The current market status was last updated on **Mon Dec 1 11:35:58 2025** (Eastern Time). There are no holidays affecting the market today.
 
 ```python
 send_message("When was the last US market close?")
 ```
 
+The last US market close was on Friday, November 28, 2025, at 8:00:00 PM.
 
 ```python
 send_message("What is Apple's stock ticker?")
 ```
 
+Apple's stock ticker symbol is AAPL.
 
 ```python
 send_message("What is the current price of Amazon stock? Display the result as a json string in markdown.")
 ```
 
+```json
+{
+"c": 234.125,
+"d": 0.905,
+"dp": 0.388,
+"h": 235.797,
+"l": 231.88,
+"o": 231.88,
+"pc": 233.22,
+"t": 1764606938
+}
+```
 
 ```python
 send_message("""Show me Apple's basic financials and help me understand key performance metrics. 
 How has the stock performed?""")
 ```
 
+Here's an overview of Apple's financials and stock performance based on the data from 2025:
+
+**Financial Highlights:**
+
+*   **Revenue Growth:** Apple has demonstrated strong revenue growth with a TTM YoY growth of 6.43%.
+*   **Profitability:** The company maintains a high level of profitability, with a TTM Net Profit Margin of 26.92%.
+*   **Gross Margin:** Apple's gross margin is also strong, with a TTM of 46.91%.
+*   **Earnings Per Share (EPS):** Apple's EPS has grown significantly, with a TTM EPS Excl. Extra Items of 7.4593, reflecting a growth of 22.89% YoY.
+*   **P/E Ratio:** The trailing twelve months (TTM) Price-to-Earnings (P/E) ratio is 36.7859. The forward P/E ratio is 33.6884.
+*   **Dividends:** Apple pays a dividend, with a current dividend yield of 0.3743%. The dividend per share TTM is $1.0318.
+*   **Return on Equity (ROE):** Apple's ROE is very high, with a TTM value of 164.05%.
+*   **52-Week Performance:** The 52 week high is 280.38, reached on 2025-11-25, and the 52 week low is 169.2101, reached on 2025-04-08.
+*   **Stock Performance:**
+    *   The stock has a 5-Day Price Return Daily of 2.711%.
+    *   The Month-to-Date Price Return Daily is 3.1364%.
+    *   The Year-to-Date Price Return Daily is 11.3529%.
+    *   The 52-Week Price Return Daily is 18.6293%.
+    *   The 13-Week Price Return Daily is 19.9045%.
+    *   The 26-Week Price Return Daily is 39.2788%.
+
+**Key Performance Metrics:**
+
+*   **Beta:** The beta is 1.0957, indicating that the stock is slightly more volatile than the market.
+*   **PEG Ratio:** The PEG ratio is 1.6255, which is above 1, suggesting that the stock may be overvalued relative to its earnings growth.
+
+**Financial Health:**
+
+*   **Current Ratio:** The current ratio is 0.8933, which is below 1, suggesting that the company may have some liquidity issues.
+*   **Debt-to-Equity Ratio:** The Long Term Debt to Equity Annual is 1.0623, indicating a moderate level of debt relative to equity.
+
+**Valuation:**
+
+*   **Price-to-Book Ratio (P/B):** The P/B ratio is 55.8825, which is very high, suggesting that the stock may be overvalued.
+*   **Price-to-Sales Ratio (P/S):** The P/S ratio is 9.9009.
+
+**Additional Indicators:**
+
+*   **Price Relative to S&P 500:**
+    *   Price Relative to S&P 500 13 Week: 14.5926
+*   **Price Relative to S&P 500 26 Week:** 23.6753
+*   **Price Relative to S&P 500 52 Week:** 4.8542
 
 ```python
 send_message("I need Apple's daily candlestick from 2025-05-05")
 ```
 
+Here is Apple's daily candlestick data for 2025-05-05:
+
+*   **Symbol:** AAPL
+*   **Open:** 203.1
+*   **High:** 204.1
+*   **Low:** 198.21
+*   **Close:** 198.89
+*   **Volume:** 69018452
+*   **Pre-market:** 205.0
+*   **After-hours:** 198.6
 
 ```python
 send_message("Tell me who are Apple's peers?")
 ```
 
+Apple's peers are: DELL TECHNOLOGIES -C (DELL), WESTERN DIGITAL CORP (WDC), SANDISK CORP (SNDK), HEWLETT PACKARD ENTERPRISE (HPE), PURE STORAGE INC - CLASS A (PSTG), HP INC (HPQ), NETAPP INC (NTAP), SUPER MICRO COMPUTER INC (SMCI), IONQ INC (IONQ), QUANTUM COMPUTING INC (QUBT), COMPOSECURE INC-A (CMPO).
 
 ```python
 send_message("Tell me who are Amazon's peers?")
 ```
 
+Amazon's peers include Coupang Inc (CPNG), eBay Inc (EBAY), Dillard's Inc-CL A (DDS), Ollie's Bargain Outlet Holdings (OLLI), Macy's Inc (M), Etsy Inc (ETSY), Kohl's Corp (KSS), Pattern Group Inc-CL A (PTRN), Savers Value Village Inc (SVV), and Groupon Inc (GRPN).
 
 ```python
 send_message("""Locate Apple's stock ticker, then download recommendation trends of all Apple's peers by sub-industry, 
 and then finally compare them.""")
 ```
 
+Apple's stock ticker is **AAPL**.
+
+Here is a comparison of the latest analyst recommendation trends for Apple and its peers in the sub-industry, based on data as of **Sun Dec 1 00:00:00 2024**:
+
+| Company (Ticker) | Strong Buy | Buy | Hold | Sell | Strong Sell | Total Recommendations |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Apple (AAPL)** | 15 | 23 | 16 | 2 | 0 | 56 |
+| **DELL TECHNOLOGIES -C (DELL)** | 8 | 16 | 7 | 1 | 0 | 32 |
+| **WESTERN DIGITAL CORP (WDC)** | 6 | 19 | 6 | 0 | 0 | 31 |
+| **SANDISK CORP (SNDK)** | 7 | 11 | 6 | 0 | 0 | 24 |
+| **HEWLETT PACKARD ENTERPRISE (HPE)** | 6 | 7 | 13 | 0 | 0 | 26 |
+| **PURE STORAGE INC - CLASS A (PSTG)** | 7 | 13 | 6 | 1 | 0 | 27 |
+| **HP INC (HPQ)** | 1 | 1 | 16 | 6 | 1 | 25 |
+| **NETAPP INC (NTAP)** | 3 | 10 | 14 | 0 | 0 | 27 |
+| **SUPER MICRO COMPUTER INC (SMCI)** | 4 | 10 | 9 | 3 | 0 | 26 |
+| **IONQ INC (IONQ)** | 2 | 10 | 4 | 0 | 0 | 16 |
+| **QUANTUM COMPUTING INC (QUBT)** | 2 | 5 | 2 | 0 | 0 | 9 |
+| **COMPOSECURE INC-A (CMPO)** | 2 | 8 | 2 | 0 | 0 | 12 |
+
+### Key Observations:
+
+*   **Apple (AAPL)** has the highest number of total recommendations (56) and a strong overall positive sentiment, with 38 "Buy" or "Strong Buy" ratings compared to 18 "Hold" or "Sell" ratings.
+*   **WESTERN DIGITAL CORP (WDC)** has the highest proportion of "Buy" ratings among its peers, with 19 "Buy" and 6 "Strong Buy" ratings, and no "Sell" or "Strong Sell" ratings.
+*   **HP INC (HPQ)** stands out with the most cautious outlook, having the highest number of "Hold" (16) and "Sell" (6) ratings, and the lowest number of "Strong Buy" ratings (1) among the group.
+*   **NETAPP INC (NTAP)** and **HEWLETT PACKARD ENTERPRISE (HPE)** have a higher concentration of "Hold" ratings, suggesting analysts are taking a more neutral stance on these companies.
+*   Smaller companies like **IONQ INC (IONQ)**, **QUANTUM COMPUTING INC (QUBT)**, and **COMPOSECURE INC-A (CMPO)** have fewer total recommendations, but generally maintain a positive to neutral outlook.
 
 ```python
 send_message("""Tell me Amazon's current share price and provide candlestick data for the past month. 
@@ -3561,31 +3879,77 @@ Discuss and provide details about any patterns you notice in the price data.
 Correlate recent patterns with news over the same date range.""")
 ```
 
+Amazon's (AMZN) current share price is $234.17, with a change of $0.95 and a percentage change of 0.4073%. The high price of the day was $235.797, the low price was $231.88, and the open price was $231.88. The previous close price was $233.22. This information is as of Mon Dec 1 11:37:16 2025.
+
+Here is the candlestick data for Amazon (AMZN) for the past month, sorted in descending order by date:
+
+| Date | Open | High | Low | Close | Volume |
+|---|---|---|---|---|---|
+| Fri Nov 28 00:00:00 2025 | $231.24 | $233.29 | $230.22 | $233.22 | 20,250,425 |
+| Wed Nov 26 00:00:00 2025 | $230.74 | $231.75 | $228.77 | $229.16 | 38,497,719 |
+| Tue Nov 25 00:00:00 2025 | $226.38 | $230.52 | $223.80 | $229.67 | 39,379,339 |
+| Mon Nov 24 00:00:00 2025 | $222.56 | $227.33 | $222.27 | $226.28 | 54,318,223 |
+| Fri Nov 21 00:00:00 2025 | $216.34 | $222.21 | $215.18 | $220.69 | 68,490,453 |
+| Thu Nov 20 00:00:00 2025 | $227.05 | $227.41 | $216.74 | $217.14 | 50,308,862 |
+| Wed Nov 19 00:00:00 2025 | $223.74 | $223.74 | $218.52 | $222.69 | 58,335,353 |
+| Tue Nov 18 00:00:00 2025 | $228.10 | $230.20 | $222.42 | $222.55 | 60,608,442 |
+| Mon Nov 17 00:00:00 2025 | $233.25 | $234.60 | $229.19 | $232.87 | 59,918,908 |
+| Fri Nov 14 00:00:00 2025 | $235.06 | $238.73 | $232.89 | $234.69 | 38,956,619 |
+| Thu Nov 13 00:00:00 2025 | $243.05 | $243.75 | $236.50 | $237.58 | 41,401,638 |
+| Wed Nov 12 00:00:00 2025 | $250.24 | $250.37 | $243.75 | $244.20 | 31,190,063 |
+| Tue Nov 11 00:00:00 2025 | $248.41 | $249.75 | $247.23 | $249.10 | 23,563,960 |
+| Mon Nov 10 00:00:00 2025 | $248.34 | $251.75 | $245.59 | $248.40 | 36,476,474 |
+| Fri Nov 7 00:00:00 2025 | $242.90 | $244.90 | $238.49 | $244.41 | 46,374,294 |
+| Thu Nov 6 00:00:00 2025 | $249.15 | $250.38 | $242.17 | $243.04 | 46,004,201 |
+| Wed Nov 5 00:00:00 2025 | $249.03 | $251.00 | $246.16 | $250.20 | 40,610,602 |
+| Tue Nov 4 00:00:00 2025 | $250.38 | $257.01 | $248.66 | $249.32 | 51,546,311 |
+| Mon Nov 3 00:00:00 2025 | $255.36 | $258.60 | $252.90 | $254.00 | 95,997,714 |
+
+**Price Data Patterns and Correlation with News:**
+
+Looking at the candlestick data for Amazon (AMZN) over the past month, several patterns emerge:
+
+*   **Early November Surge and Mid-Month Dip:** The stock started November strong, reaching a high of $258.60 on Mon Nov 3 2025. This initial surge aligns with news from early November, where Amazon announced a significant $38 billion cloud computing services deal with OpenAI, which was seen as a major positive for its AWS segment and AI growth. Several articles from Nov 3rd and 4th highlight this deal and its positive impact on Amazon's stock.
+
+    However, the price then experienced a noticeable dip, falling to a low of $215.18 on Fri Nov 21 2025. This decline coincides with news around Nov 13th-19th, where concerns about AI investment returns, potential market bubbles, and aggressive capital expenditures by tech giants were widely discussed. Articles from Nov 13th and 14th mention a tech stock selloff and Amazon's stock shedding market value. Additionally, news on Nov 19th highlighted Amazon selling shares of quantum computing and AI stocks (IonQ and AMD), potentially taking profits amid valuation concerns.
+
+*   **Late November Recovery:** Towards the end of November, the stock showed signs of recovery, closing at $233.22 on Fri Nov 28 2025. This recovery aligns with a renewed positive sentiment around Amazon's AI initiatives and its strong position in e-commerce and cloud computing. News from Nov 25th-30th consistently highlights Amazon's strong AWS cloud computing business, its AI growth engine, and its potential to reach a $3 trillion market cap. Several articles also mention Amazon's legal victory in New York and its strong performance during Black Friday.
+
+*   **Volume Fluctuations:** The trading volume was notably high at the beginning of November (95,997,714 on Nov 3rd) during the initial price surge, indicating strong investor interest. Volume remained relatively high during the mid-month dip, suggesting active trading during the period of uncertainty. Towards the end of the month, as the stock recovered, the volume was still substantial, but not as high as the initial surge.
+
+In summary, Amazon's stock performance in November 2025 appears to be heavily influenced by news and sentiment surrounding its AI investments and cloud computing business. Initial excitement over a major OpenAI deal drove the stock up, while broader market concerns about AI valuations and Amazon's capital expenditures led to a mid-month correction. The stock then recovered as positive news about its AI growth engine, e-commerce strength, and legal victories re-emerged.
 
 ```python
 send_message("What is Apple's ticker overview")
 ```
 
+Apple Inc. (AAPL) is a technology company based in Cupertino, CA. Their address is ONE APPLE PARK WAY, CUPERTINO, CA, 95014, and their phone number is (408) 996-1010. Apple was listed on December 12, 1980. They have 166,000 employees and a market cap of $4,120,386,034,050.00. Their primary exchange is XNAS. Apple's description states: "Apple is among the largest companies in the world, with a broad portfolio of hardware and software products targeted at consumers and businesses. Apple's iPhone makes up a majority of the firm sales, and Apple's other products like Mac, iPad, and Watch are designed around the iPhone as the focal point of an expansive software ecosystem. Apple has progressively worked to add new applications, like streaming video, subscription bundles, and augmented reality. The firm designs its own software and semiconductors while working with subcontractors like Foxconn and TSMC to build its products and chips. Slightly less than half of Apple's sales come directly through its flagship stores, with a majority of sales coming indirectly through partnerships and distribution."
 
 ```python
 send_message("What is Google's stock ticker symbol?")
 ```
 
+Google is listed on the NASDAQ stock exchange under the ticker symbols **GOOGL** (Class A shares) and **GOOG** (Class C shares). These symbols now represent Alphabet Inc., Google's holding company.
+
+Google is also listed on the Frankfurt Stock Exchange under the ticker symbol **GGQ1**.
 
 ```python
 send_message("What is MGM Studio's stock symbol?")
 ```
 
+I am unable to find the stock symbol for MGM Studios.
 
 ```python
 send_message("What is MGM Studio's owner company stock symbol?")
 ```
 
+MGM Studios is owned by Amazon, and Amazon's stock symbol is AMZN.
 
 ```python
 send_message("What is Facebook's stock ticker symbol?")
 ```
 
+Facebook's stock ticker symbol is META.
 
 ```python
 send_message("""Compare Amazon's bullish versus bearish predictions from Oct 01 2025 until today. 
@@ -3593,6 +3957,39 @@ Include a discussion of recommendation trends, and sentiment analysis of news fr
 Discuss any patterns or correlations you find.""")
 ```
 
+From October 1, 2025, until today, December 1, 2025, Amazon (AMZN) has consistently received a strong bullish outlook from analysts, while news sentiment has been more mixed, reflecting both significant growth opportunities and some operational challenges.
+
+**Recommendation Trends (October 1, 2025 - December 1, 2025):**
+Analyst recommendations for Amazon have been overwhelmingly positive throughout this period:
+*   **October 1, 2025:** 52 "buy" recommendations, 3 "hold," and 23 "strongBuy."
+*   **November 1, 2025:** 54 "buy" recommendations, 2 "hold," and 22 "strongBuy."
+*   **December 1, 2025:** 52 "buy" recommendations, 5 "hold," and 21 "strongBuy."
+
+Notably, there were no "sell" or "strongSell" recommendations during these months, indicating a consistently bullish sentiment from financial analysts.
+
+**Sentiment Analysis of News (October 1, 2025 - December 1, 2025):**
+
+**Bullish/Positive Sentiment:**
+*   **AWS Dominance and AI Leadership:** Numerous articles highlight the accelerating growth of Amazon Web Services (AWS), Amazon's cloud computing division, with reported 20% year-over-year revenue increases. Significant investments in AI infrastructure, custom AI chips (Trainium, Inferentia), and strategic partnerships with companies like OpenAI (including a $38 billion cloud infrastructure deal) and Anthropic are consistently cited as major drivers for future growth and profitability. Amazon's role as a key player in the AI revolution and its potential to reach a $3-4 trillion market capitalization are frequently emphasized.
+*   **E-commerce Strength and Efficiency:** Amazon's strong market share in e-commerce, improvements in operational efficiency through robotics and AI-driven logistics, and expanding delivery networks contribute to positive sentiment.
+*   **Diversified Business Model:** The company's diverse revenue streams, spanning e-commerce, cloud computing, advertising, and emerging technologies like satellite internet, are seen as providing resilience and multiple avenues for growth.
+*   **Analyst Confidence:** Many news pieces report positive analyst ratings, increased price targets (e.g., Wedbush raising to $340), and a general belief that Amazon is an attractive long-term investment.
+
+**Bearish/Negative Sentiment:**
+*   **Job Cuts and Restructuring:** Several articles report significant corporate layoffs, including up to 30,000 jobs and 15% of the HR staff. While sometimes framed as strategic restructuring for the AI era and cost-cutting measures, these are also viewed as indicators of potential workforce instability and operational challenges.
+*   **High Capital Expenditures:** Concerns are raised about Amazon's aggressive capital expenditures in AI infrastructure (e.g., $125 billion planned investment), with some analysts questioning the immediate return on investment and potential impact on free cash flow.
+*   **Competition and Market Share:** While a leader, Amazon faces intense competition in cloud computing (from Microsoft Azure and Google Cloud) and digital advertising (from Google and Meta). Some articles note instances where Amazon's stock has underperformed the broader S&P 500 or other "Magnificent Seven" stocks.
+*   **Operational Issues:** A major global AWS outage due to a software bug was reported in late October, leading to negative sentiment regarding service reliability.
+*   **Partnership Shifts:** UPS is strategically reducing its shipping volumes with Amazon due to lower margins, indicating a shift in that business relationship.
+
+**Patterns and Correlations:**
+
+1.  **AI as a Central Theme:** AI is the most prominent theme, acting as both a significant bullish catalyst and a source of some bearish concerns. The market is excited about Amazon's AI potential, particularly through AWS, but also watchful of the massive investments required and their impact on profitability and workforce.
+2.  **AWS Performance is Key:** The performance and strategic moves of AWS are consistently highlighted as critical to Amazon's overall financial health and investor sentiment. Positive news about AWS directly correlates with bullish sentiment for the company.
+3.  **Analyst Optimism vs. News Nuance:** There's a clear divergence between the consistently strong bullish analyst recommendations and the more nuanced, sometimes cautionary, tone of news articles. Analysts appear to be focusing on the long-term strategic advantages and growth potential, while news reports cover both the positive developments and the immediate operational challenges.
+4.  **Market Concentration:** Amazon is frequently discussed within the context of the "Magnificent Seven" tech stocks, which have largely driven market performance. This highlights Amazon's systemic importance but also raises broader market concerns about concentration risk and potential overvaluation in the tech sector.
+
+In conclusion, Amazon's bullish predictions are strongly supported by its leadership in cloud computing, aggressive AI investments, and diversified business model. Bearish sentiments are primarily linked to large-scale layoffs and the financial implications of massive AI capital expenditures. The overarching pattern is that the market views Amazon's strategic positioning in AI and cloud as a powerful long-term growth engine, despite short-term operational adjustments and competitive pressures.
 
 ```python
 send_message("""Compare Google's bullish versus bearish predictions from Oct 01 2025 until today. 
@@ -3600,15 +3997,141 @@ Include a discussion of recommendation trends, and sentiment analysis of news fr
 Discuss any patterns or correlations you find.""")
 ```
 
+Based on the analysis of analyst recommendations and news sentiment for Alphabet Inc. (GOOGL/GOOG) from **October 1, 2025, until today, December 1, 2025**, the overall prediction for the company is overwhelmingly **bullish**.
+
+The market's confidence is driven almost entirely by the company's successful execution of its Artificial Intelligence (AI) strategy, which has translated into strong financial performance and strategic investments.
+
+---
+
+### 1. Recommendation Trends (Bullish vs. Bearish)
+
+Analyst sentiment for Alphabet Inc. (GOOGL) remained highly bullish throughout the period, with a notable increase in conviction.
+
+| Period | Strong Buy | Buy | Hold | Sell | Strong Sell | Total Bullish (Strong Buy + Buy) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Dec 1, 2025** | 20 | 43 | 10 | 0 | 0 | **63 (86.3%)** |
+| **Nov 1, 2025** | 21 | 41 | 12 | 0 | 0 | **62 (83.8%)** |
+| **Oct 1, 2025** | 21 | 39 | 13 | 0 | 0 | **60 (82.2%)** |
+
+*   **Bullish Prediction:** The number of analysts recommending a **"Buy"** or **"Strong Buy"** increased from 60 to 63, raising the overall bullish percentage from 82.2% to 86.3%.
+*   **Bearish Prediction:** There were **zero "Sell" or "Strong Sell"** recommendations in any month, indicating a complete absence of bearish conviction among major analysts. The slight decrease in total recommendations from November to December is due to a few analysts shifting from a neutral "Hold" rating to a more positive "Buy" rating.
+
+---
+
+### 2. Sentiment Analysis of News (October 1, 2025 – November 28, 2025)
+
+News sentiment during this period was overwhelmingly positive, focusing on AI-driven growth and financial strength.
+
+#### Bullish Drivers (Positive Sentiment)
+
+The primary bullish narrative centers on Alphabet's AI leadership and financial execution:
+
+*   **AI Dominance and Innovation:** The launch and success of the **Gemini 3 AI model** and its integration across Google Search, YouTube, and Google Cloud were consistently highlighted. News articles praised Alphabet's vertically integrated AI stack, including its custom **Tensor Processing Units (TPUs)**, which are seen as a cost-effective challenge to Nvidia's GPU dominance.
+*   **Record Financial Performance:** The company reported its **first $100 billion quarterly revenue**, driven by strong growth in Google Services (advertising) and **Google Cloud (34% YoY growth)**. Analysts frequently noted the company's strong cash flow and relatively attractive valuation (low P/E ratio) compared to other "Magnificent Seven" stocks.
+*   **Strategic Investor Confidence:** A major bullish catalyst was the disclosure of a **$4-5 billion investment by Warren Buffett's Berkshire Hathaway** in Q3, signaling confidence from a prominent value investor in Alphabet's long-term growth and stability.
+*   **Massive Infrastructure Investment:** Alphabet announced significant capital expenditure plans, including a **$40 billion investment in Texas** by 2027 for cloud and AI infrastructure, and a **$6.4 billion expansion in Germany**, reinforcing its commitment to the AI race.
+
+#### Bearish and Neutral Factors
+
+The few negative or cautionary themes were generally overshadowed by the positive AI narrative:
+
+*   **Competitive Threats:** The launch of **OpenAI's ChatGPT Atlas browser** caused a minor, short-term stock drop (approx. 2%), raising concerns about a potential challenge to Google's search and Chrome dominance. However, this was quickly mitigated by news of Google's own AI integration into Chrome.
+*   **Regulatory/Legal Issues:** The company was named in a **NYC lawsuit over child social media addiction** (alongside Meta and Snap), and faced ongoing, though less prominent, geopolitical concerns about moving production out of China.
+*   **Market Bubble Caution:** Several articles warned of a potential **"AI bubble"** or market overvaluation, but often positioned Alphabet as the "least overvalued" or a "safer" long-term AI play due to its diversified, profitable core business.
+
+---
+
+### 3. Patterns and Correlations
+
+A clear and strong correlation exists between the news sentiment and analyst recommendations:
+
+1.  **AI Success Drives Bullish Consensus:** The consistent stream of positive news regarding Alphabet's AI execution (Gemini, TPUs, Cloud growth) directly correlated with the increase in "Buy" ratings and the complete absence of "Sell" ratings. The market views Alphabet's AI strategy as a successful, revenue-generating endeavor, unlike competitors whose AI spending is sometimes viewed with skepticism (e.g., Meta's stock drop after announcing high AI CapEx).
+2.  **Value and Growth Alignment:** The news frequently highlighted Alphabet's dual appeal as both a **high-growth AI leader** and a **value stock** (low P/E ratio). This combination attracted both growth investors (driven by AI) and value investors (like Buffett), creating a powerful, sustained bullish momentum that shrugged off minor competitive and regulatory risks.
+3.  **Resilience to Disruption:** The pattern shows that while new competitors (like ChatGPT Atlas) can cause temporary stock dips, the market quickly reverts to focusing on Alphabet's core strengths: its massive cash flow, dominant search market, and profitable cloud business, all of which are being successfully fortified by AI.
 
 ```python
 send_message("""How is the outlook for Apple based on trends and news sentiment from July 01 2025 until today? 
 Perform the same analysis on all peers by sub-industry. Then compare Apple result to it's peers.""")
 ```
 
+Here's an outlook for Apple and its sub-industry peers based on recommendation trends and news sentiment from July 1, 2025, until today, December 1, 2025:
+
+**Apple (AAPL) Outlook:**
+
+*   **Recommendation Trends:** As of December 1, 2025, Apple has a generally positive outlook from analysts, with 15 "Strong Buy" and 23 "Buy" recommendations, compared to 16 "Hold" and 2 "Sell" recommendations.
+*   **News Sentiment (July 1, 2025 - December 1, 2025):**
+    *   **Positive:** News highlights Apple's strong iPhone sales, particularly the iPhone 17 series, and the continued growth of its high-margin services segment. Strategic investments in AI (including partnerships with Google for Siri and MP Materials for rare earth magnets) and manufacturing diversification to India are seen as positive moves to mitigate risks and drive future growth. FDA approval for hypertension alerts on Apple Watch also contributes to a positive health tech narrative. Warren Buffett's continued, albeit sometimes trimmed, investment in Apple is also noted positively.
+    *   **Neutral:** Several articles discuss Apple's stock trading near 52-week highs, prompting questions about its valuation and the pace of its AI strategy compared to competitors. Warren Buffett's trimming of his stake is viewed as a strategic portfolio adjustment rather than a negative signal about the company itself.
+    *   **Negative:** Recurring themes include Apple's perceived lag in AI innovation compared to other tech giants, slower revenue growth in some areas, and ongoing regulatory pressures (antitrust lawsuits in India and the EU, and class-action lawsuits regarding Siri's AI capabilities). Some analysts predict that competitors with stronger AI strategies might surpass Apple's market capitalization.
+
+**Apple's Sub-Industry Peers Outlook:**
+
+Apple's sub-industry peers include companies involved in computer hardware, storage, and quantum computing. Here's a summary of their outlooks:
+
+*   **Dell Technologies (DELL):**
+    *   **Recommendation Trends:** Very positive, with 8 "Strong Buy" and 16 "Buy" recommendations.
+    *   **News Sentiment:** Highly positive, driven by strong demand for AI servers, record AI server shipments, optimistic fiscal 2026 guidance, and strategic partnerships with Nvidia and Broadcom. Dell is seen as an undervalued AI infrastructure play, though some analysts note potential margin pressures from rising memory costs.
+*   **Western Digital (WDC):**
+    *   **Recommendation Trends:** Very positive, with 6 "Strong Buy" and 19 "Buy" recommendations.
+    *   **News Sentiment:** Highly positive, recognized as a top S&P 500 performer in 2025 with significant stock returns and dividend increases. Strong demand for data storage from AI companies and expansion of its System Integration and Test (SIT) Lab for AI are key drivers.
+*   **Hewlett Packard Enterprise (HPE):**
+    *   **Recommendation Trends:** More balanced, with 6 "Strong Buy" and 7 "Buy" recommendations, alongside 13 "Hold."
+    *   **News Sentiment:** Positive, following the successful $14 billion acquisition of Juniper Networks, which is expected to double its networking business and provide AI networking solutions. Collaborations on 5G and sovereign AI supercomputers are also positive. However, strategic restructuring costs have impacted profit margins.
+*   **Pure Storage Inc - Class A (PSTG):**
+    *   **Recommendation Trends:** Positive, with 7 "Strong Buy" and 13 "Buy" recommendations.
+    *   **News Sentiment:** Positive, outperforming Nvidia in 2025 with strong annual recurring revenue growth and key clients in the AI sector.
+*   **HP Inc (HPQ):**
+    *   **Recommendation Trends:** More negative/hold, with 1 "Strong Buy" and 1 "Buy" against 16 "Hold" and 6 "Sell."
+    *   **News Sentiment:** Mixed. While there are positive developments in AI-powered gaming hardware and sustainable products, the company has faced workforce reductions and missed revenue forecasts.
+*   **NetApp Inc (NTAP):**
+    *   **Recommendation Trends:** More balanced, leaning towards "Hold," with 3 "Strong Buy" and 10 "Buy" recommendations, and 14 "Hold."
+    *   **News Sentiment:** Positive, aligning with Broadcom's quantum-safe SAN switch portfolio and focusing on infrastructure modernization and data protection.
+*   **Super Micro Computer Inc (SMCI):**
+    *   **Recommendation Trends:** Mixed to positive, with 4 "Strong Buy" and 10 "Buy" recommendations, but also 9 "Hold" and 3 "Sell."
+    *   **News Sentiment:** Mixed. Positive sentiment stems from launching Nvidia Blackwell Ultra solutions, strong AI order backlogs, and institutional interest. However, negative sentiment arises from missing revenue expectations, stock declines due to weak guidance, and past fraud allegations.
+*   **IonQ Inc (IONQ):**
+    *   **Recommendation Trends:** Positive, with 2 "Strong Buy" and 10 "Buy" recommendations.
+    *   **News Sentiment:** Highly speculative. While showing strong revenue growth and strategic acquisitions in quantum computing, it faces high valuations, significant net losses, and is considered a risky investment. Amazon notably sold its entire stake.
+*   **Quantum Computing Inc (QUBT):**
+    *   **Recommendation Trends:** Positive, with 2 "Strong Buy" and 5 "Buy" recommendations.
+    *   **News Sentiment:** Highly speculative. Despite strong Q3 earnings and a substantial capital raise, the company has minimal sales, high operating expenses, and an expensive valuation. It's considered a high-risk investment.
+*   **CompoSecure Inc-A (CMPO):**
+    *   **Recommendation Trends:** Positive, with 2 "Strong Buy" and 8 "Buy" recommendations.
+    *   **News Sentiment:** Positive, with plans for a business combination and ongoing management fee generation.
+
+**Comparison of Apple to its Peers:**
+
+*   **AI Leadership:** Many of Apple's peers, particularly Dell, Western Digital, Pure Storage, and Super Micro Computer, are seen as directly benefiting from and leading in the AI infrastructure and data storage boom. Apple, while making AI investments and partnerships, is often perceived as lagging in groundbreaking AI innovation compared to these specialized AI-focused companies.
+*   **Growth Drivers:** Apple's growth is primarily driven by its established iPhone ecosystem and expanding services. Its peers are seeing significant growth from the broader AI revolution, data center expansion, and specialized technological advancements in areas like quantum computing and rare earth materials.
+*   **Valuation & Risk:** Apple's valuation is a point of discussion, with some analysts questioning if it's justified given its slower AI progress. While some peers like Dell and Pure Storage are seen as undervalued, the quantum computing pure-plays (IonQ, QUBT) carry extremely high valuations and significant speculative risk, making them much riskier investments than Apple.
+*   **Analyst Sentiment:** While Apple generally has a positive analyst sentiment, some of its peers, particularly Western Digital and Dell, show even stronger "Buy" recommendations, reflecting their more direct and impactful involvement in the current AI-driven market surge.
+
+**Overall Conclusion:**
+
+Apple's outlook is stable and positive, supported by its strong brand, loyal customer base, and growing services revenue. It is actively working to integrate AI into its ecosystem and diversify its manufacturing. However, it is currently perceived as playing catch-up in the AI race compared to some of its peers who are directly building the foundational AI infrastructure.
+
+Many of Apple's peers, especially those in AI hardware and data storage, are experiencing more explosive growth and stronger positive sentiment due to the immense demand for AI technologies. The quantum computing peers, while highly speculative, represent a high-risk, high-reward segment of the tech industry.
+
+In essence, Apple is a robust and profitable company with a solid future, but its growth trajectory is currently more measured compared to the rapid expansion seen in some of its more specialized, AI-centric peers.
 
 ```python
 send_message("""What does the recent news say about Apple and the impact of tariffs? From 2025-09-01 up to today. 
 Also locate candlestick data for the same dates. 
 Discuss in detail any correlations in patterns between the candlestick and news data. Ignore duplicate news entry.""")
 ```
+
+From September 1, 2025, to December 1, 2025, Apple's stock (AAPL) experienced a general upward trend, with some periods of volatility. The news during this period highlighted several factors, including the impact of tariffs, which showed a correlation with the stock's movements.
+
+**Impact of Tariffs:**
+
+*   **Negative Correlation:** News directly related to President Trump's tariff threats and Apple's reported tariff-related cost increases often coincided with periods of stock price decline or stagnation. For instance, on **October 10, 2025**, news broke about "Trump Shocks Markets: VIX Spikes 25%, S&P 500 Eyes Worst Day Since April," explicitly stating that Apple experienced a significant stock price decline due to renewed tariff threats against China. Similarly, on **November 18, 2025**, "The Stock Market Flashes a Warning as Investors Get Bad News About President Trump's Tariffs" reported Apple facing $1.1 billion in tariff-related cost increases, which could have contributed to downward pressure. On **October 26, 2025**, an article titled "Is Apple Going to Be Hit Hard by President Trump's Tariffs?" highlighted potential significant challenges from US-China trade tensions and rare earth element export restrictions.
+*   **Positive/Mitigating Correlation:** Conversely, news detailing Apple's strategies to mitigate tariff impacts was often met with positive or neutral sentiment, potentially cushioning negative market reactions. For example, on **October 28, 2025**, "Top 3 Stocks Powering Through Trump’s Tariff Policies" noted that Apple successfully avoided arduous tariffs through strategic U.S. investments, relocated iPhone production, and achieved exemptions. This positive news could have contributed to a stock recovery after earlier tariff-related dips. Furthermore, Apple's strategic investments in rare earth materials, such as the $500 million investment in MP Materials for recycling facility development (reported on **October 31, 2025**, and **September 4, 6, 12, 30, November 2, 15, 17, 19, 26, 29, 30, December 1**), were seen as proactive measures to address supply chain risks stemming from China's export controls, which likely instilled investor confidence. The news on **September 17, 2025**, about Apple investing in Vietnam for supply chain diversification also falls into this category.
+
+**Other Significant News and Candlestick Correlations:**
+
+*   **Early September (around $225-$245):** The stock showed an upward trend, coinciding with several positive news items. Notably, favorable Google antitrust rulings (reported on **September 3, 4, 5, 7, 8, 9, 11, 12**) preserved Apple's significant annual revenue from Google, providing a strong positive impetus. News about Apple's AI future and strategic investments also contributed to this positive sentiment.
+*   **Mid-September to Early October (fluctuating in $245-$260):** This period saw mixed news. While some reports indicated an "underwhelming" iPhone 17 launch (**September 12, 14, 15**) and concerns about Apple's AI progress (**September 28, October 8**), positive news about strong iPhone 17 pre-order demand in China (**September 22**) and positive analyst upgrades (**October 2**) helped to balance the sentiment, leading to fluctuating but generally stable prices.
+*   **Mid-October to Early November (fluctuating in $255-$275):** This period included the negative tariff news mentioned above, which likely caused some dips. However, positive news about strong iPhone 17 sales (**October 23, 24, 30**) and Apple being a top holding in various ETFs (**October 14, 19, 22, 25, 27, 28, 29, 30, 31, November 2, 3, 4, 5, 8, 10, 11, 12, 14, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, December 1**) indicated continued investor confidence.
+*   **Late November to December 1 (upward trend towards $277-$279):** The stock showed a strong upward movement. This aligns with continued positive news regarding strong iPhone sales (**November 25, 28**), strategic partnerships, and Apple being a significant holding in various investment funds. Despite some negative news like new antitrust lawsuits in India and a class-action lawsuit over AI training (**November 27, 14**), the overall positive sentiment from product demand and strategic positioning seemed to drive the stock higher.
+
+**In conclusion:** Apple's stock performance during this period was a complex interplay of various factors. While tariff-related news introduced volatility and sometimes downward pressure, Apple's proactive strategies to mitigate these risks, coupled with strong iPhone sales, favorable legal outcomes (like the Google antitrust case), and ongoing AI investments, generally contributed to a positive overall trend in its stock price. The candlestick data reflects these shifts in market sentiment, with dips often correlating with negative news and rallies aligning with positive developments.
