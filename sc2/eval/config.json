@@ -1,6 +1,71 @@
 {
   "criteria": {
-    "tool_trajectory_avg_score": 1.0,
-    "response_match_score": 0.8
+    "rubric_based_final_response_quality_v1": {
+      "threshold": 0.8,
+      "judge_model_options": {
+        "judge_model": "gemini-2.5-flash",
+        "num_samples": 3
+      },
+      "rubrics": [
+        {
+          "rubric_id": "conciseness",
+          "rubric_content": {
+            "text_property": "The agent's response is direct and to the point."
+          }
+        },
+        {
+          "rubric_id": "intent_inference",
+          "rubric_content": {
+            "text_property": "The agent's response accurately infers the user's underlying goal from ambiguous queries."
+          }
+        }
+      ]
+    },
+    "rubric_based_tool_use_quality_v1": {
+      "threshold": 1.0,
+      "judge_model_options": {
+        "judge_model": "gemini-2.5-flash",
+        "num_samples": 3
+      },
+      "rubrics": [
+        {
+          "rubric_id": "prefs_called",
+          "rubric_content": {
+            "text_property": "The agent calls `sc2_prefs` to store profile data when required."
+          }
+        },
+        {
+          "rubric_id": "memory_called_before",
+          "rubric_content": {
+            "text_property": "The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`."
+          }
+        },
+        {
+          "rubric_id": "memory_called_after",
+          "rubric_content": {
+            "text_property": "The agent calls `sc2_memory` after `sc2_terms` only for new memories."
+          }
+        },
+        {
+          "rubric_id": "summary_called",
+          "rubric_content": {
+            "text_property": "The agent calls `sc2_summary` last only after using a tool."
+          }
+        },
+        {
+          "rubric_id": "workflow_bypass",
+          "rubric_content": {
+            "text_property": "The agent calls no tools for usage related questions."
+          }
+        }
+      ]
+    },
+    "hallucinations_v1": {
+      "threshold": 0.8,
+      "judge_model_options": {
+            "judge_model": "gemini-2.5-flash"
+          },
+      "evaluate_intermediate_nl_responses": true
+    }
   }
 }
