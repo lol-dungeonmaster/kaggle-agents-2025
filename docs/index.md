@@ -1,384 +1,1107 @@
-# Environment Setup
+---
+layout: default
+---
+<div class="collapsible-code">
+<button type="button">Environment Setup</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Setup the notebook based on running environment.
+</span><span class="kn">import</span> <span class="n">os</span>
+<span class="c1"># Optional: Enable telemetry in browser_use and chromadb.
+</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">ANONYMIZED_TELEMETRY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">false</span><span class="sh">"</span>
+<span class="c1"># Check for kaggle environment.
+</span><span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">KAGGLE_KERNEL_RUN_TYPE</span><span class="sh">"</span><span class="p">):</span>
+    <span class="c1"># Kaggle Run: update the system.
+</span>    <span class="err">!</span><span class="n">pip</span> <span class="n">uninstall</span> <span class="o">-</span><span class="n">qqy</span> <span class="n">google</span><span class="o">-</span><span class="n">ai</span><span class="o">-</span><span class="n">generativelanguage</span> <span class="n">pydrive2</span> <span class="n">tensorflow</span> <span class="n">tensorflow</span><span class="o">-</span><span class="n">decision</span><span class="o">-</span><span class="n">forests</span> <span class="n">cryptography</span> <span class="n">pyOpenSSL</span> <span class="n">langchain</span> <span class="n">langchain</span><span class="o">-</span><span class="n">core</span> <span class="n">nltk</span> <span class="n">ray</span> <span class="n">click</span> <span class="n">google</span><span class="o">-</span><span class="n">generativeai</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">translate</span> <span class="n">datasets</span> <span class="n">cesium</span> <span class="n">bigframes</span> <span class="n">plotnine</span> <span class="n">mlxtend</span> <span class="n">fastai</span> <span class="n">spacy</span> <span class="n">thinc</span> <span class="n">google</span><span class="o">-</span><span class="n">colab</span> <span class="n">gcsfs</span> <span class="n">jupyter</span><span class="o">-</span><span class="n">kernel</span><span class="o">-</span><span class="n">gateway</span> <span class="n">nltk</span> <span class="n">preprocessing</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">qU</span> <span class="n">posthog</span>\<span class="o">&lt;</span><span class="mf">6.0</span><span class="p">.</span><span class="mi">0</span> <span class="n">google</span><span class="o">-</span><span class="n">genai</span><span class="o">==</span><span class="mf">1.50</span><span class="p">.</span><span class="mi">0</span> <span class="n">chromadb</span><span class="o">==</span><span class="mf">0.6</span><span class="p">.</span><span class="mi">3</span> <span class="n">opentelemetry</span><span class="o">-</span><span class="n">proto</span><span class="o">==</span><span class="mf">1.37</span><span class="p">.</span><span class="mi">0</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">qU</span> <span class="n">langchain</span><span class="o">-</span><span class="n">community</span> <span class="n">langchain</span><span class="o">-</span><span class="n">text</span><span class="o">-</span><span class="n">splitters</span> <span class="n">wikipedia</span> <span class="n">lmnr</span><span class="p">[</span><span class="nb">all</span><span class="p">]</span> <span class="n">google</span><span class="o">-</span><span class="n">adk</span> <span class="n">google</span><span class="o">-</span><span class="n">adk</span><span class="p">[</span><span class="nb">eval</span><span class="p">]</span> <span class="n">google</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">translate</span>
+    <span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span> <span class="c1"># type: ignore
+</span>    <span class="kn">from</span> <span class="n">jupyter_server.serverapp</span> <span class="kn">import</span> <span class="n">list_running_servers</span> <span class="c1"># type: ignore
+</span><span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Mock the kaggle secrets client.
+</span>    <span class="k">class</span> <span class="nc">UserSecretsClient</span><span class="p">:</span>
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">set_secret</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">get_secret</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+            <span class="k">except</span> <span class="nb">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">KeyError: authentication token for </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s"> is undefined</span><span class="sh">"</span><span class="p">)</span>
+    <span class="c1"># Local Run: update the venv.
+</span>    <span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">qU</span> <span class="n">posthog</span>\<span class="o">&lt;</span><span class="mf">6.0</span><span class="p">.</span><span class="mi">0</span> <span class="n">google</span><span class="o">-</span><span class="n">genai</span><span class="o">==</span><span class="mf">1.50</span><span class="p">.</span><span class="mi">0</span> <span class="n">chromadb</span><span class="o">==</span><span class="mf">0.6</span><span class="p">.</span><span class="mi">3</span> <span class="n">opentelemetry</span><span class="o">-</span><span class="n">proto</span><span class="o">==</span><span class="mf">1.37</span><span class="p">.</span><span class="mi">0</span>
+    <span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">qU</span> <span class="n">langchain</span><span class="o">-</span><span class="n">community</span> <span class="n">langchain</span><span class="o">-</span><span class="n">text</span><span class="o">-</span><span class="n">splitters</span> <span class="n">wikipedia</span> <span class="n">pandas</span> <span class="n">google</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">core</span> <span class="sh">"</span><span class="s">lmnr[all]</span><span class="sh">"</span> <span class="n">browser</span><span class="o">-</span><span class="n">use</span> <span class="n">ollama</span> <span class="n">google</span><span class="o">-</span><span class="n">adk</span> <span class="sh">"</span><span class="s">google-adk[eval]</span><span class="sh">"</span>
+    <span class="kn">from</span> <span class="n">browser_use</span> <span class="kn">import</span> <span class="n">Agent</span> <span class="k">as</span> <span class="n">BrowserAgent</span>
 
+<span class="kn">import</span> <span class="n">ast</span><span class="p">,</span> <span class="n">chromadb</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">logging</span><span class="p">,</span> <span class="n">pandas</span><span class="p">,</span> <span class="n">platform</span><span class="p">,</span> <span class="n">pytz</span><span class="p">,</span> <span class="n">re</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">sys</span><span class="p">,</span> <span class="n">threading</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">warnings</span><span class="p">,</span> <span class="n">wikipedia</span>
+<span class="kn">from</span> <span class="n">bs4</span> <span class="kn">import</span> <span class="n">Tag</span>
+<span class="kn">from</span> <span class="n">chromadb</span> <span class="kn">import</span> <span class="n">Documents</span><span class="p">,</span> <span class="n">Embeddings</span>
+<span class="kn">from</span> <span class="n">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="n">dateutil.parser</span> <span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span> <span class="n">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="n">google.adk.apps.app</span> <span class="kn">import</span> <span class="n">App</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">InMemorySessionService</span><span class="p">,</span> <span class="n">BaseSessionService</span> <span class="k">as</span> <span class="n">SessionService</span><span class="p">,</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="n">google</span> <span class="kn">import</span> <span class="n">genai</span>
+<span class="kn">from</span> <span class="n">google.api_core</span> <span class="kn">import</span> <span class="n">retry</span><span class="p">,</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="n">google.genai.models</span> <span class="kn">import</span> <span class="n">Models</span>
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span><span class="p">,</span> <span class="n">errors</span>
+<span class="kn">from</span> <span class="n">IPython.display</span> <span class="kn">import</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="n">langchain_community.document_loaders.csv_loader</span> <span class="kn">import</span> <span class="n">CSVLoader</span>
+<span class="kn">from</span> <span class="n">langchain_text_splitters.html</span> <span class="kn">import</span> <span class="n">HTMLSemanticPreservingSplitter</span>
+<span class="kn">from</span> <span class="n">langchain_text_splitters.json</span> <span class="kn">import</span> <span class="n">RecursiveJsonSplitter</span>
+<span class="kn">from</span> <span class="n">lmnr</span> <span class="kn">import</span> <span class="n">Laminar</span>
+<span class="kn">from</span> <span class="n">math</span> <span class="kn">import</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="n">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">field_validator</span>
+<span class="kn">from</span> <span class="n">threading</span> <span class="kn">import</span> <span class="n">Timer</span>
+<span class="kn">from</span> <span class="n">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span> <span class="n">wikipedia.exceptions</span> <span class="kn">import</span> <span class="n">DisambiguationError</span><span class="p">,</span> <span class="n">PageError</span>
+</code></pre></div></div>
 
-```python
-# Setup the notebook based on running environment.
-import os
-# Optional: Enable telemetry in browser_use and chromadb.
-os.environ["ANONYMIZED_TELEMETRY"] = "false"
-# Check for kaggle environment.
-if os.getenv("KAGGLE_KERNEL_RUN_TYPE"):
-    # Kaggle Run: update the system.
-    !pip uninstall -qqy google-ai-generativelanguage pydrive2 tensorflow cryptography pyOpenSSL langchain langchain-core nltk ray click google-generativeai google-cloud-translate datasets cesium bigframes plotnine mlxtend fastai spacy thinc google-colab gcsfs jupyter-kernel-gateway
-    !pip install -qU posthog\<6.0.0 google-genai==1.45.0 chromadb==0.6.3 opentelemetry-proto==1.37.0
-    !pip install -qU langchain-community langchain-text-splitters wikipedia lmnr[all] google-adk
-    from kaggle_secrets import UserSecretsClient # type: ignore
-    from jupyter_server.serverapp import list_running_servers # type: ignore
-else:
-    # Mock the kaggle secrets client.
-    class UserSecretsClient:
-        @classmethod
-        def set_secret(cls, id: str, value: str):
-            os.environ[id] = value
-        @classmethod
-        def get_secret(cls, id: str):
-            try:
-                return os.environ[id]
-            except KeyError as e:
-                print(f"KeyError: authentication token for {id} is undefined")
-    # Local Run: update the venv.
-    %pip install -qU posthog\<6.0.0 google-genai==1.45.0 chromadb==0.6.3 opentelemetry-proto==1.37.0
-    %pip install -qU langchain-community langchain-text-splitters wikipedia pandas google-api-core "lmnr[all]" browser-use ollama google-adk
-    from browser_use import Agent as BrowserAgent
+    Note: you may need to restart the kernel to use updated packages.
+    Note: you may need to restart the kernel to use updated packages.
 
-import ast, chromadb, json, logging, pandas, platform, pytz, re, requests, time, warnings, wikipedia
-from bs4 import Tag
-from chromadb import Documents, Embeddings
-from datetime import datetime, timedelta
-from dateutil.parser import parse
-from enum import Enum
-from google import genai
-from google.api_core import retry, exceptions
-from google.genai.models import Models
-from google.genai import types, errors
-from IPython.display import Markdown, display, HTML
-from langchain_community.document_loaders.csv_loader import CSVLoader
-from langchain_text_splitters.html import HTMLSemanticPreservingSplitter
-from langchain_text_splitters.json import RecursiveJsonSplitter
-from lmnr import Laminar
-from math import inf
-from pydantic import BaseModel, field_validator
-from threading import Timer
-from tqdm import tqdm
-from typing import Optional, Callable, NewType
-from wikipedia.exceptions import DisambiguationError, PageError
-```
+<div class="collapsible-code">
+<button type="button">Prepare the Gemini API</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Prepare the Gemini api for use.
+# Setup a retry helper for generation not run through the below api-helper.
+</span><span class="n">is_retriable</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="nf">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">errors</span><span class="p">.</span><span class="n">APIError</span><span class="p">)</span> <span class="ow">and</span> <span class="n">e</span><span class="p">.</span><span class="n">code</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">429</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">500</span><span class="p">})</span>
+<span class="n">Models</span><span class="p">.</span><span class="n">generate_content</span> <span class="o">=</span> <span class="n">retry</span><span class="p">.</span><span class="nc">Retry</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">is_retriable</span><span class="p">)(</span><span class="n">Models</span><span class="p">.</span><span class="n">generate_content</span><span class="p">)</span>
+<span class="n">Models</span><span class="p">.</span><span class="n">embed_content</span> <span class="o">=</span> <span class="n">retry</span><span class="p">.</span><span class="nc">Retry</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">is_retriable</span><span class="p">)(</span><span class="n">Models</span><span class="p">.</span><span class="n">embed_content</span><span class="p">)</span>
 
-    [2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m45.8/45.8 kB[0m [31m2.2 MB/s[0m eta [36m0:00:00[0m
-    [2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m67.3/67.3 kB[0m [31m3.8 MB/s[0m eta [36m0:00:00[0m
-    [?25h  Installing build dependencies ... [?25l[?25hdone
-      Getting requirements to build wheel ... [?25l[?25hdone
-      Preparing metadata (pyproject.toml) ... [?25l[?25hdone
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m238.5/238.5 kB[0m [31m10.6 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m611.1/611.1 kB[0m [31m23.5 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m2.4/2.4 MB[0m [31m65.1 MB/s[0m eta [36m0:00:00[0m:00:01[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m105.4/105.4 kB[0m [31m6.0 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m278.2/278.2 kB[0m [31m16.7 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m2.0/2.0 MB[0m [31m62.3 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m103.1/103.1 kB[0m [31m5.9 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m17.4/17.4 MB[0m [31m82.0 MB/s[0m eta [36m0:00:00[0m:00:01[0m00:01[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m107.3/107.3 kB[0m [31m6.4 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m456.6/456.6 kB[0m [31m24.9 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m128.4/128.4 kB[0m [31m6.6 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m3.8/3.8 MB[0m [31m81.9 MB/s[0m eta [36m0:00:00[0m:00:01[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m456.1/456.1 kB[0m [31m23.0 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m46.0/46.0 kB[0m [31m2.8 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m86.8/86.8 kB[0m [31m4.4 MB/s[0m eta [36m0:00:00[0m
-    [?25h  Building wheel for pypika (pyproject.toml) ... [?25l[?25hdone
-      Preparing metadata (setup.py) ... [?25l[?25hdone
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m2.5/2.5 MB[0m [31m48.5 MB/s[0m eta [36m0:00:00[0m:00:01[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m1.0/1.0 MB[0m [31m38.9 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m471.2/471.2 kB[0m [31m23.2 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m253.7/253.7 kB[0m [31m12.7 MB/s[0m eta [36m0:00:00[0m
-    [2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m357.5/357.5 kB[0m [31m17.1 MB/s[0m eta [36m0:00:00[0m
-    [?25h  Building wheel for wikipedia (setup.py) ... [?25l[?25hdone
+<span class="c1"># Activate Laminar auto-instrumentation.
+</span><span class="k">try</span><span class="p">:</span>
+    <span class="n">Laminar</span><span class="p">.</span><span class="nf">initialize</span><span class="p">(</span><span class="n">project_api_key</span><span class="o">=</span><span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">LMNR_PROJECT_API_KEY</span><span class="sh">"</span><span class="p">))</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Skipping Laminar.initialize()</span><span class="sh">"</span><span class="p">)</span>
 
+<span class="k">class</span> <span class="nc">GeminiModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">rpm</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">tpm</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">rpd</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">rpm</span> <span class="o">=</span> <span class="n">rpm</span> <span class="c1"># requests per minute
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">tpm</span> <span class="o">=</span> <span class="n">tpm</span> <span class="c1"># tokens per minute in millions
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">rpd</span> <span class="o">=</span> <span class="n">rpd</span> <span class="c1"># requests per day
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">err</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># validation, api_related
+</span>
+<span class="c1"># A python api-helper with model fail-over/chaining/retry support.
+</span><span class="n">GeminiEmbedFunction</span> <span class="o">=</span> <span class="nc">NewType</span><span class="p">(</span><span class="sh">"</span><span class="s">GeminiEmbedFunction</span><span class="sh">"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># forward-decl
+</span><span class="k">class</span> <span class="nc">Api</span><span class="p">:</span>
+    <span class="n">gen_limit_in</span> <span class="o">=</span> <span class="mi">1048576</span>
+    <span class="n">emb_limit_in</span> <span class="o">=</span> <span class="mi">2048</span>
+    <span class="n">gen_model</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">gemini-2.5-flash</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],[.</span><span class="mi">25</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">],[</span><span class="mi">250</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">100000</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># stable: 10 RPM/250K TPM/250 RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.5-flash-preview-09-2025</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],[.</span><span class="mi">25</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">],[</span><span class="mi">250</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">100000</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># exp: 10 RPM/250K TPM/250 RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.0-flash-exp</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],[.</span><span class="mi">25</span><span class="p">,.</span><span class="mi">25</span><span class="p">,.</span><span class="mi">25</span><span class="p">,.</span><span class="mi">25</span><span class="p">],[</span><span class="mi">200</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">500</span><span class="p">]),</span> <span class="c1"># latest w/thinking: 10 RPM/250K TPM/200 RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.0-flash</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">30000</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">200</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># stable wo/thinking: 15 RPM/1M TPM/200 RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span><span class="mi">4000</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">30000</span><span class="p">],[.</span><span class="mi">25</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">1000</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># stable: 15 RPM/250K TPM/1K RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.5-flash-lite-preview-09-2025</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span><span class="mi">4000</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">30000</span><span class="p">],[.</span><span class="mi">25</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">1000</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># exp: 15 RPM/250K TPM/1K RPD
+</span>        <span class="sh">"</span><span class="s">gemini-2.5-pro</span><span class="sh">"</span><span class="p">:</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">],[.</span><span class="mi">125</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">],[</span><span class="mi">100</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">50000</span><span class="p">,</span><span class="n">inf</span><span class="p">]),</span> <span class="c1"># stable: 5 RPM/250K TPM/100 RPD
+</span>    <span class="p">}</span>
+    <span class="n">gen_local</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">gemma3n:e4b</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">gemma3:12b-it-qat</span><span class="sh">"</span><span class="p">]</span>
+    <span class="n">default_local</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">default_model</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">embed_model</span> <span class="o">=</span> <span class="sh">"</span><span class="s">gemini-embedding-001</span><span class="sh">"</span><span class="p">,</span> <span class="nc">GeminiModel</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">5000</span><span class="p">,</span><span class="mi">10000</span><span class="p">],[.</span><span class="mi">03</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">],[</span><span class="mi">1000</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span> <span class="c1"># stable: 100 RPM/30K TPM/1000 RPD/100 per batch
+</span>    <span class="n">embed_local</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">error_total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">min_rpm</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">min_tpm</span> <span class="o">=</span> <span class="mi">40000</span>
+    <span class="n">dt_between</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">errored</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">dt_err</span> <span class="o">=</span> <span class="mf">45.0</span>
+    <span class="n">dt_rpm</span> <span class="o">=</span> <span class="mf">60.0</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Create a header matching the OS' tcp-stack fingerprint.
+</span>        <span class="n">system_ua</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">match</span> <span class="n">platform</span><span class="p">.</span><span class="nf">system</span><span class="p">():</span>
+            <span class="k">case</span> <span class="sh">'</span><span class="s">Linux</span><span class="sh">'</span><span class="p">:</span>
+                <span class="n">system_ua</span> <span class="o">=</span> <span class="sh">'</span><span class="s">Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36</span><span class="sh">'</span>
+            <span class="k">case</span> <span class="sh">'</span><span class="s">Darwin</span><span class="sh">'</span><span class="p">:</span>
+                <span class="n">system_ua</span> <span class="o">=</span> <span class="sh">'</span><span class="s">Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15</span><span class="sh">'</span>
+            <span class="k">case</span> <span class="sh">'</span><span class="s">Windows</span><span class="sh">'</span><span class="p">:</span>
+                <span class="n">system_ua</span> <span class="o">=</span> <span class="sh">'</span><span class="s">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36</span><span class="sh">'</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="sh">'</span><span class="s">User-Agent</span><span class="sh">'</span><span class="p">:</span> <span class="n">system_ua</span><span class="p">})</span>
+            <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">requests</span><span class="p">.</span><span class="n">codes</span><span class="p">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Api.get() returned status </span><span class="si">{</span><span class="n">request</span><span class="p">.</span><span class="n">status_code</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">request</span><span class="p">.</span><span class="n">text</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
 
-```python
-# Prepare the Gemini api for use.
-# Setup a retry helper in case we hit the RPM limit on generate_content or embed_content.
-is_retriable = lambda e: (isinstance(e, errors.APIError) and e.code in {429, 503, 500})
-Models.generate_content = retry.Retry(predicate=is_retriable)(Models.generate_content)
-Models.embed_content = retry.Retry(predicate=is_retriable)(Models.embed_content)
-
-# Activate Laminar auto-instrumentation.
-try:
-    Laminar.initialize(project_api_key=UserSecretsClient().get_secret("LMNR_PROJECT_API_KEY"))
-except:
-    print("Skipping Laminar.initialize()")
-
-class GeminiModel:
-    def __init__(self, rpm: list, tpm: list, rpd: list):
-        self.rpm = rpm # requests per minute
-        self.tpm = tpm # tokens per minute in millions
-        self.rpd = rpd # requests per day
-        self.err = [0,0] # validation, api_related
-
-# A python api-helper with model fail-over/chaining/retry support.
-GeminiEmbedFunction = NewType("GeminiEmbedFunction", None) # forward-decl
-class Gemini:
-    gen_limit_in = 1048576
-    emb_limit_in = 2048
-    gen_model = {
-        "gemini-2.0-flash": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # stable wo/thinking: 15 RPM/1M TPM/200 RPD
-        "gemini-2.0-flash-exp": GeminiModel([15,2000,10000,30000],[1,4,10,30],[200,inf,inf,inf]), # latest w/thinking: 15 RPM/1M TPM/200 RPD
-        "gemini-2.5-flash-preview-09-2025": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # exp: 10 RPM/250K TPM/250 RPD
-        "gemini-2.5-flash": GeminiModel([10,1000,2000,10000],[.25,1,3,8],[250,10000,100000,inf]), # stable: 10 RPM/250K TPM/250 RPD
-        "gemini-2.5-flash-lite-preview-09-2025": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # exp: 15 RPM/250K TPM/1K RPD
-        "gemini-2.5-flash-lite": GeminiModel([15,4000,10000,30000],[.25,4,10,30],[1000,inf,inf,inf]), # stable: 15 RPM/250K TPM/1K RPD
-        "gemini-2.5-pro": GeminiModel([5,150,1000,2000],[.25,2,5,8],[100,10000,50000,inf]), # stable: 5 RPM/250K TPM/100 RPD
-    }
-    gen_local = ["gemma3n:e4b","gemma3:12b-it-qat"]
-    default_local = 0
-    default_model = []
-    embed_model = "gemini-embedding-001", GeminiModel([100,3000,5000,10000],[.03,1,5,10],[1000,inf,inf,inf]) # stable: 100 RPM/30K TPM/1000 RPD/100 per batch
-    embed_local = False
-    error_total = 0
-    min_rpm = 3
-    dt_between = 2.0
-    errored = False
-    running = False
-    dt_err = 45.0
-    dt_rpm = 60.0
-
-    @classmethod
-    def get(cls, url: str):
-        # Create a header matching the OS' tcp-stack fingerprint.
-        system_ua = None
-        match platform.system():
-            case 'Linux':
-                system_ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
-            case 'Darwin':
-                system_ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15'
-            case 'Windows':
-                system_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
-        try:
-            request = requests.get(url, headers={'User-Agent': system_ua})
-            if request.status_code != requests.codes.ok:
-                print(f"api.get() returned status {request.status_code}")
-            return request.text
-        except Exception as e:
-            raise e
-
-    class Limit(Enum):
-        FREE = 0
-        TIER_1 = 1
-        TIER_2 = 2
-        TIER_3 = 3
+    <span class="k">class</span> <span class="nc">Limit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">FREE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">TIER_1</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">TIER_2</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">TIER_3</span> <span class="o">=</span> <span class="mi">3</span>
     
-    class Model(Enum):
-        GEN = 1
-        EMB = 2
-        LOC = 3
+    <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">GEN</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">EMB</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">LOC</span> <span class="o">=</span> <span class="mi">3</span>
 
-    class Const(Enum):
-        STOP = "I don't know."
-        METRIC_BATCH = 20
-        SERIES_BATCH = 40
-        EMBED_BATCH = 100
-        CHUNK_MAX = 1500
+    <span class="k">class</span> <span class="nc">Const</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">STOP</span> <span class="o">=</span> <span class="sh">"</span><span class="s">I don</span><span class="sh">'</span><span class="s">t know.</span><span class="sh">"</span>
+        <span class="n">METRIC_BATCH</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">SERIES_BATCH</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">EMBED_BATCH</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">CHUNK_MAX</span> <span class="o">=</span> <span class="mi">1500</span>
 
-        @classmethod
-        def Stop(cls):
-            return cls.STOP.value
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">Stop</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">.</span><span class="n">STOP</span><span class="p">.</span><span class="n">value</span>
 
-        @classmethod
-        def MetricBatch(cls):
-            return cls.METRIC_BATCH.value
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">MetricBatch</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">.</span><span class="n">METRIC_BATCH</span><span class="p">.</span><span class="n">value</span>
 
-        @classmethod
-        def SeriesBatch(cls):
-            return cls.SERIES_BATCH.value
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">SeriesBatch</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">.</span><span class="n">SERIES_BATCH</span><span class="p">.</span><span class="n">value</span>
 
-        @classmethod
-        def EmbedBatch(cls):
-            return cls.EMBED_BATCH.value
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">EmbedBatch</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">.</span><span class="n">EMBED_BATCH</span><span class="p">.</span><span class="n">value</span>
 
-        @classmethod
-        def ChunkMax(cls):
-            return cls.CHUNK_MAX.value
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">ChunkMax</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">.</span><span class="n">CHUNK_MAX</span><span class="p">.</span><span class="n">value</span>
+    
+    <span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span> <span class="c1"># Make init args immutable.
+</span>        <span class="n">CLIENT</span><span class="p">:</span> <span class="n">genai</span><span class="p">.</span><span class="n">Client</span>
+        <span class="n">API_LIMIT</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">GEN_DEFAULT</span><span class="p">:</span> <span class="nb">str</span>
 
-    def __init__(self, with_limit: Limit, default_model: str):
-        self.client = genai.Client(api_key=UserSecretsClient().get_secret("GOOGLE_API_KEY"))
-        self.limit = with_limit.value
-        self.m_id = list(self.gen_model.keys()).index(default_model)
-        self.push_default_model(default_model)
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.limit]
-        self.s_embed = GeminiEmbedFunction(self.client, semantic_mode = True) # type: ignore
-        logging.getLogger("google_genai").setLevel(logging.WARNING) # suppress info on generate
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">with_limit</span><span class="p">:</span> <span class="n">Limit</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">default_model</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">default_model</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">():</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">RLock</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">with_limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">with_limit</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">id</span><span class="p">.</span><span class="n">value</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">Api</span><span class="p">.</span><span class="n">Limit</span><span class="p">]:</span>
+                    <span class="n">limit</span> <span class="o">=</span> <span class="n">with_limit</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">limit</span> <span class="o">=</span> <span class="n">with_limit</span><span class="p">.</span><span class="n">value</span>
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Api.__init__: </span><span class="si">{</span><span class="n">with_limit</span><span class="si">}</span><span class="s"> is not a valid limit</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">self</span><span class="p">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">Api</span><span class="p">.</span><span class="nc">Env</span><span class="p">(</span>
+                    <span class="n">genai</span><span class="p">.</span><span class="nc">Client</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)),</span>
+                    <span class="n">limit</span><span class="p">,</span> <span class="n">default_model</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">m_id</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">()).</span><span class="nf">index</span><span class="p">(</span><span class="n">default_model</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">default_model</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="nf">update_quota</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">s_embed</span> <span class="o">=</span> <span class="nc">GeminiEmbedFunction</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">CLIENT</span><span class="p">,</span> <span class="n">semantic_mode</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="c1"># type: ignore
+</span>            <span class="n">logging</span><span class="p">.</span><span class="nf">getLogger</span><span class="p">(</span><span class="sh">"</span><span class="s">google_genai</span><span class="sh">"</span><span class="p">).</span><span class="nf">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">WARNING</span><span class="p">)</span> <span class="c1"># suppress info on generate
+</span>        <span class="k">else</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Api.__init__: </span><span class="si">{</span><span class="n">default_model</span><span class="si">}</span><span class="s"> not found in gen_model.keys()</span><span class="sh">"</span><span class="p">)</span>
+        
 
-    def __call__(self, model: Model) -> str:
-        if model == self.Model.GEN:
-            return "models/" + list(self.gen_model.keys())[self.m_id]
-        elif model == self.Model.LOC:
-            return self.gen_local[self.default_local]
-        else:
-            return "models/" + self.embed_model[0] if not self.embed_local else "embeddinggemma:latest"
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="n">self</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="n">GEN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">models/</span><span class="sh">"</span> <span class="o">+</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="n">self</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="n">LOC</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_local</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">default_local</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">models/</span><span class="sh">"</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">embed_model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">embed_local</span> <span class="k">else</span> <span class="sh">"</span><span class="s">embeddinggemma:latest</span><span class="sh">"</span>
 
-    def push_default_model(self, model_code: str):
-        if model_code in self.gen_model.keys():
-            self.stop_running()
-            self.default_model.append(model_code)
-            self.m_id = list(self.gen_model.keys()).index(model_code)
-        else:
-            print(f"{model_code} not found in gen_model.keys()")
+    <span class="k">def</span> <span class="nf">push_default_model</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">():</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">acquire</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="nf">stop_running</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">m_id</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">()).</span><span class="nf">index</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s"> not found in gen_model.keys()</span><span class="sh">"</span><span class="p">)</span>
 
-    def pop_default_model(self):
-        self.stop_running()
-        self.default_model.pop(-1)
-        self.m_id = list(self.gen_model.keys()).index(self.default_model[-1])
+    <span class="k">def</span> <span class="nf">pop_default_model</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">acquire</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="nf">stop_running</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">.</span><span class="nf">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">m_id</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">()).</span><span class="nf">index</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
 
-    def retriable(self, retry_fn: Callable, *args, **kwargs):
-        for attempt in range(len(self.gen_model.keys())):
-            try:
-                if self.gen_rpm > self.min_rpm:
-                    self.gen_rpm -= 1
-                else:
-                    self.on_error(kwargs)
-                if not self.running and not self.errored:
-                    self.rpm_timer = Timer(self.dt_rpm, self.refill_rpm)
-                    self.rpm_timer.start()
-                    self.running = True
-                return retry_fn(*args, **kwargs)
-            except (errors.APIError, exceptions.RetryError) as api_error:
-                if isinstance(api_error, errors.APIError):
-                    retriable = api_error.code in {429, 503, 500, 400} # code 400 when TPM exceeded
-                    if not retriable or attempt == len(self.gen_model.keys())-1:
-                        raise api_error
-                self.on_error(kwargs)
-            except Exception as e:
-                raise e
+    <span class="k">def</span> <span class="nf">retriable</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">retry_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">tries</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">tries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">acquire</span><span class="p">()</span>
+                <span class="n">token_use</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">token_count</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="sh">"</span><span class="s">contents</span><span class="sh">"</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_rpm</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">min_rpm</span> <span class="ow">and</span> <span class="n">token_use</span> <span class="o">&lt;=</span> <span class="n">self</span><span class="p">.</span><span class="n">token_quota</span> <span class="ow">and</span> <span class="n">self</span><span class="p">.</span><span class="n">token_quota</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">min_tpm</span><span class="p">:</span>
+                    <span class="n">self</span><span class="p">.</span><span class="n">token_quota</span> <span class="o">-=</span> <span class="n">token_use</span>
+                    <span class="n">self</span><span class="p">.</span><span class="n">gen_rpm</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">self</span><span class="p">.</span><span class="nf">on_error</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">running</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">errored</span><span class="p">:</span>
+                    <span class="n">self</span><span class="p">.</span><span class="n">rpm_timer</span> <span class="o">=</span> <span class="nc">Timer</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">dt_rpm</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">refill_rpm</span><span class="p">)</span>
+                    <span class="n">self</span><span class="p">.</span><span class="n">rpm_timer</span><span class="p">.</span><span class="nf">start</span><span class="p">()</span>
+                    <span class="n">self</span><span class="p">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">return</span> <span class="nf">retry_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="nf">except </span><span class="p">(</span><span class="n">errors</span><span class="p">.</span><span class="n">APIError</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">.</span><span class="n">RetryError</span><span class="p">)</span> <span class="k">as</span> <span class="n">api_error</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">api_error</span><span class="p">,</span> <span class="n">errors</span><span class="p">.</span><span class="n">APIError</span><span class="p">):</span>
+                    <span class="n">is_retry</span> <span class="o">=</span> <span class="n">api_error</span><span class="p">.</span><span class="n">code</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">429</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">400</span><span class="p">}</span> <span class="c1"># code 400 when TPM exceeded
+</span>                    <span class="k">if</span> <span class="n">api_error</span><span class="p">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">400</span><span class="p">:</span>
+                        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">retriable.api_error: token limit exceeded (</span><span class="si">{</span><span class="n">token_use</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">retriable.api_error(</span><span class="si">{</span><span class="n">api_error</span><span class="p">.</span><span class="n">code</span><span class="si">}</span><span class="s">): </span><span class="si">{</span><span class="nf">str</span><span class="p">(</span><span class="n">api_error</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_retry</span> <span class="ow">or</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">tries</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">api_error</span>
+                <span class="n">self</span><span class="p">.</span><span class="nf">on_error</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">retriable.exception: </span><span class="si">{</span><span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+                <span class="n">self</span><span class="p">.</span><span class="nf">on_error</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">self</span><span class="p">.</span><span class="n">write_lock</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
 
-    def on_error(self, kwargs):
-        self.generation_fail()
-        kwargs["model"] = self(Gemini.Model.GEN)
-        time.sleep(self.dt_between)
+    <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">generation_fail</span><span class="p">()</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="sh">"</span><span class="s">model</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="nf">self</span><span class="p">(</span><span class="n">Api</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="n">GEN</span><span class="p">)</span>
+        <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">dt_between</span><span class="p">)</span>
 
-    def stop_running(self):
-        if self.running:
-            self.rpm_timer.cancel()
-            self.running = False
+    <span class="k">def</span> <span class="nf">stop_running</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">rpm_timer</span><span class="p">.</span><span class="nf">cancel</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
 
-    def validation_fail(self):
-        list(self.gen_model.values())[self.m_id].err[0] += 1
-        self.error_total += 1
+    <span class="k">def</span> <span class="nf">validation_fail</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">values</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">].</span><span class="n">err</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">error_total</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    def generation_fail(self):
-        self.stop_running()
-        self.save_error()
-        self.next_model()
-        print("api.generation_fail.next_model: model is now ", list(self.gen_model.keys())[self.m_id])
-        if not self.errored:
-            self.error_timer = Timer(self.dt_err, self.zero_error)
-            self.error_timer.start()
-            self.errored = True
+    <span class="k">def</span> <span class="nf">generation_fail</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">stop_running</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">save_error</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">next_model</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Api.generation_fail.next_model: model is now</span><span class="sh">"</span><span class="p">,</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">errored</span><span class="p">:</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">error_timer</span> <span class="o">=</span> <span class="nc">Timer</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">dt_err</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">zero_error</span><span class="p">)</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">error_timer</span><span class="p">.</span><span class="nf">start</span><span class="p">()</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">errored</span> <span class="o">=</span> <span class="bp">True</span>
 
-    def save_error(self):
-        list(self.gen_model.values())[self.m_id].err[1] += 1
-        self.error_total += 1
+    <span class="k">def</span> <span class="nf">save_error</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">values</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">].</span><span class="n">err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">error_total</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    def next_model(self):
-        self.m_id = (self.m_id+1)%len(self.gen_model.keys())
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.limit]
+    <span class="k">def</span> <span class="nf">next_model</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">m_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">())</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">update_quota</span><span class="p">()</span>
 
-    def refill_rpm(self):
-        self.running = False
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.limit]
-        print("api.refill_rpm ", self.gen_rpm)
+    <span class="k">def</span> <span class="nf">refill_rpm</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">update_quota</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Api.refill_rpm</span><span class="sh">"</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_rpm</span><span class="p">)</span>
 
-    def zero_error(self):
-        self.errored = False
-        self.m_id = list(self.gen_model.keys()).index(self.default_model[-1])
-        self.gen_rpm = list(self.gen_model.values())[self.m_id].rpm[self.limit]
-        print("api.zero_error: model is now ", list(self.gen_model.keys())[self.m_id])
+    <span class="k">def</span> <span class="nf">zero_error</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">errored</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">m_id</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">()).</span><span class="nf">index</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">default_model</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">update_quota</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Api.zero_error: model is now</span><span class="sh">"</span><span class="p">,</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">keys</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">])</span>
 
-    def token_count(self, expr: str):
-        count = self.client.models.count_tokens(
-            model=self(Gemini.Model.GEN),
-            contents=json.dumps(expr))
-        return count.total_tokens
+    <span class="k">def</span> <span class="nf">update_quota</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">gen_rpm</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">values</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">].</span><span class="n">rpm</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">API_LIMIT</span><span class="p">]</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">token_quota</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">values</span><span class="p">())[</span><span class="n">self</span><span class="p">.</span><span class="n">m_id</span><span class="p">].</span><span class="n">tpm</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">API_LIMIT</span><span class="p">]</span><span class="o">*</span><span class="mi">1_000_000</span>
 
-    def errors(self):
-        errors = {"total": self.error_total, "by_model": {}}
-        for m_code, m in self.gen_model.items():
-            errors["by_model"].update({
-                m_code: {
-                    "api_related": m.err[1],
-                    "validation": m.err[0]
-                }})
-        return errors
+    <span class="k">def</span> <span class="nf">token_count</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">CLIENT</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="nf">count_tokens</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="nf">self</span><span class="p">(</span><span class="n">Api</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="n">GEN</span><span class="p">),</span>
+            <span class="n">contents</span><span class="o">=</span><span class="n">json</span><span class="p">.</span><span class="nf">dumps</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span> <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nf">str</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">count</span><span class="p">.</span><span class="n">total_tokens</span>
 
-    @retry.Retry(
-        predicate=is_retriable,
-        initial=2.0,
-        maximum=64.0,
-        multiplier=2.0,
-        timeout=600,
-    )
-    def similarity(self, content: list):
-        return self.s_embed.sts(content) # type: ignore
-```
+    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">{</span><span class="sh">"</span><span class="s">total</span><span class="sh">"</span><span class="p">:</span> <span class="n">self</span><span class="p">.</span><span class="n">error_total</span><span class="p">,</span> <span class="sh">"</span><span class="s">by_model</span><span class="sh">"</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">for</span> <span class="n">m_code</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">gen_model</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
+            <span class="n">errors</span><span class="p">[</span><span class="sh">"</span><span class="s">by_model</span><span class="sh">"</span><span class="p">].</span><span class="nf">update</span><span class="p">({</span>
+                <span class="n">m_code</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="sh">"</span><span class="s">api_related</span><span class="sh">"</span><span class="p">:</span> <span class="n">m</span><span class="p">.</span><span class="n">err</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="sh">"</span><span class="s">validation</span><span class="sh">"</span><span class="p">:</span> <span class="n">m</span><span class="p">.</span><span class="n">err</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">}})</span>
+        <span class="k">return</span> <span class="n">errors</span>
 
+    <span class="nd">@retry.Retry</span><span class="p">(</span>
+        <span class="n">predicate</span><span class="o">=</span><span class="n">is_retriable</span><span class="p">,</span>
+        <span class="n">initial</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">maximum</span><span class="o">=</span><span class="mf">64.0</span><span class="p">,</span>
+        <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">s_embed</span><span class="p">.</span><span class="nf">sts</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="c1"># type: ignore
+</span></code></pre></div></div>
+
+    KeyError: authentication token for LMNR_PROJECT_API_KEY is undefined
     Skipping Laminar.initialize()
 
+<div class="collapsible-code">
+<button type="button">Define the Embedding Function</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Define the embedding function.
+</span><span class="n">api</span> <span class="o">=</span> <span class="nc">NewType</span><span class="p">(</span><span class="sh">"</span><span class="s">api</span><span class="sh">"</span><span class="p">,</span> <span class="n">Api</span><span class="p">)</span> <span class="c1"># type: ignore (forward-decl)
+</span><span class="k">class</span> <span class="nc">GeminiEmbedFunction</span><span class="p">:</span>
+    <span class="n">document_mode</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c1"># Generate embeddings for documents (T,F), or queries (F,F).
+</span>    <span class="n">semantic_mode</span> <span class="o">=</span> <span class="bp">False</span> <span class="c1"># Semantic text similarity mode is exclusive (F,T).
+</span>    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">genai_client</span><span class="p">,</span> <span class="n">semantic_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">genai_client</span>
+        <span class="k">if</span> <span class="n">semantic_mode</span><span class="p">:</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">document_mode</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">semantic_mode</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="nd">@retry.Retry</span><span class="p">(</span>
+        <span class="n">predicate</span><span class="o">=</span><span class="n">is_retriable</span><span class="p">,</span>
+        <span class="n">initial</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">maximum</span><span class="o">=</span><span class="mf">64.0</span><span class="p">,</span>
+        <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__embed__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Documents</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embeddings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">document_mode</span><span class="p">:</span>
+            <span class="n">embedding_task</span> <span class="o">=</span> <span class="sh">"</span><span class="s">retrieval_document</span><span class="sh">"</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">document_mode</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">semantic_mode</span><span class="p">:</span>
+            <span class="n">embedding_task</span> <span class="o">=</span> <span class="sh">"</span><span class="s">retrieval_query</span><span class="sh">"</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">document_mode</span> <span class="ow">and</span> <span class="n">self</span><span class="p">.</span><span class="n">semantic_mode</span><span class="p">:</span>
+            <span class="n">embedding_task</span> <span class="o">=</span> <span class="sh">"</span><span class="s">semantic_similarity</span><span class="sh">"</span>
+        <span class="n">partial</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="nf">embed_content</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="nf">api</span><span class="p">(</span><span class="n">Api</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="n">EMB</span><span class="p">),</span>
+            <span class="n">contents</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">types</span><span class="p">.</span><span class="nc">EmbedContentConfig</span><span class="p">(</span><span class="n">task_type</span><span class="o">=</span><span class="n">embedding_task</span><span class="p">))</span> <span class="c1"># type: ignore
+</span>        <span class="k">return</span> <span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">partial</span><span class="p">.</span><span class="n">embeddings</span><span class="p">]</span>
+    
+    <span class="nd">@retry.Retry</span><span class="p">(</span>
+        <span class="n">predicate</span><span class="o">=</span><span class="n">is_retriable</span><span class="p">,</span>
+        <span class="n">initial</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">maximum</span><span class="o">=</span><span class="mf">64.0</span><span class="p">,</span>
+        <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Documents</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embeddings</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">Api</span><span class="p">.</span><span class="n">Const</span><span class="p">.</span><span class="nc">EmbedBatch</span><span class="p">()):</span>  <span class="c1"># Gemini max-batch-size is 100.
+</span>                <span class="n">response</span> <span class="o">+=</span> <span class="n">self</span><span class="p">.</span><span class="nf">__embed__</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">Api</span><span class="p">.</span><span class="n">Const</span><span class="p">.</span><span class="nc">EmbedBatch</span><span class="p">()])</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">caught exception of type </span><span class="si">{</span><span class="nf">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">def</span> <span class="nf">sts</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="nf">self</span><span class="p">(</span><span class="n">content</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">df</span> <span class="o">@</span> <span class="n">df</span><span class="p">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">score</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div></div>
+
+### Set Gemini API Limit
+
+<div class="collapsible-code">
+<button type="button">Set API Limit</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Instantiate the api-helper with usage limit =&gt; FREE.
+# Optional: Set limit here to one of [FREE,TIER_1,TIER_2,TIER_3]
+</span><span class="n">api</span> <span class="o">=</span> <span class="nc">Api</span><span class="p">(</span><span class="n">with_limit</span><span class="o">=</span><span class="n">Api</span><span class="p">.</span><span class="n">Limit</span><span class="p">.</span><span class="n">FREE</span><span class="p">,</span> <span class="n">default_model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1"># Export api environment for agent.
+</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">API_LIMIT</span><span class="sh">"</span><span class="p">]</span><span class="o">=</span><span class="nf">str</span><span class="p">(</span><span class="n">api</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">API_LIMIT</span><span class="p">)</span>
+<span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GEN_DEFAULT</span><span class="sh">"</span><span class="p">]</span><span class="o">=</span><span class="n">api</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">GEN_DEFAULT</span>
+<span class="c1"># Cleanup old vector_db instances.
+</span><span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="n">vector_db</span>
+</code></pre></div></div>
+
+# __StockChat: Agents Edition__
+
+It was during Kaggle's 5-day Generative AI course in 2025 that StockChat first existed as a simple search-connected LLM. There were two observations from that initial build. First being the need for a real-time source of grounding truth. Even with google-search data was more often incomplete. The second observation, which still exists today, is the tendency toward hallucinations in finance data. Ticker symbols can imitate the name of another company, and it also possible for the LLM to confuse a company name for a wrong symbol. This happens even when the context of the question matches the immediate discussion history and should be self-evident.
+
+```python
+response = chat.send_message('''What is MGM Studio's stock ticker symbol?''')
+Markdown(response.text)
+```
+
+```
+... (possibly useful content, often not)
+
+It is important not to confuse MGM Studios with MGM Resorts International, which is a separate, publicly traded hospitality and casino entertainment company with the stock ticker symbol MGM on the New York Stock Exchange (NYSE).
+```
+
+Gemini is naturally chatty in a helpful way and this sometimes causes it to go off-topic. The inclusion of off-topic discussion requires that all output from the LLM be checked for topic deviations. Otherwise a backing RAG may store incorrect truths. It became a trade-off between restraining gemini output, and it's usefulness, versus unrestrained with the hallucination caveat. So google-search was not the solution, and actually it was kind-of off-putting as a source of finance chat. Thus StockChat transformed into a huge monolithic agent with access to multiple finance api's, and wikipedia/search to back it up.
+
+```python
+send_message("What is MGM Studio's stock symbol?")
+```
+
+```
+MGM Studios (Metro-Goldwyn-Mayer Studios, Inc.) is a wholly-owned subsidiary of Amazon and is not publicly traded, so it does not have its own stock symbol.
+
+The stock symbol for its parent company, Amazon, is AMZN.
+```
+
+While big and capable, StockChat (SC1) became limited by it's single agent design.
+- There's no parallelism or asynchronous operation because parallel function calling is agent-wide. Some of the functions may have unmet dependencies when run parallel (by an LLM). In other cases the degree of parallelism is determined by whether you have paid for finance api access. As I'm building a toy I wanted to keep free-tier as an option. Effectively SC1 is a big LLM-guided loop with serial operations, and a single rest api request at a time. It makes SC1 stable at the cost of performance.
+- The lack of context management means it can handle months worth of pre-scored news data. As a synchronous operation.
+- There's a single vector store with all acquired data, requiring metadata management to compensate.
+- It has no facility to determine user interest. It's a giant cache of previously searched finance data.
+- It has no systematic evaluation except to run baseline queries.
+
+With these issues in mind my goal during Kaggle's 5-day Agents course was to apply Google's agentic framework to free SC1 from these limitations.
+- SC2 uses async runners while maintaining some minimal thread synchronization on shared data.
+- LLM-assisted context compaction runs at regular intervals.
+- All the sub-tools have their own vector stores.
+- A memory tool stores long-term memories with semantic meaning preserved, and tagged with date of creation.
+- A user profile expert is added to extract user attributes for long-term memory.
+- Session state keys are used to pass user interest along to other agents.
+- The ADK CLI is used to run an evaluation suite with LLM-as-judge.
+
+## Setup working directory
+
+On Kaggle the working directory for ADK runner's differs from notebook location. To work around this I use git with spare-checkout to pull in SC2's updated source. Then I setup the Kaggle runner environment and define the async runner.
+
+<div class="collapsible-code">
+<button type="button">Setup working directory</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Setup working directory on Kaggle.
+</span><span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">KAGGLE_KERNEL_RUN_TYPE</span><span class="sh">"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">isdir</span><span class="p">(</span><span class="sh">"</span><span class="s">sc2/</span><span class="sh">"</span><span class="p">):</span>
+        <span class="err">!</span><span class="n">git</span> <span class="n">init</span> <span class="o">-</span><span class="n">b</span> <span class="n">main</span>
+        <span class="err">!</span><span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">origin</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">lol</span><span class="o">-</span><span class="n">dungeonmaster</span><span class="o">/</span><span class="n">kaggle</span><span class="o">-</span><span class="n">agents</span><span class="o">-</span><span class="mf">2025.</span><span class="n">git</span>
+        <span class="err">!</span><span class="n">git</span> <span class="n">config</span> <span class="n">core</span><span class="p">.</span><span class="n">sparseCheckout</span> <span class="n">true</span>
+        <span class="err">!</span><span class="n">echo</span> <span class="sh">"</span><span class="s">sc2/</span><span class="sh">"</span> <span class="o">&gt;&gt;</span> <span class="p">.</span><span class="n">git</span><span class="o">/</span><span class="n">info</span><span class="o">/</span><span class="n">sparse</span><span class="o">-</span><span class="n">checkout</span>
+        <span class="err">!</span><span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">main</span>
+        <span class="k">for</span> <span class="n">api_key</span> <span class="ow">in</span> <span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">POLYGON_API_KEY</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">FINNHUB_API_KEY</span><span class="sh">"</span><span class="p">]:</span>
+            <span class="n">env_key</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+            <span class="err">!</span><span class="n">echo</span> <span class="sh">"</span><span class="s">$api_key=$env_key</span><span class="sh">"</span> <span class="o">&gt;&gt;</span> <span class="n">sc2</span><span class="o">/</span><span class="p">.</span><span class="n">env</span> <span class="c1"># from .venv on local runs
+</span>            <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="n">api_key</span><span class="p">]</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span> <span class="c1"># from .venv on local runs
+</span></code></pre></div></div>
+
+<div class="collapsible-code">
+<button type="button">Define Async Runner</button>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Define async runner and helper functions.
+</span><span class="kn">from</span> <span class="n">sc2.agent</span> <span class="kn">import</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="n">sc2.src</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="c1"># Logger access not possible on Kaggle to prevent hiding errors.
+# - The StderrToLog wrapper will not work as kaggle-docker makes the file-descriptor constant.
+# - Redirect basic logger output on Kaggle using print().
+</span><span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">KAGGLE_KERNEL_RUN_TYPE</span><span class="sh">"</span><span class="p">):</span>
+    <span class="n">log_info</span> <span class="o">=</span> <span class="k">print</span>
+    <span class="n">log_warn</span> <span class="o">=</span> <span class="k">print</span>
+    <span class="n">log_err</span> <span class="o">=</span> <span class="k">print</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">log_info</span> <span class="o">=</span> <span class="n">log</span><span class="p">.</span><span class="n">info</span>
+    <span class="n">log_warn</span> <span class="o">=</span> <span class="n">log</span><span class="p">.</span><span class="n">warning</span>
+    <span class="n">log_err</span> <span class="o">=</span> <span class="n">log</span><span class="p">.</span><span class="n">error</span>
+
+<span class="c1"># Display the user query and response after the response is complete.
+</span><span class="k">async</span> <span class="k">def</span> <span class="nf">on_event</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">!=</span> <span class="sh">"</span><span class="s">None</span><span class="sh">"</span><span class="p">:</span>
+            <span class="nf">log_info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">USER  &gt; </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="nf">log_info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">MODEL &gt; </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nf">log_err</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">on_event.exception: </span><span class="si">{</span><span class="nf">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Run an App with the provided BaseSessionService and user queries list.
+</span><span class="k">async</span> <span class="k">def</span> <span class="nf">run_queries</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">App</span><span class="p">,</span> <span class="n">sessions</span><span class="p">:</span> <span class="n">SessionService</span><span class="p">,</span> <span class="n">queries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                      <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">):</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">session_service</span><span class="o">=</span><span class="n">sessions</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">sessions</span><span class="p">.</span><span class="nf">create_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">runner</span><span class="p">.</span><span class="n">app_name</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">sessions</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">runner</span><span class="p">.</span><span class="n">app_name</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nf">log_info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">### Agent session: (uid=</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s">) </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">:</span>
+            <span class="k">await</span> <span class="nf">try_run</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+<span class="c1"># Launch a runner with the provided session and user_id then respond to query.
+# - retries on exceptions TypeError, KeyError, IndexError
+</span><span class="k">async</span> <span class="k">def</span> <span class="nf">try_run</span><span class="p">(</span><span class="n">runner</span><span class="p">:</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">Content</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">types</span><span class="p">.</span><span class="nc">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">query</span><span class="p">)])</span>
+        <span class="k">async</span> <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">runner</span><span class="p">.</span><span class="nf">run_async</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">new_message</span><span class="o">=</span><span class="n">q</span>
+        <span class="p">):</span> <span class="k">await</span> <span class="nf">on_event</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">q_id</span> <span class="o">=</span> <span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="nf">split</span><span class="p">()[:</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nf">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">TypeError</span><span class="p">,</span> <span class="nb">KeyError</span><span class="p">,</span> <span class="nb">IndexError</span><span class="p">]:</span>
+            <span class="nf">log_warn</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">try_run.run_async (q=</span><span class="si">{</span><span class="n">q_id</span><span class="si">}</span><span class="s">): retrying, generated </span><span class="si">{</span><span class="nf">type</span><span class="p">(</span><span class="n">e</span><span class="p">).</span><span class="n">__name__</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+            <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>
+            <span class="k">await</span> <span class="nf">try_run</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nf">log_warn</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">try_run.run_async (q=</span><span class="si">{</span><span class="n">q_id</span><span class="si">}</span><span class="s">): </span><span class="si">{</span><span class="nf">type</span><span class="p">(</span><span class="n">e</span><span class="p">).</span><span class="n">__name__</span><span class="si">}</span><span class="s"> - </span><span class="si">{</span><span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Check for compaction events in the provided BaseSessionService.
+# - optionally also show the llm compacted output.
+</span><span class="k">async</span> <span class="k">def</span> <span class="nf">check_compaction</span><span class="p">(</span><span class="n">sessions</span><span class="p">:</span> <span class="n">SessionService</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">,</span> 
+                           <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">,</span> <span class="n">show_llm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="k">await</span> <span class="n">sessions</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+        <span class="n">app_name</span><span class="o">=</span><span class="n">app</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="p">)).</span><span class="n">events</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">e</span><span class="p">.</span><span class="n">actions</span> <span class="ow">and</span> <span class="p">(</span><span class="n">llm_out</span> <span class="p">:</span><span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">actions</span><span class="p">.</span><span class="n">compaction</span><span class="p">):</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">show_llm</span><span class="p">:</span>
+                <span class="nf">log_info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">check_compaction.show_llm: </span><span class="si">{</span><span class="n">llm_out</span><span class="p">.</span><span class="n">compacted_content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+    <span class="nf">log_info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">check_compaction: found (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s">) compaction event</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+    WARNING  [root] KeyError: authentication token for LMNR_PROJECT_API_KEY is undefined
+    INFO     [root] Skipping Laminar.initialize()
+    INFO     [root] sc2.__init__: the api-helper is ready
+    Generate document embedding:   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate document embedding: 100%|##########| 1/1 [00:03<00:00,  3.99s/it]
+    Generate document embedding: 100%|##########| 1/1 [00:04<00:00,  4.13s/it]
+    INFO     [root] sc2.__init__: RestGroundingTool is ready
+    INFO     [root] sc2.__init__: SearchGroundingTool is ready
+    INFO     [root] sc2.__init__: WikiGroundingTool is ready
+    INFO     [root] sc2.__init__: MemoryService is ready
+    WARNING  [root] [EXPERIMENTAL] ReflectAndRetryToolPlugin: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      plugins=[ReflectAndRetryToolPlugin(max_retries=1)],
+    WARNING  [root] [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      events_compaction_config=EventsCompactionConfig(
+
+
+## Test the Runner
+
+The initial two-questions are used to test the agents self-awareness of tools. This was particularly problematic for the parallel `fncall_pipeline`. The goal is to have a parallel operating planner and executor of function calls. The function tool definition are tricky to access reliably when nested inside workflow agents like the ParallelAgent. In the end I exposed the planner and it's containing pipeline, then told Gemini where to look.
+
+My goal is ultimately to make SC2 a more capable assistant in addition to removing existing limits. To that end I also added a Terminology expert to make use of the built-in google-search. Meanwhile a user profile expert dynamically extracts preferences and user attributes. These two types of data are stored in long-term memory.
 
 
 ```python
-# Define the embedding function.
-api = NewType("Gemini", None) # type: ignore (forward-decl)
-class GeminiEmbedFunction:
-    document_mode = True  # Generate embeddings for documents (T,F), or queries (F,F).
-    semantic_mode = False # Semantic text similarity mode is exclusive (F,T).
-    
-    def __init__(self, genai_client, semantic_mode: bool = False):
-        self.client = genai_client
-        if semantic_mode:
-            self.document_mode = False
-            self.semantic_mode = True
+# Create a session service and run some test queries.
+s_svc = InMemorySessionService()
 
-    @retry.Retry(
-        predicate=is_retriable,
-        initial=2.0,
-        maximum=64.0,
-        multiplier=2.0,
-        timeout=600,
-    )
-    def __embed__(self, input: Documents) -> Embeddings:
-        if self.document_mode:
-            embedding_task = "retrieval_document"
-        elif not self.document_mode and not self.semantic_mode:
-            embedding_task = "retrieval_query"
-        elif not self.document_mode and self.semantic_mode:
-            embedding_task = "semantic_similarity"
-        partial = self.client.models.embed_content(
-            model=api(Gemini.Model.EMB),
-            contents=input,
-            config=types.EmbedContentConfig(task_type=embedding_task)) # type: ignore
-        return [e.values for e in partial.embeddings]
-    
-    @retry.Retry(
-        predicate=is_retriable,
-        initial=2.0,
-        maximum=64.0,
-        multiplier=2.0,
-        timeout=600,
-    )
-    def __call__(self, input: Documents) -> Embeddings:
-        try:
-            response = []
-            for i in range(0, len(input), Gemini.Const.EmbedBatch()):  # Gemini max-batch-size is 100.
-                response += self.__embed__(input[i:i + Gemini.Const.EmbedBatch()])
-            return response
-        except Exception as e:
-            print(f"caught exception of type {type(e)}\n{e}")
-            raise e
-
-    def sts(self, content: list) -> float:
-        df = pandas.DataFrame(self(content), index=content)
-        score = df @ df.T
-        return score.iloc[0].iloc[1]
+await run_queries(
+    app=app, sessions=s_svc,
+    queries=[
+        "What tools do you know how to use?",
+        "Tell me what functions `fncall_pipeline` knows by checking `sc2_fnplan`.",
+        "What is a short trade?",
+        "What is gambler's ruin?",
+        "My local advisor is SC at JPMorgan Chase, 212-736-2001",
+        "I live in Brooklyn, New York."])
 ```
 
-## Set Gemini API Limit
+    INFO     [root] ### Agent session: (uid=default) default
+    
+    INFO     [root] USER  > What tools do you know how to use?
+    INFO     [root] MODEL > I can use the following tools:
+    
+    *   `sc2_memory`: An expert writer of long-term memories.
+    *   `sc2_prefs`: An expert profile analyst in the field of finance, money, and stock markets.
+    *   `fncall_pipeline`: A function caller with functions defined in sub-agent `sc2_fnplan`.
+    *   `sc2_fnplan`: A highly intelligent FunctionTool call planner.
+    *   `sc2_terms`: An expert terminologist in the field of finance, money, and stock markets.
+    *   `sc2_summary`: An expert proof-reader and writer that knows HTML, JSON and Markdown.
+    
+    INFO     [root] USER  > Tell me what functions `fncall_pipeline` knows by checking `sc2_fnplan`.
+    INFO     [root] MODEL > `fncall_pipeline` knows the following functions:
+    
+    *   `get_symbol_1`
+    *   `get_symbols_1`
+    *   `get_name_1`
+    *   `get_symbol_quote_1`
+    *   `get_market_status_1`
+    *   `get_market_session_1`
+    *   `get_company_peers_1`
+    *   `get_local_datetime`
+    *   `get_last_market_close`
+    *   `get_exchange_codes_1`
+    *   `get_exchange_code_1`
+    *   `get_financials_1`
+    *   `get_daily_candlestick_2`
+    *   `get_custom_candlestick_2`
+    *   `get_ticker_overview_2`
+    *   `get_recommendation_trends_1`
+    *   `get_news_with_sentiment_2`
+    *   `get_wiki_grounding`
+    *   `get_search_grounding`
+    
+    Generate memory embedding (Short Trade):   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate memory embedding (Short Trade): 100%|##########| 1/1 [00:00<00:00,  1.47it/s]
+    Generate memory embedding (Short Trade): 100%|##########| 1/1 [00:00<00:00,  1.40it/s]
+    INFO     [root] USER  > What is a short trade?
+    INFO     [root] MODEL > A short trade, also known as short selling, is a speculative strategy where an investor sells borrowed securities with the expectation of repurchasing them at a lower price. The objective is to profit from a decrease in the security's price. If the price declines, the investor can buy the shares at a reduced cost, return them to the lender, and gain the difference. Conversely, if the price increases, the investor must buy them back at a higher price, resulting in a loss.
+    
+    Generate memory embedding (Gambler's ruin):   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate memory embedding (Gambler's ruin): 100%|##########| 1/1 [00:00<00:00,  1.25it/s]
+    Generate memory embedding (Gambler's ruin): 100%|##########| 1/1 [00:00<00:00,  1.20it/s]
+    INFO     [root] USER  > What is gambler's ruin?
+    INFO     [root] MODEL > Gambler's Ruin
+    
+    Gambler's ruin is a concept within probability theory. It posits that a gambler possessing a finite sum of money, engaging in a game against an opponent with an effectively infinite amount of money, will inevitably deplete their entire funds. This outcome holds true regardless of whether the game is fair or if the odds are even slightly in the gambler's favor.
+    
+    
+    Generate memory embedding (local advisor):   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate memory embedding (local advisor): 100%|##########| 1/1 [00:00<00:00,  1.82it/s]
+    Generate memory embedding (local advisor): 100%|##########| 1/1 [00:00<00:00,  1.72it/s]
+    INFO     [root] USER  > My local advisor is SC at JPMorgan Chase, 212-736-2001
+    INFO     [root] MODEL > I've noted that your local advisor is SC at JPMorgan Chase, phone number 212-736-2001.
+    
+    Generate memory embedding (User's residence):   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate memory embedding (User's residence): 100%|##########| 1/1 [00:01<00:00,  1.62s/it]
+    Generate memory embedding (User's residence): 100%|##########| 1/1 [00:01<00:00,  1.65s/it]
+    INFO     [root] USER  > I live in Brooklyn, New York.
+    INFO     [root] MODEL > Okay, I've noted that you live in Brooklyn, New York.
+    
+
+
+## Test Long-term Memory
+
+Testing long-term memory is as easy as creating a new `BaseSessionService`. As this Memory is a custom implementation it must be specified as a tool during user query.
 
 
 ```python
-# Instantiate the api-helper with usage limit => FREE.
-api = Gemini(with_limit=Gemini.Limit.FREE, default_model="gemini-2.0-flash") # [FREE,TIER_1,TIER_2,TIER_3]
+# Use long-term memory from a new session.
+s_svc2 = InMemorySessionService()
+
+await run_queries(
+    app=app, sessions=s_svc2,
+    queries=[
+        "Check memory for where I live.",
+        "Check memory for my local advisor SCs phone number."])
 ```
 
-# Gemini Baseline Check
+    INFO     [root] ### Agent session: (uid=default) default
+    
+    INFO     [root] Api.refill_rpm 10
+    INFO     [root] USER  > Check memory for where I live.
+    INFO     [root] MODEL > You live in Brooklyn, New York.
+    
+    INFO     [root] USER  > Check memory for my local advisor SCs phone number.
+    INFO     [root] MODEL > SC's phone number is 212-736-2001.
+    
+
+
+## Check for compaction
+
+One of the features of SC2 that I'm looking forward to working with more is the LLM-assisted context compaction. In this implementation I've opted for zero-overlap to avoid re-summarizing past events. At this point no events are dropped from the context. The LLM is known to become confused with statement repetition, so let's avoid that complication. A delightful feature of LLM-compaction is the use of an LLM-as-judge to assess the summary quality with impartiality. It'll note neat things for you like when the tools fail completely or when parts of a user query remain unanswered.
+
+
+```python
+# Display context compaction output.
+await check_compaction(s_svc, show_llm=True)
+```
+
+    INFO     [root] check_compaction.show_llm: The user initiated the conversation by asking about the AI's available tools. The AI listed its tools, including `sc2_memory`, `sc2_prefs`, `fncall_pipeline`, `sc2_fnplan`, `sc2_terms`, and `sc2_summary`, along with their brief descriptions.
+    
+    Next, the user asked the AI to specify the functions available through `fncall_pipeline` by checking `sc2_fnplan`. The AI responded by listing 20 specific functions, predominantly related to financial data retrieval (e.g., `get_symbol_1`, `get_market_status_1`, `get_financials_1`, `get_news_with_sentiment_2`).
+    
+    Finally, the user asked for a definition of "short trade." The AI provided a clear explanation, describing it as a speculative strategy where an investor sells borrowed securities with the expectation of repurchasing them at a lower price to profit from a price decrease.
+    
+    **Key information and decisions made:**
+    *   The AI disclosed its capabilities in terms of tools and specific functions.
+    *   The AI provided a detailed definition of a financial term requested by the user.
+    
+    **Unresolved questions or tasks:**
+    *   There are no explicit unresolved questions or tasks at the end of this conversation segment.
+    
+    INFO     [root] check_compaction.show_llm: The conversation began with the user asking for a definition of "gambler's ruin," which the AI successfully provided. Subsequently, the user volunteered two pieces of personal information: their local advisor (SC at JPMorgan Chase, 212-736-2001) and their residence (Brooklyn, New York). The AI acknowledged and noted both details.
+    
+    **Key Information & Decisions:**
+    *   **Definition Provided:** The AI explained "gambler's ruin."
+    *   **Advisor Details Noted:** The AI recorded the user's advisor (SC, JPMorgan Chase, 212-736-2001).
+    *   **Residence Noted:** The AI recorded the user's residence (Brooklyn, New York).
+    
+    **Unresolved Questions or Tasks:**
+    There are no unresolved questions or tasks in this segment of the conversation.
+    
+    INFO     [root] check_compaction: found (2) compaction event
+    
+
+
+## Evaluation by CLI
+
+In SC1 evaluation didn't happen systematically. As you can see from the appendix evaluation consists of manually checking the model output, or baseline. In leveraging the ADK CLI, SC2 gains an LLM-as-judge to systematically evaluate assistant output. A rubric is applied to check response quality and related tool use. Then a hallucination test is performed to ensure the agent has stayed on-topic.
+
+
+```python
+!adk eval sc2 sc2/eval/test_cases.json --config_file_path=sc2/eval/config.json --print_detailed_results
+```
+
+    /home/sysop/Documents/kaggle-agents-2025/.venv/lib/python3.12/site-packages/google/adk/evaluation/metric_evaluator_registry.py:90: UserWarning: [EXPERIMENTAL] MetricEvaluatorRegistry: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      metric_evaluator_registry = MetricEvaluatorRegistry()
+    /home/sysop/Documents/kaggle-agents-2025/.venv/lib/python3.12/site-packages/google/adk/evaluation/local_eval_service.py:80: UserWarning: [EXPERIMENTAL] UserSimulatorProvider: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      user_simulator_provider: UserSimulatorProvider = UserSimulatorProvider(),
+    Using evaluation criteria: criteria={'rubric_based_final_response_quality_v1': BaseCriterion(threshold=0.8, judge_model_options={'judge_model': 'gemini-2.5-flash', 'num_samples': 1}, rubrics=[{'rubric_id': 'conciseness', 'rubric_content': {'text_property': "The agent's response is direct and to the point."}}, {'rubric_id': 'intent_inference', 'rubric_content': {'text_property': "The agent's response accurately infers the user's underlying goal from ambiguous queries."}}]), 'rubric_based_tool_use_quality_v1': BaseCriterion(threshold=1.0, judge_model_options={'judge_model': 'gemini-2.5-flash', 'num_samples': 1}, rubrics=[{'rubric_id': 'prefs_called', 'rubric_content': {'text_property': 'The agent calls `sc2_prefs` to store profile data when required.'}}, {'rubric_id': 'memory_called_before', 'rubric_content': {'text_property': 'The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.'}}, {'rubric_id': 'memory_called_after', 'rubric_content': {'text_property': 'The agent calls `sc2_memory` after `sc2_terms` only for new memories.'}}, {'rubric_id': 'summary_called', 'rubric_content': {'text_property': 'The agent calls `sc2_summary` last when used.'}}, {'rubric_id': 'workflow_bypass', 'rubric_content': {'text_property': 'The agent can bypass the workflow for usage related questions.'}}]), 'hallucinations_v1': BaseCriterion(threshold=0.8, judge_model_options={'judge_model': 'gemini-2.5-flash'}, evaluate_intermediate_nl_responses=True)} user_simulator_config=None
+    2025-12-01 06:49:13,997 - WARNING - secret.py:13 - KeyError: authentication token for LMNR_PROJECT_API_KEY is undefined
+    2025-12-01 06:49:13,998 - INFO - __init__.py:54 - Skipping Laminar.initialize()
+    2025-12-01 06:49:14,229 - INFO - __init__.py:64 - sc2.__init__: the api-helper is ready
+    Generate document embedding:   0%|          | 0/1 [00:00<?, ?it/s]
+    Generate document embedding: 100%|##########| 1/1 [00:03<00:00,  3.71s/it]
+    Generate document embedding: 100%|##########| 1/1 [00:03<00:00,  3.80s/it]
+    2025-12-01 06:49:18,839 - INFO - __init__.py:72 - sc2.__init__: RestGroundingTool is ready
+    2025-12-01 06:49:18,840 - INFO - __init__.py:74 - sc2.__init__: SearchGroundingTool is ready
+    2025-12-01 06:49:18,841 - INFO - __init__.py:76 - sc2.__init__: WikiGroundingTool is ready
+    2025-12-01 06:49:18,842 - INFO - __init__.py:78 - sc2.__init__: MemoryService is ready
+    2025-12-01 06:49:18,890 - WARNING - __init__.py:26 - [EXPERIMENTAL] ReflectAndRetryToolPlugin: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      plugins=[ReflectAndRetryToolPlugin(max_retries=1)],
+    2025-12-01 06:49:18,939 - WARNING - __init__.py:26 - [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      events_compaction_config=EventsCompactionConfig(
+    2025-12-01 06:49:18,939 - WARNING - __init__.py:26 - [EXPERIMENTAL] UserSimulatorProvider: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      user_simulator_provider = UserSimulatorProvider(
+    2025-12-01 06:49:18,940 - WARNING - __init__.py:26 - [EXPERIMENTAL] LocalEvalService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      eval_service = LocalEvalService(
+    2025-12-01 06:49:18,941 - WARNING - __init__.py:26 - [EXPERIMENTAL] StaticUserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      return StaticUserSimulator(static_conversation=eval_case.conversation)
+    2025-12-01 06:49:18,942 - WARNING - __init__.py:26 - [EXPERIMENTAL] UserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      super().__init__(
+    2025-12-01 06:49:20,706 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:20,804 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:21,234 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:21,335 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:22,239 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:22,288 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:23,182 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:25,574 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:25,576 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:25,577 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:36,695 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:38,488 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:39,862 - WARNING - types.py:6334 - Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    2025-12-01 06:49:46,575 - WARNING - __init__.py:26 - [EXPERIMENTAL] RubricBasedFinalResponseQualityV1Evaluator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      return self._registry[eval_metric.metric_name][0](eval_metric=eval_metric)
+    2025-12-01 06:49:46,577 - WARNING - __init__.py:26 - [EXPERIMENTAL] RubricBasedEvaluator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      super().__init__(
+    2025-12-01 06:49:46,580 - WARNING - __init__.py:26 - [EXPERIMENTAL] LlmAsJudge: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      super().__init__(
+    2025-12-01 06:49:51,285 - WARNING - __init__.py:26 - [EXPERIMENTAL] RubricBasedToolUseV1Evaluator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      return self._registry[eval_metric.metric_name][0](eval_metric=eval_metric)
+    2025-12-01 06:49:51,288 - WARNING - __init__.py:26 - [EXPERIMENTAL] RubricBasedEvaluator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      super().__init__(
+    INFO     [root] Api.refill_rpm 10
+    2025-12-01 06:50:07,623 - WARNING - __init__.py:26 - [EXPERIMENTAL] HallucinationsV1Evaluator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+      return self._registry[eval_metric.metric_name][0](eval_metric=eval_metric)
+    2025-12-01 06:50:16,247 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589816.2472925.evalset_result.json
+    2025-12-01 06:50:18,639 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589818.6387215.evalset_result.json
+    2025-12-01 06:50:20,395 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589820.395301.evalset_result.json
+    2025-12-01 06:50:24,276 - INFO - api.py:225 - Api.refill_rpm 10
+    2025-12-01 06:50:29,980 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589829.9797585.evalset_result.json
+    2025-12-01 06:50:39,274 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589839.2740445.evalset_result.json
+    2025-12-01 06:50:40,440 - INFO - local_eval_set_results_manager.py:62 - Writing eval result to file: /home/sysop/Documents/kaggle-agents-2025/sc2/.adk/eval_history/sc2_sc2_eval_suite_1764589840.4402955.evalset_result.json
+    *********************************************************************
+    Eval Run Summary
+    sc2_eval_suite:
+      Tests passed: 6
+      Tests failed: 0
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: create_memory_2
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+-------------------------+------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                  | expected_response      | actual_response           | expected_tool_calls   | actual_tool_calls         | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+=========================+========================+===========================+=======================+===========================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | I live in Brooklyn, New | I have saved where you | It's great to know that   |                       | id='adk-0a21d28d-e189-43f | Status: PASSED, Score:                   | Reasoning: The final                                       | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The user                                                        | Reasoning: The agent did                                                        | Reasoning: The agent did                                                        | Reasoning: The agent did                                | Reasoning: The user's                                                    | Status: PASSED, Score: |
+    |    | York.                   | live in memory.        | you live in Brooklyn, New |                       | 9-a917- 179ac463535c'     | 1.0                                      | answer directly addresses                                  | query "I live in                                                                                    | 1.0                                | provided profile                                                           | not call `sc2_memory`,                                                          | not call `sc2_memory` or                                                        | not call `sc2_summary` in                               | prompt ("I live in                                                       | 1.0                    |
+    |    |                         |                        | York! I've saved this     |                       | args={'request': 'The     |                                          | the user's input by                                        | Brooklyn, New York" is a                                                                            |                                    | information ("I live in                                                    | `sc2_terms`, or                                                                 | `sc2_terms` in its                                                              | its response., Score: 1.0                               | Brooklyn, New York") is                                                  |                        |
+    |    |                         |                        | information to your       |                       | user lives in Brooklyn,   |                                          | acknowledging the                                          | direct statement of fact                                                                            |                                    | Brooklyn, New York"), and                                                  | `fncall_pipeline` in its                                                        | response, so the                                                                |                                                         | not a usage- related                                                     |                        |
+    |    |                         |                        | profile. If you have any  |                       | New York.'}               |                                          | information, stating it                                    | and is not ambiguous. The                                                                           |                                    | the agent correctly used                                                   | response, so the                                                                | condition for this                                                              |                                                         | question. Therefore, this                                                |                        |
+    |    |                         |                        | questions about finance,  |                       | name='sc2_prefs'          |                                          | has been saved, and                                        | agent correctly                                                                                     |                                    | the `sc2_prefs` tool to                                                    | condition for this                                                              | ordering property was not                                                       |                                                         | property is not                                                          |                        |
+    |    |                         |                        | money, or the stock       |                       |                           |                                          | offering further                                           | identified this as                                                                                  |                                    | process and store this                                                     | ordering property was not                                                       | met., Score: 1.0                                                                |                                                         | applicable to the current                                                |                        |
+    |    |                         |                        | market, feel free to ask. |                       |                           |                                          | assistance, without any                                    | "profile data" as per the                                                                           |                                    | information, as indicated                                                  | met., Score: 1.0                                                                |                                                                                 |                                                         | interaction., Score: 1.0                                                 |                        |
+    |    |                         |                        |                           |                       |                           |                                          | unnecessary information                                    | developer instructions                                                                              |                                    | by the tool call                                                           |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          | or digression. This is a                                   | and used the appropriate                                                                            |                                    | `sc2_prefs(request='The                                                    |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          | direct and appropriate                                     | `sc2_prefs` tool to store                                                                           |                                    | user lives in Brooklyn,                                                    |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          | response given the user's                                  | it, successfully                                                                                    |                                    | New York.')` and the                                                       |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          | statement., Score: 1.0                                     | fulfilling the implicit                                                                             |                                    | tool's description as a                                                    |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          |                                                            | goal of saving this                                                                                 |                                    | profile analyst., Score:                                                   |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                        |                           |                       |                           |                                          |                                                            | information., Score: 1.0                                                                            |                                    | 1.0                                                                        |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    +----+-------------------------+------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: term_discovery_1
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                 | expected_response         | actual_response           | expected_tool_calls   | actual_tool_calls         | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+========================+===========================+===========================+=======================+===========================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | What is a short trade? | A short trade, also known | A short trade, also known |                       | id='adk-06b2c5a6-06c7-47e | Status: PASSED, Score:                   | Reasoning: The user asked                                  | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The agent did                                                   | Reasoning: The agent                                                            | Reasoning: The tool                                                             | Reasoning: `sc2_summary`                                | Reasoning: The user                                                      | Status: PASSED, Score: |
+    |    |                        | as short- selling or      | as short selling or       |                       | 6-8d26- f53c99aec3f9'     | 1.0                                      | for a definition of a                                      | query "What is a short                                                                              | 1.0                                | not call `sc2_prefs`. The                                                  | called `sc2_memory` at                                                          | `sc2_terms` was not                                                             | was called at step 1,                                   | prompt "What is a short                                                  | 1.0                    |
+    |    |                        | going-short is an         | shorting, is a            |                       | args={'request': 'What is |                                          | "short trade." The                                         | trade?" is a direct and                                                                             |                                    | user's prompt, "What is a                                                  | step 0. Neither                                                                 | called in the response.                                                         | which is the last step in                               | trade?" is not a usage-                                                  |                        |
+    |    |                        | investment strategy where | speculative trading       |                       | a short trade?'}          |                                          | agent's final answer                                       | unambiguous question                                                                                |                                    | short trade?", is a                                                        | `sc2_terms` nor                                                                 | Therefore, the condition                                                        | the sequence of tool                                    | related question. The                                                    |                        |
+    |    |                        | an investor anticipates a | strategy. In this         |                       | name='sc2_memory' id='a d |                                          | directly provides this                                     | asking for a definition.                                                                            |                                    | request for information                                                    | `fncall_pipeline` were                                                          | of `sc2_memory` being                                                           | calls (the only other                                   | agent correctly did not                                                  |                        |
+    |    |                        | decline in the price of   | strategy, an investor     |                       | k-5ad53614-23dc-46a6-820c |                                          | definition without any                                     | Therefore, the condition                                                                            |                                    | and does not require                                                       | called in the response,                                                         | called *after*                                                                  | call was `sc2_memory` at                                | bypass the workflow,                                                     |                        |
+    |    |                        | an asset, typically a     | sells borrowed securities |                       | -3210edbb95e1'            |                                          | extraneous information,                                    | for this property to be                                                                             |                                    | storing profile data.                                                      | thus `sc2_memory`                                                               | `sc2_terms` is not                                                              | step 0)., Score: 1.0                                    | using `sc2_memory` and                                                   |                        |
+    |    |                        | stock.                    | with the expectation of   |                       | args={'request': "A short |                                          | conversational filler, or                                  | applicable (an ambiguous                                                                            |                                    | Therefore, the tool was                                                    | implicitly occurs before                                                        | applicable., Score: 1.0                                                         |                                                         | `sc2_summary` to provide                                                 |                        |
+    |    |                        |                           | buying them back later at |                       | trade, also known as      |                                          | unnecessary preamble. The                                  | query) is not met.,                                                                                 |                                    | not required and                                                           | them., Score: 1.0                                                               |                                                                                 |                                                         | an answer, which aligns                                                  |                        |
+    |    |                        |                           | a lower price, aiming to  |                       | short selling or          |                                          | information provided is                                    | Score: 1.0                                                                                          |                                    | correctly not called.,                                                     |                                                                                 |                                                                                 |                                                         | with the property's                                                      |                        |
+    |    |                        |                           | profit from a decline in  |                       | shorting, is a            |                                          | relevant and concise.,                                     |                                                                                                     |                                    | Score: 1.0                                                                 |                                                                                 |                                                                                 |                                                         | implication that it *can*                                                |                        |
+    |    |                        |                           | the security's price. If  |                       | speculative trading       |                                          | Score: 1.0                                                 |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | bypass for usage                                                         |                        |
+    |    |                        |                           | the price of the security |                       | strategy where an         |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | questions, but                                                           |                        |
+    |    |                        |                           | falls, the investor buys  |                       | investor sells borrowed   |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | *shouldn't* for others.,                                                 |                        |
+    |    |                        |                           | the shares back at a      |                       | securities with the       |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | Score: 1.0                                                               |                        |
+    |    |                        |                           | lower price, returns them |                       | expectation of buying     |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | to the lender, and keeps  |                       | them back later at a      |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | the difference as profit. |                       | lower price. The goal is  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | However, if the price of  |                       | to profit from a decline  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | the security rises, the   |                       | in the security's price.  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | investor must buy them    |                       | If the price falls, the   |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | back at a higher price,   |                       | investor buys the shares  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           | which results in a loss.  |                       | back at a lower price,    |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | returns them to the       |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | lender, and keeps the     |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | difference as profit.     |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | Conversely, if the price  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | rises, the investor must  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | buy them back at a higher |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | price, resulting in a     |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | loss."}                   |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                        |                           |                           |                       | name='sc2_summary'        |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    +----+------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: term_discovery_2
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+-------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                  | expected_response         | actual_response           | expected_tool_calls   | actual_tool_calls         | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+=========================+===========================+===========================+=======================+===========================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | What is gambler's ruin? | Gambler's Ruin is a       | Gambler's Ruin is a       |                       | id='adk-63f4407e-52fc-455 | Status: PASSED, Score:                   | Reasoning: The final                                       | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The agent did                                                   | Reasoning: The agent                                                            | Reasoning: The tool                                                             | Reasoning: The agent                                    | Reasoning: The user                                                      | Status: PASSED, Score: |
+    |    |                         | concept in probability    | concept in probability    |                       | f-9d59- 628f36394236'     | 1.0                                      | answer directly addresses                                  | query "What is gambler's                                                                            | 1.0                                | not call `sc2_prefs`. The                                                  | called `sc2_memory` as                                                          | `sc2_terms` was not                                                             | called `sc2_summary` at                                 | prompt "What is gambler's                                                | 1.0                    |
+    |    |                         | theory. It describes a    | theory. It posits that a  |                       | args={'request': "What is |                                          | the user's question by                                     | ruin?" is not an                                                                                    |                                    | user prompt "What is                                                       | the first step (step 0).                                                        | called by the agent.                                                            | step 1, which is the last                               | ruin?" is a factual                                                      |                        |
+    |    |                         | scenario where a gambler, | gambler possessing a      |                       | gambler's ruin?"}         |                                          | providing a clear                                          | ambiguous query; it is a                                                                            |                                    | gambler's ruin?" does not                                                  | The tools `sc2_terms` and                                                       | Since `sc2_terms` was not                                                       | step in the                                             | question, not a usage-                                                   |                        |
+    |    |                         | beginning with a finite   | finite sum of money,      |                       | name='sc2_memory'         |                                          | definition of "gambler's                                   | direct question asking                                                                              |                                    | require the storage of                                                     | `fncall_pipeline` were                                                          | called, the condition for                                                       | `tool_calls_and_response`                               | related question. The                                                    |                        |
+    |    |                         | sum of money, will        | engaged in a game against |                       | id='adk- bf19929c-3381-4a |                                          | ruin" without any                                          | for a definition.                                                                                   |                                    | profile data, so the                                                       | not called at all in the                                                        | `sc2_memory` to be called                                                       | sequence., Score: 1.0                                   | agent correctly executed                                                 |                        |
+    |    |                         | inevitably lose all of    | an opponent with an       |                       | b1-80b6-62b327127e4d'     |                                          | extraneous conversational                                  | Therefore, the condition                                                                            |                                    | `sc2_prefs` tool was not                                                   | response. Therefore,                                                            | *after* `sc2_terms` did                                                         |                                                         | a workflow for a factual                                                 |                        |
+    |    |                         | their funds.              | infinite amount of        |                       | args={'request':          |                                          | elements or irrelevant                                     | for evaluating inference                                                                            |                                    | required to be called.,                                                    | `sc2_memory` was called                                                         | not occur, and thus the                                                         |                                                         | query rather than                                                        |                        |
+    |    |                         |                           | capital, will inevitably  |                       | "Gambler's ruin is a      |                                          | information., Score: 1.0                                   | from *ambiguous* queries                                                                            |                                    | Score: 1.0                                                                 | before either of them.,                                                         | constraint "only for new                                                        |                                                         | bypassing it, which                                                      |                        |
+    |    |                         |                           | deplete their entire      |                       | concept in probability    |                                          |                                                            | is not applicable. The                                                                              |                                    |                                                                            | Score: 1.0                                                                      | memories" was not                                                               |                                                         | demonstrates its ability                                                 |                        |
+    |    |                         |                           | fortune. This outcome is  |                       | theory. It states that a  |                                          |                                                            | agent accurately inferred                                                                           |                                    |                                                                            |                                                                                 | violated., Score: 1.0                                                           |                                                         | to discern when to apply                                                 |                        |
+    |    |                         |                           | irrespective of whether   |                       | gambler with a finite     |                                          |                                                            | the explicit goal of the                                                                            |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | its standard workflow                                                    |                        |
+    |    |                         |                           | the game is fair or even  |                       | amount of money, playing  |                                          |                                                            | user, which was to get a                                                                            |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | versus when a bypass (for                                                |                        |
+    |    |                         |                           | if it offers a slight     |                       | against an opponent with  |                                          |                                                            | definition. Since the                                                                               |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | usage questions) might be                                                |                        |
+    |    |                         |                           | advantage to the gambler. |                       | an infinite amount of     |                                          |                                                            | property's specific                                                                                 |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | appropriate., Score: 1.0                                                 |                        |
+    |    |                         |                           |                           |                       | money, will eventually    |                                          |                                                            | condition (ambiguous                                                                                |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | lose all of their money.  |                                          |                                                            | queries) was not met, the                                                                           |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | This outcome occurs even  |                                          |                                                            | property is considered                                                                              |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | in a fair game or a game  |                                          |                                                            | fulfilled., Score: 1.0                                                                              |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | biased in the gambler's   |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | favor."}                  |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                         |                           |                           |                       | name='sc2_summary'        |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    +----+-------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: function_aware
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+---------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                    | expected_response         | actual_response           | expected_tool_calls   | actual_tool_calls         | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+===========================+===========================+===========================+=======================+===========================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | Tell me what functions    | `fncall_pipeline` knows   | `fncall_pipeline` can     |                       | id='adk-66d3704a-e420-4cf | Status: PASSED, Score:                   | Reasoning: The final                                       | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The agent's                                                     | Reasoning: The agent did                                                        | Reasoning: The agent did                                                        | Reasoning: The agent did                                | Reasoning: The user's                                                    | Status: PASSED, Score: |
+    |    | `fncall_pipeline` knows   | the following functions:  | access the following      |                       | e-85ac- 2529f03068f3'     | 1.0                                      | answer directly provides                                   | query is direct and                                                                                 | 1.0                                | response does not include                                                  | not call `sc2_memory`,                                                          | not call `sc2_memory` or                                                        | not call `sc2_summary` in                               | prompt is a direct usage-                                                | 1.0                    |
+    |    | by checking `sc2_fnplan`. | get_symbol_1,             | functions:  *             |                       | args={'request': 'List    |                                          | the requested list of                                      | unambiguous, explicitly                                                                             |                                    | a call to `sc2_prefs`.                                                     | `sc2_terms`, or                                                                 | `sc2_terms` in its                                                              | its response. Since                                     | related question about                                                   |                        |
+    |    |                           | get_symbols_1,            | `get_symbol_1` *          |                       | all functions defined     |                                          | functions without                                          | asking for a list of                                                                                |                                    | The user's prompt is a                                                     | `fncall_pipeline` in its                                                        | response, nor did the                                                           | `sc2_summary` was not                                   | tool functionality. The                                                  |                        |
+    |    |                           | get_name_1,               | `get_symbols_1` *         |                       | within sc2_fnplan'}       |                                          | additional text or                                         | functions and specifying                                                                            |                                    | question about tool                                                        | response. Since the                                                             | user's prompt involve new                                                       | used, the condition of                                  | agent responded by                                                       |                        |
+    |    |                           | get_symbol_quote_1,       | `get_name_1` *            |                       | name='sc2_fnplan'         |                                          | conversational fluff,                                      | the tool to check                                                                                   |                                    | functionality and does                                                     | premise for the ordering                                                        | memories. Therefore, the                                                        | the property is not met,                                | directly invoking the                                                    |                        |
+    |    |                           | get_market_status_1,      | `get_symbol_quote_1` *    |                       |                           |                                          | making it direct and to                                    | (`sc2_fnplan`).                                                                                     |                                    | not require storing                                                        | condition is not met, the                                                       | property is not                                                                 | and thus it is not                                      | specified tool,                                                          |                        |
+    |    |                           | get_market_session_1,     | `get_market_status_1` *   |                       |                           |                                          | the point., Score: 1.0                                     | Therefore, there was no                                                                             |                                    | profile data. Thus,                                                        | property is not                                                                 | applicable., Score: 1.0                                                         | applicable., Score: 1.0                                 | `sc2_fnplan`, without                                                    |                        |
+    |    |                           | get_company_peers_1,      | `get_market_session_1` *  |                       |                           |                                          |                                                            | need for the agent to                                                                               |                                    | `sc2_prefs` was not                                                        | applicable in a violating                                                       |                                                                                 |                                                         | engaging in any                                                          |                        |
+    |    |                           | get_local_datetime,       | `get_company_peers_1` *   |                       |                           |                                          |                                                            | infer an underlying goal                                                                            |                                    | called when it was not                                                     | sense., Score: 1.0                                                              |                                                                                 |                                                         | extraneous steps that                                                    |                        |
+    |    |                           | get_last_market_close,    | `get_local_datetime` *    |                       |                           |                                          |                                                            | from an ambiguous query.,                                                                           |                                    | required, fulfilling the                                                   |                                                                                 |                                                                                 |                                                         | might be part of a                                                       |                        |
+    |    |                           | get_exchange_codes_1,     | `get_last_market_close` * |                       |                           |                                          |                                                            | Score: 1.0                                                                                          |                                    | property., Score: 1.0                                                      |                                                                                 |                                                                                 |                                                         | broader workflow, thus                                                   |                        |
+    |    |                           | get_exchange_code_1,      | `get_exchange_codes_1` *  |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | demonstrating its ability                                                |                        |
+    |    |                           | get_financials_1,         | `get_exchange_code_1` *   |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | to bypass such a workflow                                                |                        |
+    |    |                           | get_daily_candlestick_2,  | `get_financials_1` *      |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | for direct usage                                                         |                        |
+    |    |                           | get_custom_candlestick_2, | `get_daily_candlestick_2` |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         | inquiries., Score: 1.0                                                   |                        |
+    |    |                           | get_ticker_overview_2, ge | * `get_custom_candlestick |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           | t_recommendation_trends_1 | _2` *                     |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           | , get_news_with_sentiment | `get_ticker_overview_2` * |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           | _2, get_wiki_grounding,   | `get_recommendation_trend |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           | get_search_grounding.     | s_1` * `get_news_with_sen |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                           | timent_2` *               |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                           | `get_wiki_grounding` *    |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                           | `get_search_grounding`    |                       |                           |                                          |                                                            |                                                                                                     |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    +----+---------------------------+---------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: tool_aware
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+------------------------+-------------------------+-----------------------+-----------------------+---------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                 | expected_response       | actual_response       | expected_tool_calls   | actual_tool_calls   | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+========================+=========================+=======================+=======================+=====================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | What tools do you know | I can use the following | I know how to use the |                       |                     | Status: PASSED, Score:                   | Reasoning: The agent's                                     | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The user's                                                      | Reasoning: The agent did                                                        | Reasoning: The agent did                                                        | Reasoning: The agent did                                | Reasoning: The user's                                                    | Status: PASSED, Score: |
+    |    | how to use?            | tools: sc2_memory,      | following tools:      |                       |                     | 1.0                                      | response directly answers                                  | query "What tools do you                                                                            | 1.0                                | prompt was a question                                                      | not make any tool calls.                                                        | not make any tool calls.                                                        | not make any tool calls,                                | prompt was a usage-                                                      | 1.0                    |
+    |    |                        | sc2_prefs,              | `sc2_memory`,         |                       |                     |                                          | the user's question by                                     | know how to use?" is a                                                                              |                                    | about the agent's                                                          | Therefore, the condition                                                        | Therefore, the condition                                                        | which means `sc2_summary`                               | related question. The                                                    |                        |
+    |    |                        | fncall_pipeline,        | `sc2_prefs`,          |                       |                     |                                          | listing the tools it                                       | direct and unambiguous                                                                              |                                    | capabilities, not a                                                        | of calling `sc2_memory`                                                         | of calling `sc2_memory`                                                         | was not used. Therefore,                                | agent's response, "No                                                    |                        |
+    |    |                        | sc2_fnplan, sc2_terms,  | `fncall_pipeline`,    |                       |                     |                                          | knows how to use, without                                  | question. There is no                                                                               |                                    | request to store profile                                                   | before `sc2_terms` or                                                           | after `sc2_terms` is not                                                        | the condition that it is                                | intermediate steps were                                                  |                        |
+    |    |                        | sc2_summary.            | `sc2_fnplan`,         |                       |                     |                                          | any additional                                             | underlying goal to infer                                                                            |                                    | data. Therefore, calling                                                   | `fncall_pipeline` is not                                                        | applicable as neither of                                                        | called last "when used"                                 | taken," indicates that it                                                |                        |
+    |    |                        |                         | `sc2_terms`, and      |                       |                     |                                          | elaboration or                                             | beyond directly answering                                                                           |                                    | `sc2_prefs` was not                                                        | applicable as none of                                                           | these tools were used.,                                                         | is satisfied as it was                                  | bypassed any complex                                                     |                        |
+    |    |                        |                         | `sc2_summary`.        |                       |                     |                                          | unnecessary information.,                                  | the question. Therefore,                                                                            |                                    | required. The agent did                                                    | these tools were used.,                                                         | Score: 1.0                                                                      | not used at all., Score:                                | workflow that might                                                      |                        |
+    |    |                        |                         |                       |                       |                     |                                          | Score: 1.0                                                 | the condition for this                                                                              |                                    | not call any tools, which                                                  | Score: 1.0                                                                      |                                                                                 | 1.0                                                     | involve tool calls or                                                    |                        |
+    |    |                        |                         |                       |                       |                     |                                          |                                                            | property (an ambiguous                                                                              |                                    | aligns with not calling                                                    |                                                                                 |                                                                                 |                                                         | planning, directly                                                       |                        |
+    |    |                        |                         |                       |                       |                     |                                          |                                                            | query) was not met.,                                                                                |                                    | `sc2_prefs` when not                                                       |                                                                                 |                                                                                 |                                                         | addressing the nature of                                                 |                        |
+    |    |                        |                         |                       |                       |                     |                                          |                                                            | Score: 1.0                                                                                          |                                    | required., Score: 1.0                                                      |                                                                                 |                                                                                 |                                                         | the question., Score: 1.0                                                |                        |
+    +----+------------------------+-------------------------+-----------------------+-----------------------+---------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    ********************************************************************
+    Eval Set Id: sc2_eval_suite
+    Eval Id: create_memory_1
+    Overall Eval Status: PASSED
+    ---------------------------------------------------------------------
+    Metric: rubric_based_final_response_quality_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    Rubric Scores:
+    Rubric: The agent's response is direct and to the point., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: rubric_based_tool_use_quality_v1, Status: PASSED, Score: 1.0, Threshold: 1.0
+    Rubric Scores:
+    Rubric: The agent calls `sc2_prefs` to store profile data when required., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent calls `sc2_summary` last when used., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    Rubric: The agent can bypass the workflow for usage related questions., Score: 1.0, Reasoning: This is an aggregated score derived from individual entries. Please refer to individual entries in each invocation for actual rationale from the model.
+    ---------------------------------------------------------------------
+    Metric: hallucinations_v1, Status: PASSED, Score: 1.0, Threshold: 0.8
+    ---------------------------------------------------------------------
+    Invocation Details:
+    +----+---------------------------+--------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    |    | prompt                    | expected_response        | actual_response           | expected_tool_calls   | actual_tool_calls         | rubric_based_final_response_quality_v1   | Rubric: The agent's response is direct and to the point.   | Rubric: The agent's response accurately infers the user's underlying goal from ambiguous queries.   | rubric_based_tool_use_quality_v1   | Rubric: The agent calls `sc2_prefs` to store profile data when required.   | Rubric: The agent calls `sc2_memory` before `sc2_terms` or `fncall_pipeline`.   | Rubric: The agent calls `sc2_memory` after `sc2_terms` only for new memories.   | Rubric: The agent calls `sc2_summary` last when used.   | Rubric: The agent can bypass the workflow for usage related questions.   | hallucinations_v1      |
+    +====+===========================+==========================+===========================+=======================+===========================+==========================================+============================================================+=====================================================================================================+====================================+============================================================================+=================================================================================+=================================================================================+=========================================================+==========================================================================+========================+
+    |  0 | My local advisor is SC at | I have stored your local | I already know that the   |                       | id='adk-9aaffd5a-287d-48d | Status: PASSED, Score:                   | Reasoning: The final                                       | Reasoning: The user's                                                                               | Status: PASSED, Score:             | Reasoning: The user                                                        | Reasoning: The agent's                                                          | Reasoning: The agent's                                                          | Reasoning: The agent's                                  | Reasoning: The user                                                      | Status: PASSED, Score: |
+    |    | JPMorgan Chase,           | advisor's information.   | local advisor is SC at    |                       | a-9a62- 4e346e31cb20'     | 1.0                                      | answer directly addresses                                  | query is a clear                                                                                    | 1.0                                | prompt contained profile                                                   | response did not include                                                        | response did not include                                                        | response did not include                                | prompt was not a "usage                                                  | 1.0                    |
+    |    | 212-736-2001.             |                          | JPMorgan Chase, and their |                       | args={'request': 'My      |                                          | the user's statement                                       | statement of profile                                                                                |                                    | data (advisor name,                                                        | calls to `sc2_memory`,                                                          | calls to `sc2_memory` or                                                        | a call to `sc2_summary`.                                | related question," so                                                    |                        |
+    |    |                           |                          | phone number is           |                       | local advisor is SC at    |                                          | without any extraneous                                     | data, not an ambiguous                                                                              |                                    | company, phone number),                                                    | `sc2_terms`, or                                                                 | `sc2_terms`. Therefore,                                                         | Therefore, the property                                 | this property is not                                                     |                        |
+    |    |                           |                          | 212-736-2001.             |                       | JPMorgan Chase,           |                                          | information or                                             | query. The agent                                                                                    |                                    | and the agent                                                              | `fncall_pipeline`.                                                              | the property is not                                                             | is not applicable.,                                     | applicable to the current                                                |                        |
+    |    |                           |                          |                           |                       | 212-736-2001.'}           |                                          | conversational filler. It                                  | correctly inferred the                                                                              |                                    | appropriately called                                                       | Therefore, the property                                                         | applicable., Score: 1.0                                                         | Score: 1.0                                              | interaction., Score: 1.0                                                 |                        |
+    |    |                           |                          |                           |                       | name='sc2_prefs'          |                                          | confirms the information                                   | user's goal was to                                                                                  |                                    | `sc2_prefs` to handle                                                      | is not applicable.,                                                             |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          | provided by the user.,                                     | provide profile data, as                                                                            |                                    | this information., Score:                                                  | Score: 1.0                                                                      |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          | Score: 1.0                                                 | evidenced by its use of                                                                             |                                    | 1.0                                                                        |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | the `sc2_prefs` tool,                                                                               |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | which is designed for                                                                               |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | storing profile data                                                                                |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | according to the                                                                                    |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | instructions. The                                                                                   |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | response then confirms                                                                              |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    |    |                           |                          |                           |                       |                           |                                          |                                                            | the data., Score: 1.0                                                                               |                                    |                                                                            |                                                                                 |                                                                                 |                                                         |                                                                          |                        |
+    +----+---------------------------+--------------------------+---------------------------+-----------------------+---------------------------+------------------------------------------+------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+------------------------------------+----------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------------------------------+---------------------------------------------------------+--------------------------------------------------------------------------+------------------------+
+    
+    
+    
+    2025-12-01 06:50:40,922 - ERROR - base_events.py:1821 - Unclosed client session
+    client_session: <aiohttp.client.ClientSession object at 0x7b392c0e12b0>
+    2025-12-01 06:50:40,922 - ERROR - base_events.py:1821 - Unclosed connector
+    connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7410>, 163304.64493107), (<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7230>, 163307.551887757), (<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7890>, 163311.3517091)])']
+    connector: <aiohttp.connector.TCPConnector object at 0x7b392c0e1370>
+    2025-12-01 06:50:40,924 - ERROR - base_events.py:1821 - Unclosed client session
+    client_session: <aiohttp.client.ClientSession object at 0x7b392a7ae420>
+    2025-12-01 06:50:40,924 - ERROR - base_events.py:1821 - Unclosed connector
+    connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7050>, 163304.441401676)])']
+    connector: <aiohttp.connector.TCPConnector object at 0x7b392a7aca70>
+    2025-12-01 06:50:40,925 - ERROR - base_events.py:1821 - Unclosed client session
+    client_session: <aiohttp.client.ClientSession object at 0x7b3929b58c20>
+    2025-12-01 06:50:40,925 - ERROR - base_events.py:1821 - Unclosed connector
+    connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7d70>, 163300.374662593), (<aiohttp.client_proto.ResponseHandler object at 0x7b392a760170>, 163301.411946312)])']
+    connector: <aiohttp.connector.TCPConnector object at 0x7b3929b58b60>
+    2025-12-01 06:50:40,927 - ERROR - base_events.py:1821 - Unclosed client session
+    client_session: <aiohttp.client.ClientSession object at 0x7b392a778f50>
+    2025-12-01 06:50:40,927 - ERROR - base_events.py:1821 - Unclosed connector
+    connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7b392aed7ef0>, 163299.872841362), (<aiohttp.client_proto.ResponseHandler object at 0x7b392a761130>, 163300.01212217), (<aiohttp.client_proto.ResponseHandler object at 0x7b392a760a10>, 163300.013835746), (<aiohttp.client_proto.ResponseHandler object at 0x7b392a760770>, 163301.746375534)])']
+    connector: <aiohttp.connector.TCPConnector object at 0x7b392a778e90>
+
+
+## Conclusion
+
+In applying Google's ADK to SC1, the result is a more capable SC2 which is ready to grow beyond it's first edition roots. Unresolved issues from SC1 remain. Parallelism will enable large work loads, like a stack of news requiring analysis, or background processes to drive self-improvement. This will enable a better user experience when locally running models are later employed to scale further. With the addition of agentic capabilities StockChat has room to grow again.
+
+__I hope you'll stick around to see how far the project gets! Thanks for taking the time to check out my notebook!__
+
+# __Appendix__
+
+## Gemini Baseline Check
 
 
 ```python
@@ -388,31 +1111,14 @@ config_with_search = types.GenerateContentConfig(
     temperature=0.0
 )
 
-chat = api.client.chats.create(
-    model=api(Gemini.Model.GEN), 
-    config=config_with_search, 
+chat = api.args.CLIENT.chats.create(
+    model=api(Api.Model.GEN),
+    config=config_with_search,
     history=[]) # Ignoring the part about dark elves, and tengwar.
 
 response = chat.send_message('Do you know anything about the stock market?')
 Markdown(response.text)
 ```
-
-
-
-
-Yes, I do. The stock market is a place where shares of publicly traded companies are bought and sold. It allows companies to raise capital and investors to potentially grow their wealth. The stock market can influence the products you buy, the jobs available, and even your retirement plans.
-
-Here are some key aspects of the stock market:
-
-*   **Function:** Companies issue shares on the stock market to raise capital for business expansion. Investors buy shares to potentially receive dividends, vote in corporate elections, or sell the shares at a higher price.
-*   **Participants:** The stock market involves both investors and traders. Investors typically take a long-term approach, while traders aim to capitalize on short-term market volatility.
-*   **Exchanges:** Stocks are bought and sold on exchanges, such as the New York Stock Exchange (NYSE) and the Nasdaq. These exchanges provide a platform for trading and act as guarantors of settlement.
-*   **Market Size:** The stock market has grown significantly over the years. The total market capitalization of all publicly traded stocks worldwide rose from US$2.5 trillion in 1980 to US$111 trillion by the end of 2023.
-*   **Market Indicators:** The stock market is often considered an indicator of a country's economic strength and development. Rising share prices tend to be associated with increased business investment.
-
-
-
-
 
 
 ```python
@@ -421,100 +1127,10 @@ Markdown(response.text)
 ```
 
 
-
-
-Okay, I can provide you with some information regarding AMZN (Amazon) stock. Based on the most recent information available, here's a summary:
-
-**Current Status:**
-
-*   As of November 8, 2025, AMZN is trading around $244.41 - $245.10.
-*   Amazon's market capitalization is approximately $2.61 trillion.
-*   The stock has fluctuated between $238.49 and $245.50 today.
-*   The 52-week range is $161.38 to $258.60.
-*   The next earnings report is expected on January 29, 2026.
-
-**Analyst Ratings and Price Targets:**
-
-*   The consensus among analysts is "Strong Buy".
-*   The average price target from analysts is around $296.26 - $297.03.
-*   Some analysts have a high forecast of $340.
-
-**Forecasts for the End of 2025:**
-
-*   Predictions vary, but several sources suggest a price between $214 and $298 by the end of 2025.
-*   One source estimates AMZN will hit $250 by the end of 2025.
-*   Another projects a range of $242.89 and $296.87, with an average near $269.88.
-
-**Factors Influencing the Stock Price:**
-
-*   **Earnings Reports:** Amazon's share price is impacted by quarterly earnings. The last earnings report beat expectations.
-*   **AWS Growth:** Amazon Web Services (AWS), particularly its AI-fueled growth, is a key driver.
-*   **Consumer Spending:** Consumer spending trends influence Amazon's revenue and profitability, especially in retail.
-*   **Economic Conditions:** High inflation, changes in consumer spending, and interest rate hikes can all have an impact.
-*   **New Initiatives:** New business initiatives can also affect the stock price.
-*   **Cloud Computing Demand:** Changes in cloud computing demand influence the stock price.
-
-**Recent News and Developments:**
-
-*   Amazon signed a multiyear deal with OpenAI for computing power.
-*   Amazon is launching a low-cost shopping app, Amazon Bazaar, in multiple countries.
-*   New Echo products with upgraded Alexa and AZ3 chips are being launched.
-
-**General Sentiment:**
-
-*   The overall sentiment is bullish, with analysts optimistic about Amazon's short-term prospects.
-*   Amazon is considered a leader in e-commerce with opportunities for growth.
-
-**Important Note:** Stock market investments can be risky, and forecasts are not guaranteed. You should consult with a financial advisor before making any investment decisions.
-
-
-
-
-
 ```python
 response = chat.send_message('''Tell me about AMZN current share price, short-term trends, and bullish versus bearish predictions''')
 Markdown(response.text)
 ```
-
-
-
-
-Here's an overview of AMZN (Amazon) stock, including its current share price, short-term trends, and bullish versus bearish predictions:
-
-**Current Share Price:**
-
-*   As of November 8, 2025, the current price of AMZN is around $244.41.
-*   Throughout the day, AMZN has fluctuated between $238.49 and $245.50.
-
-**Short-Term Trends:**
-
-*   **Mixed Signals:** AMZN has shown a 0.56% increase in the last 24 hours. However, it has fallen by -2.28% compared to the previous week.
-*   **Positive Recent Performance:** The price has risen in 7 of the last 10 days and is up by 9.01% over the past 2 weeks.
-*   **Technical Indicators:** Technical analysis indicates a bullish sentiment in the short term.
-*   **Horizontal Trend:** The stock is moving within a wide and horizontal trend, which is expected to continue.
-*   **Support and Resistance:** The $240-$245 range is considered a strong support level.
-
-**Bullish Predictions:**
-
-*   **Strong Buy Consensus:** The consensus rating among analysts is "Strong Buy".
-*   **Upside Potential:** The average price target from analysts is around $296.26, suggesting an upside potential of over 18%. Some analysts have a high forecast of $340.
-*   **Revenue Growth:** Amazon's revenue is expected to rise significantly in the coming years.
-*   **AWS and AI:** Growth in Amazon Web Services (AWS), fueled by AI, is a key driver for bullish sentiment.
-*   **Analyst Upgrades:** Analysts are raising price targets, citing Amazon's role in the AI ecosystem.
-*   **Long-Term Growth:** Bullish forecasts see the share price potentially reaching $431 by 2030.
-
-**Bearish Predictions:**
-
-*   **Potential Downturn:** Some forecasts predict a slight decrease in the short term, with one source suggesting a price of $242.71 by December 7, 2025.
-*   **Overbought Conditions:** Amazon's Relative Strength Index (RSI) is above 70, signaling overbought conditions, which could lead to a pullback.
-*   **Profit-Taking:** After a sharp move higher, some profit-taking could occur, especially if the broader market declines.
-*   **Long-Term Bearish Case:** A bearish scenario suggests the stock price could range between $233.09 and $350.88 in 2030.
-*   **Sell Signal:** One source indicates a massive sell signal on the 1-week time frame as the price hit a 5-year Higher Highs trendline.
-
-**In summary:** The prevailing sentiment leans towards a bullish outlook for AMZN, driven by strong fundamentals, growth in AWS and AI, and positive analyst ratings. However, some technical indicators suggest the possibility of a short-term pullback.
-
-
-
 
 
 ```python
@@ -523,33 +1139,10 @@ Markdown(response.text)
 ```
 
 
-
-
-Please note that there seems to be some confusion. MGM Studios was acquired by Amazon in 2022 and is no longer a publicly traded company with its own stock ticker.
-
-The ticker symbol "MGM" refers to MGM Resorts International, a hospitality and entertainment company. It trades on the New York Stock Exchange (NYSE) under the ticker symbol "MGM". As of November 7, 2025, the stock price for MGM Resorts International was $32.66.
-
-
-
-
-
 ```python
 response = chat.send_message('''What was the last open,close,high,low data for AMZN again?''')
 Markdown(response.text)
 ```
-
-
-
-
-Here's the requested data for AMZN (Amazon) as of November 7, 2025:
-
-*   **Open:** $242.90 or $242.99
-*   **Close:** $244.41
-*   **High:** $244.90 or $245.50
-*   **Low:** $238.49
-
-
-
 
 
 ```python
@@ -558,35 +1151,9 @@ Present the data with multiple columns for display in markdown.''')
 Markdown(response.text)
 ```
 
+## Previously on Kaggle: StockChat 1.0
 
-
-
-It is difficult to provide exact, real-time intraday historical data for the past month (October 9, 2025 - November 8, 2025) without access to a specialized financial data service. However, I can provide a sample of the data available from the beginning of November 2025, and some data points from late October 2025 to give you an idea.
-
-**Please note:** This is not a complete dataset, and real-time data may vary.
-
-| Date       | Open      | Close     | High      | Low       |
-| :----------- | :-------- | :-------- | :-------- | :-------- |
-| Nov 7, 2025  | $242.90   | $244.41   | $244.90   | $238.49   |
-| Nov 6, 2025  | $249.16   | $243.04   | $250.38   | $242.17   |
-| Nov 5, 2025  | $249.03   | $250.20   | $251.00   | $246.16   |
-| Nov 4, 2025  | $250.38   | $249.32   | $257.01   | $248.66   |
-| Nov 3, 2025  | $255.36   | $254.00   | $258.60   | $252.90   |
-| Oct 31, 2025 | $250.10   | $244.22   | $250.50   | $243.98   |
-| Oct 30, 2025 | $227.06   | $222.86   | $228.44   | $222.75   |
-| Oct 29, 2025 | $231.67   | $230.30   | $232.82   | $227.76   |
-| Oct 28, 2025 | $228.22   | $229.25   | $231.49   | $226.21   |
-| Oct 27, 2025 | $227.66   | $226.97   | $228.40   | $225.54   |
-| Oct 26, 2025 | $221.09   | $224.21   | N/A       | N/A       |
-
-For more precise data, I recommend consulting a financial data provider like Nasdaq, or Trading Economics.
-
-
-
-
-# Previously on Kaggle: StockChat 1.0
-
-## Validation BaseModels
+### Validation BaseModels
 
 
 ```python
@@ -598,7 +1165,7 @@ class RestStatus(Enum):
     AUTH = "NOT_AUTHORIZED"
 
 class StopGeneration(BaseModel):
-    result: str = Gemini.Const.Stop()
+    result: str = Api.Const.Stop()
 
 class RestResultPoly(BaseModel):
     request_id: Optional[str] = None
@@ -1033,7 +1600,7 @@ class TrendsResult(BaseModel):
         return self.results
 ```
 
-## Contents Memory
+### Contents Memory
 
 
 ```python
@@ -1046,8 +1613,10 @@ class Memory:
         Convert timestamps according to the rules before including them. Think step by step.
         """
         self.revery = {}
+        self.contents = []
         self.prompt = None
         self.summary = None
+        self.response = None
     
     def set_prompt(self, prompt):
         self.prompt = f"""
@@ -1083,12 +1652,12 @@ class Memory:
             "summary": self.summary, 
             "contents": self.contents
         }
-        self.contents = None
+        self.contents = []
 
 memory = Memory()
 ```
 
-## Retrieval-Augmented Generation
+### Retrieval-Augmented Generation
 
 
 ```python
@@ -1112,7 +1681,7 @@ class RetrievalAugmentedGenerator:
             metadata={"hnsw:space": "cosine"})
         logging.getLogger("chromadb").setLevel(logging.ERROR) # suppress warning on existing id
         self.set_holidays("US", ["09-01-2025","10-13-2025","11-11-2025","11-27-2025","12-25-2025"])
-        self.generated_events("US")
+        #self.generated_events("US")
 
     def set_holidays(self, exchange_code: str, holidays: list):
         self.holidays[exchange_code] = [datetime.strptime(h, "%m-%d-%Y").date() for h in holidays]
@@ -1182,15 +1751,21 @@ class RetrievalAugmentedGenerator:
             Omit all other chat and details. Do not use sentences."""
         progress = tqdm(total=1, desc=f"Generate {exchange_code}->{event}")
         response = self.get_exchanges_csv(prompt).candidates[0].content
-        if api.Const.Stop() in f"{response.parts[-1].text}":
-            progress.close()
-            api.generation_fail()
-            time.sleep(api.dt_between)
-            return self.generate_event(exchange_code, event)
-        else:
-            response = self.get_event_date(response.parts[-1].text, exchange_code, event)
-            progress.update(1)
-            return response
+        try:
+            if Api.Const.Stop() in f"{response.parts[-1].text}":
+                self.generate_event_failed(progress, exchange_code, event)
+            else:
+                response = self.get_event_date(response.parts[-1].text, exchange_code, event)
+                progress.update(1)
+                return response
+        except Exception as e:
+            self.generate_event_failed(progress, exchange_code, event)
+
+    def generate_event_failed(self, progress: tqdm, exchange_code: str, event: MarketEvent):
+        progress.close()
+        api.generation_fail()
+        time.sleep(api.dt_between)
+        return self.generate_event(exchange_code, event)
 
     def generated_events(self, exchange_code: str) -> GeneratedEvent:
         # Check for an existing GeneratedEvent object having updates.
@@ -1248,7 +1823,7 @@ class RetrievalAugmentedGenerator:
 
     def add_api_document(self, query: str, api_response: str, topic: str, source: str = "add_api_document"):
         self.embed_fn.document_mode = True # Switch to document mode.
-        splitter = RecursiveJsonSplitter(max_chunk_size=Gemini.Const.ChunkMax())
+        splitter = RecursiveJsonSplitter(max_chunk_size=Api.Const.ChunkMax())
         docs = splitter.create_documents(texts=[api_response], convert_lists=True)
         ids = list(map(str, range(self.db.count(), self.db.count()+len(docs))))
         content = [json.dumps(doc.page_content) for doc in docs]
@@ -1427,7 +2002,7 @@ class RetrievalAugmentedGenerator:
         # Generate the response.
         response = api.retriable(
             self.client.models.generate_content,
-            model=api(Gemini.Model.GEN),
+            model=api(Api.Model.GEN),
             config=self.config_temp,
             contents=prompt)
         # Check for generated code and store in memory.
@@ -1459,7 +2034,7 @@ class RetrievalAugmentedGenerator:
             raise e
 ```
 
-## Wiki Grounding
+### Wiki Grounding
 
 
 ```python
@@ -1477,7 +2052,7 @@ class WikiGroundingGenerator:
             self.splitter = HTMLSemanticPreservingSplitter(
                 headers_to_split_on=[("h2", "Main Topic"), ("h3", "Sub Topic")],
                 separators=["\n\n", "\n", ". ", "! ", "? "],
-                max_chunk_size=Gemini.Const.ChunkMax(),
+                max_chunk_size=Api.Const.ChunkMax(),
                 chunk_overlap=50,
                 preserve_links=True,
                 preserve_images=True,
@@ -1499,11 +2074,11 @@ class WikiGroundingGenerator:
                 for i in range(len(pages)):
                     if tqdm(api.similarity([topic + " company", pages[i]]) > p_topic_match, 
                             desc= "Score wiki search by similarity to topic"):
-                        page_html = api.get(f"https://en.wikipedia.org/wiki/{pages[i]}")
+                        page_html = Api.get(f"https://en.wikipedia.org/wiki/{pages[i]}")
                         chunks = [chunk.page_content for chunk in self.splitter.split_text(page_html)]
                         self.rag.add_wiki_documents(topic, chunks)
                         return self.rag.generate_with_wiki_passages(query, topic, chunks).text
-            return StopGeneration().result
+            return Api.Const.Stop()
 
     def code_handler(self, element: Tag) -> str:
         data_lang = element.get("data-lang")
@@ -1511,7 +2086,7 @@ class WikiGroundingGenerator:
         return code_format
 ```
 
-## Search Grounding
+### Search Grounding
 
 
 ```python
@@ -1551,18 +2126,20 @@ class SearchGroundingGenerator:
     def get_grounding(self, query: str, topic: str):
         contents = [types.Content(role="user", parts=[types.Part(text=query)])]
         contents += f"""
-        You're a search assistant that provides grounded answers to questions about {topic}. You will provide only 
-        results that discuss {topic}. Be brief and specific in answering and omit extra details.
-        If an answer is not possible respond with: I don't know."""
+        You're a search assistant that provides answers to questions about {topic}.
+        Do not discuss alternative topics of interest. Do not discuss similar topics.
+        You will provide answers that discuss only {topic}. 
+        You may discuss the owner or parent of {topic} when no other answer is possible.
+        Otherwise respond with: I don't know."""
         response = api.retriable(self.client.models.generate_content, 
-                                 model=api(Gemini.Model.GEN), 
+                                 model=api(Api.Model.GEN), 
                                  config=self.config_ground, 
                                  contents=contents)
         if response.candidates[0].grounding_metadata.grounding_supports is not None:
             if self.is_consistent(query, topic, response.text):
                 self.rag.add_grounded_document(query, topic, response)
                 return response.text 
-        return StopGeneration().result # Empty grounding supports or not consistent in response
+        return Api.Const.Stop() # Empty grounding supports or not consistent in response
 
     def is_consistent(self, query: str, topic: str, model_response: str) -> bool:
         topic = topic.replace("'", "")
@@ -1581,7 +2158,7 @@ class SearchGroundingGenerator:
         return True # all prefix matches contained topic
 ```
 
-## Rest Grounding
+### Rest Grounding
 
 
 ```python
@@ -1643,7 +2220,7 @@ class RestGroundingGenerator:
         if with_limits:
             self.limits = {}
             for rest_api in ApiLimit:
-                self.limits[rest_api.value[0]] = BlockingUrlQueue(api.get, rest_api.value[1])
+                self.limits[rest_api.value[0]] = BlockingUrlQueue(Api.get, rest_api.value[1])
 
     def get_limit(self, rest_api: ApiLimit) -> Optional[BlockingUrlQueue]:
         return self.limits[rest_api.value[0]] if self.limits else None
@@ -1681,7 +2258,7 @@ class RestGroundingGenerator:
                 success_fn: Callable, *args, **kwargs):
         try:
             if self.limits is None:
-                data = api.get(url)
+                data = Api.get(url)
             elif with_limit:
                 data = with_limit.push(url)
             if schema is DailyCandle:
@@ -1719,7 +2296,7 @@ class RestGroundingGenerator:
         if len(matches) > 0:
             self.rag.add_api_document(with_content["query"], matches, with_content["q"], "get_symbol_1")
             return matches
-        return StopGeneration().result
+        return Api.Const.Stop()
 
     def get_quote(self, with_content, model: Quote):
         quote = model.model_dump_json()
@@ -1730,20 +2307,20 @@ class RestGroundingGenerator:
         metric = list(model.metric.items())
         chunks = []
         # Chunk the metric data.
-        for i in range(0, len(metric), Gemini.Const.MetricBatch()):
-            batch = metric[i:i + Gemini.Const.MetricBatch()]
+        for i in range(0, len(metric), Api.Const.MetricBatch()):
+            batch = metric[i:i + Api.Const.MetricBatch()]
             chunks.append({"question": with_content["query"], "answer": batch})
         # Chunk the series data.
         for key in model.series.keys():
             series = list(model.series[key].items())
             for s in series:
-                if api.token_count(s) <= Gemini.Const.ChunkMax():
+                if api.token_count(s) <= Api.Const.ChunkMax():
                     chunks.append({"question": with_content["query"], "answer": s})
                 else:
                     k = s[0]
                     v = s[1]
-                    for i in range(0, len(v), Gemini.Const.SeriesBatch()):
-                        batch = v[i:i + Gemini.Const.SeriesBatch()]
+                    for i in range(0, len(v), Api.Const.SeriesBatch()):
+                        batch = v[i:i + Api.Const.SeriesBatch()]
                         chunks.append({"question": with_content["query"], "answer": {k: batch}})
         self.rag.add_rest_chunks(chunks, topic=with_content["symbol"], source="get_financials_1")
         return chunks
@@ -1761,7 +2338,7 @@ class RestGroundingGenerator:
                                      ids=[f"{digest.id}+news" for digest in model.get()],
                                      meta_opt=metas, is_update=False)
             return [digest.summary().model_dump_json() for digest in model.get()]
-        return StopGeneration().result
+        return Api.Const.Stop()
 
     def parse_news(self, with_content, model: Optional[NewsResultPoly] = None,
                    result: Optional[RestResultPoly] = None) -> tuple[list, str]: # list of summary, next list url
@@ -1822,7 +2399,7 @@ class RestGroundingGenerator:
             trends = [trend.model_dump_json() for trend in model.get()]
             self.rag.add_rest_chunks(trends, topic=with_content["symbol"], source="trends_1", meta_opt=metas)
             return trends
-        return StopGeneration().result
+        return Api.Const.Stop()
 
     def augment_market_status(self, with_id: Optional[str], model: MarketStatusResult):
         if model.get().holiday != MarketSession.NA.value:
@@ -1952,7 +2529,7 @@ class RestGroundingGenerator:
             with_content=content)
 ```
 
-## Callable Functions
+### Callable Functions
 
 
 ```python
@@ -1967,7 +2544,7 @@ decl_get_symbol_1 = types.FunctionDeclaration(
         "properties": {
             "q": {
                 "type": "string",
-                "description": """The company, security, isin or cusip to search for a symbol."""
+                "description": """A ticker symbol to search for."""
             },
             "exchange": {
                 "type": "string",
@@ -2533,21 +3110,6 @@ decl_get_search_tool_response = types.FunctionDeclaration(
 
 
 ```python
-# Define the system prompt.
-
-instruction = f"""You are a helpful and informative bot that answers finance and stock market questions. 
-Only answer the question asked and do not change topic. While the answer is still
-unknown you must follow these rules for predicting function call order:
-
-RULE#1: Always consult your other functions before get_search_tool_response.
-RULE#2: Always consult get_wiki_tool_response before get_search_tool_response.
-RULE#3: Always consult get_search_tool_response last.
-RULE#4: Always convert timestamps with get_local_datetime and use the converted date/time in your response.
-RULE#5: Always incorporate as much useful information from tools and functions in your response."""
-```
-
-
-```python
 # Import the finance api secret keys.
 
 POLYGON_API_KEY = UserSecretsClient().get_secret("POLYGON_API_KEY")
@@ -2568,54 +3130,16 @@ df.to_csv("exchanges.csv", index=False)
 exchanges = CSVLoader(file_path="exchanges.csv", encoding="utf-8", csv_args={"delimiter": ","}).load()
 
 # Prepare a RAG tool for use and add the exchange data.
-tool_rag = RetrievalAugmentedGenerator(api.client, "finance")
+tool_rag = RetrievalAugmentedGenerator(api.args.CLIENT, "finance")
 tool_rag.add_documents_list(exchanges)
 
 # Prepare a the grounding tools for use.
-tool_wiki = WikiGroundingGenerator(api.client, tool_rag)
-tool_ground = SearchGroundingGenerator(api.client, tool_rag)
+tool_wiki = WikiGroundingGenerator(api.args.CLIENT, tool_rag)
+tool_ground = SearchGroundingGenerator(api.args.CLIENT, tool_rag)
 tool_rest = RestGroundingGenerator(tool_rag, with_limits=True)
 ```
 
-    Generate US->MarketEvent.LAST_CLOSE:   0%|          | 0/1 [00:00<?, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.0-flash-exp
-
-
-    Generate US->MarketEvent.LAST_CLOSE:   0%|          | 0/1 [00:00<?, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.5-flash-preview-09-2025
-
-
-    Generate US->MarketEvent.LAST_CLOSE:   0%|          | 0/1 [00:03<?, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.5-flash
-
-
-    Generate US->MarketEvent.LAST_CLOSE:   0%|          | 0/1 [00:03<?, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.5-flash-lite-preview-09-2025
-
-
-    Generate US->MarketEvent.LAST_CLOSE:   0%|          | 0/1 [00:00<?, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.5-flash-lite
-
-
-    Generate US->MarketEvent.LAST_CLOSE: 100%|██████████| 1/1 [00:00<00:00,  1.62it/s]
-    Generate US->MarketEvent.PRE_OPEN: 100%|██████████| 1/1 [00:00<00:00,  1.37it/s]
-    Generate US->MarketEvent.REG_OPEN: 100%|██████████| 1/1 [00:00<00:00,  1.37it/s]
-    Generate US->MarketEvent.REG_CLOSE: 100%|██████████| 1/1 [00:00<00:00,  1.69it/s]
-    Generate US->MarketEvent.POST_CLOSE: 100%|██████████| 1/1 [00:00<00:00,  1.52it/s]
-    Generate document embedding: 0it [00:00, ?it/s]
-
-
-## Function Calling Expert
+### Function Calling Expert
 
 
 ```python
@@ -2685,12 +3209,12 @@ def get_peers_1(content):
                 if peer == content["symbol"]:
                     continue # skip including the query symbol in peers
                 name = get_name_1(dict(q=peer, exchange=content["exchange"], query=content["query"]))
-                if name != StopGeneration().result:
+                if name != Api.Const.Stop():
                     data = {"symbol": peer, "name": name}
                     names.append(data)
             tool_rag.add_peers_document(content["query"], names, content["symbol"], "get_peers_1", content['grouping'])
             return names
-        return StopGeneration().result
+        return Api.Const.Stop()
     return json.loads(stored[0].docs)["peers"]
 
 def local_datetime(content):
@@ -2825,6 +3349,34 @@ function_handler = {
 
 ```python
 # Implement the function calling expert.
+# Define the system prompt.
+instruction = f"""You are a helpful and informative bot that answers finance and stock market questions. 
+Only answer the question asked and do not change topic. While the answer is still
+unknown you must follow these rules for predicting function call order:
+
+RULE#1: Always consult your other functions before get_search_tool_response.
+RULE#2: Always consult get_wiki_tool_response before get_search_tool_response.
+RULE#3: Always consult get_search_tool_response last.
+RULE#4: Always convert timestamps with get_local_datetime and use the converted date/time in your response.
+RULE#5: Always incorporate as much useful information from tools and functions in your response."""
+
+def get_response():
+    # Enable system prompt, function calling and minimum-randomness.
+    config_fncall = types.GenerateContentConfig(
+        system_instruction=instruction,
+        tools=[finance_tool],
+        temperature=0.0
+    )
+    memory.response = api.retriable(
+        api.args.CLIENT.models.generate_content,
+        model=api(Api.Model.GEN),
+        config=config_fncall,
+        contents=memory.contents)
+
+def retry_last_send():
+    api.generation_fail()
+    time.sleep(api.dt_between)
+    get_response()
 
 @retry.Retry(
     predicate=is_retriable,
@@ -2837,71 +3389,59 @@ def send_message(prompt):
     #display(Markdown("#### Prompt"))
     #print(prompt, "\n")
     memory.set_prompt(prompt)
-    # Enable system prompt, function calling and minimum-randomness.
-    config_fncall = types.GenerateContentConfig(
-        system_instruction=instruction,
-        tools=[finance_tool],
-        temperature=0.0
-    )
     # Handle cases with multiple chained function calls.
     function_calling_in_process = True
     # Send the initial user prompt and function declarations.
-    response = api.retriable(api.client.models.generate_content,
-                             model=api(Gemini.Model.GEN),
-                             config=config_fncall,
-                             contents=memory.contents)
+    get_response()
     while function_calling_in_process:
-        # A part can be a function call or natural language response.
-        for part in response.candidates[0].content.parts:
-            if function_call := part.function_call:
-                # Extract the function call.
-                fn_name = function_call.name
-                #display(Markdown("#### Predicted function name"))
-                #print(fn_name, "\n")
-                # Extract the function call arguments.
-                fn_args = {key: value for key, value in function_call.args.items()}
-                #display(Markdown("#### Predicted function arguments"))
-                #print(fn_args, "\n")
-                # Call the predicted function.
-                try:
-                    api_response = function_handler[fn_name](fn_args)[:20000] # Stay within the input token limit
-                except KeyError as e: # Gemini sometimes omits required fn_args
-                    api.generation_fail()
-                    time.sleep(api.dt_between)
-                    send_message(prompt)
-                #display(Markdown("#### API response"))
-                #print(api_response[:500], "...", "\n")
-                # Create an API response part.
-                api_response_part = types.Part.from_function_response(
-                    name=fn_name,
-                    response={"content": api_response},
-                )
-                memory.update_contents(function_call, api_response_part)
-                # Send the updated prompt.
-                response = api.retriable(api.client.models.generate_content,
-                                         model=api(Gemini.Model.GEN),
-                                         config=config_fncall,
-                                         contents=memory.contents)
+        try:
+            response_parts = memory.response.candidates[0].content.parts
+            # A summary response never includes function calls.
+            if not any(part.function_call for part in response_parts):
+                memory.set_summary("\n".join(e.text for e in response_parts))
+                function_calling_in_process = False
+                break # The function calling chain is complete.
             else:
-                # Response may be a summary or reasoning step.
-                if len(response.candidates[0].content.parts) == 1:
-                    function_calling_in_process = False
-                    memory.set_summary(response.text.replace("$", "\\$"))
-                    break # No more parts in response.
-                else:
-                    #display(Markdown("#### Natural language reasoning step"))
-                    #print(response)
-                    memory.set_reason(response.candidates[0].content.parts[0].text)
-                    continue # Next part contains a function call.
-        if not function_calling_in_process:
-            break # The function calling chain is complete.
+                # A part can be a function call or reasoning-step.
+                for part in response_parts:
+                    if function_call := part.function_call:
+                        # Extract the function call.
+                        fn_name = function_call.name
+                        #display(Markdown("#### Predicted function name"))
+                        #print(fn_name, "\n")
+                        # Extract the function call arguments.
+                        fn_args = {key: value for key, value in function_call.args.items()}
+                        #display(Markdown("#### Predicted function arguments"))
+                        #print(fn_args, "\n")
+                        # Call the predicted function.
+                        print("send_message: get function response")
+                        api_response = function_handler[fn_name](fn_args)[:20000] # Stay within the input token limit
+                        #display(Markdown("#### API response"))
+                        #print(api_response[:500], "...", "\n")
+                        # Create an API response part.
+                        api_response_part = types.Part.from_function_response(
+                            name=fn_name,
+                            response={"content": api_response},
+                        )
+                        memory.update_contents(function_call, api_response_part)
+                    else:
+                        #display(Markdown("#### Natural language reasoning step"))
+                        #print(part.text)
+                        memory.set_reason(part.text)
+                print("send_message: updating state")
+                get_response() # Send the updated prompt.
+                print("send_message: got a response")
+        except Exception as e:
+            if isinstance(response_parts, list):
+                print("send_message: generated wrong function arguments")
+            retry_last_send()
             
     # Show the final natural language summary.
     display(Markdown("#### Natural language response"))
     display(Markdown(memory.summary))
 ```
 
-# RAG Baseline Check
+## RAG Baseline Check
 
 
 ```python
@@ -2952,129 +3492,20 @@ response = tool_rag.get_exchanges_csv(
 print(response.candidates[0].content.parts[-1].text)
 ```
 
-    ```json
-    {
-      "VN": "Vietnam",
-      "AD": "ABU DHABI SECURITIES EXCHANGE",
-      "US": "US exchanges (NYSE, Nasdaq)",
-      "CO": "OMX NORDIC EXCHANGE COPENHAGEN A/S",
-      "QA": "QATAR EXCHANGE",
-      "BA": "BOLSA DE COMERCIO DE BUENOS AIRES",
-      "MX": "BOLSA MEXICANA DE VALORES (MEXICAN STOCK EXCHANGE)",
-      "PR": "PRAGUE STOCK EXCHANGE",
-      "HK": "HONG KONG EXCHANGES AND CLEARING LTD",
-      "CA": "Egyptian Stock Exchange",
-      "AX": "ASX - ALL MARKETS",
-      "SX": "DEUTSCHE BOERSE Stoxx",
-      "KQ": "KOREA EXCHANGE (KOSDAQ)",
-      "DB": "DUBAI FINANCIAL MARKET",
-      "PM": "Philippine Stock Exchange",
-      "KS": "KOREA EXCHANGE (STOCK MARKET)",
-      "ST": "NASDAQ OMX NORDIC STOCKHOLM",
-      "DU": "BOERSE DUESSELDORF",
-      "TL": "NASDAQ OMX TALLINN",
-      "AT": "ATHENS EXCHANGE S.A. CASH MARKET",
-      "SW": "SWISS EXCHANGE",
-      "LS": "NYSE EURONEXT - EURONEXT LISBON",
-      "SI": "SINGAPORE EXCHANGE",
-      "RG": "NASDAQ OMX RIGA",
-      "CR": "CARACAS STOCK EXCHANGE",
-      "SA": "Brazil Bolsa - Sao Paolo",
-      "BH": "BAHRAIN BOURSE",
-      "NZ": "NEW ZEALAND EXCHANGE LTD",
-      "L": "LONDON STOCK EXCHANGE",
-      "SZ": "SHENZHEN STOCK EXCHANGE",
-      "IC": "NASDAQ OMX ICELAND",
-      "KW": "Kuwait Stock Exchange",
-      "JK": "INDONESIA STOCK EXCHANGE",
-      "BE": "BOERSE BERLIN",
-      "TA": "TEL AVIV STOCK EXCHANGE",
-      "PA": "NYSE EURONEXT - MARCHE LIBRE PARIS",
-      "V": "TSX VENTURE EXCHANGE - NEX",
-      "SN": "SANTIAGO STOCK EXCHANGE",
-      "BD": "BUDAPEST STOCK EXCHANGE",
-      "KL": "BURSA MALAYSIA",
-      "CN": "CANADIAN NATIONAL STOCK EXCHANGE",
-      "VS": "NASDAQ OMX VILNIUS",
-      "ME": "MOSCOW EXCHANGE",
-      "CS": "CASABLANCA STOCK EXCHANGE",
-      "NL": "Nigerian Stock Exchange",
-      "BR": "NYSE EURONEXT - EURONEXT BRUSSELS",
-      "NS": "NATIONAL STOCK EXCHANGE OF INDIA",
-      "DE": "XETRA",
-      "WA": "WARSAW STOCK EXCHANGE/EQUITIES/MAIN MARKET",
-      "AS": "NYSE EURONEXT - EURONEXT AMSTERDAM",
-      "TG": "DEUTSCHE BOERSE TradeGate",
-      "IR": "IRISH STOCK EXCHANGE - ALL MARKET",
-      "OL": "OSLO BORS ASA",
-      "BO": "BSE LTD",
-      "MT": "MALTA STOCK EXCHANGE",
-      "BC": "BOLSA DE VALORES DE COLOMBIA",
-      "F": "DEUTSCHE BOERSE AG",
-      "HE": "NASDAQ OMX HELSINKI LTD",
-      "MU": "BOERSE MUENCHEN",
-      "IS": "BORSA ISTANBUL",
-      "SR": "SAUDI STOCK EXCHANGE",
-      "NE": "AEQUITAS NEO EXCHANGE",
-      "MI": "Italian Stock Exchange",
-      "SS": "SHANGHAI STOCK EXCHANGE",
-      "MC": "BOLSA DE MADRID",
-      "HA": "Hanover Stock Exchange",
-      "VI": "Vienna Stock Exchange",
-      "TWO": "TPEx",
-      "HM": "HANSEATISCHE WERTPAPIERBOERSE HAMBURG",
-      "TW": "TAIWAN STOCK EXCHANGE",
-      "TO": "TORONTO STOCK EXCHANGE",
-      "SC": "BOERSE_FRANKFURT_ZERTIFIKATE",
-      "JO": "JOHANNESBURG STOCK EXCHANGE",
-      "SG": "BOERSE STUTTGART",
-      "RO": "BUCHAREST STOCK EXCHANGE",
-      "T": "TOKYO STOCK EXCHANGE-TOKYO PRO MARKET",
-      "BK": "STOCK EXCHANGE OF THAILAND"
-    }
-    ```
-    DE, F, TG, SX, BE, DU, HA, HM, MU, SC, SG 
-    
-    The Germany exchanges and their corresponding codes are: XETRA (DE), DEUTSCHE BOERSE AG (F), Hanover Stock Exchange (HA), DEUTSCHE BOERSE TradeGate (TG), BOERSE BERLIN (BE), BOERSE DUESSELDORF (DU), HANSEATISCHE WERTPAPIERBOERSE HAMBURG (HM), BOERSE MUENCHEN (MU), DEUTSCHE BOERSE Stoxx (SX), BOERSE_FRANKFURT_ZERTIFIKATE (SC), and BOERSE STUTTGART (SG). 
-    
-    I don't know. 
-    
-    I don't know. 
-    
-    US exchanges operate from 09:30 to 16:00. 
-    
-    Fri Nov 07 20:00:00 2025
-
-
-# SC1 Baseline Check
+## SC1 Baseline Check
 
 
 ```python
 # Wait 59s for rate-limits to reset on FREE-tier.
-if api.limit is Gemini.Limit.FREE.value:
+if api.args.API_LIMIT is Api.Limit.FREE.value:
     print("Gemini API limit is FREE. Waiting 59s...")
     time.sleep(59)
 ```
-
-    Gemini API limit is FREE. Waiting 59s...
-
 
 
 ```python
 send_message("What is the current session for US exchanges?")
 ```
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-The current session for US exchanges is closed.
-
-
 
 
 ```python
@@ -3082,72 +3513,19 @@ send_message("What is the US market status?")
 ```
 
 
-#### Natural language response
-
-
-
-The US market is currently closed as of Sat Nov  8 21:17:00 2025.
-
-
-
-
 ```python
 send_message("When was the last US market close?")
 ```
-
-
-#### Natural language response
-
-
-
-The last US market close was Fri Nov 07 20:00:00 2025.
-
-
 
 
 ```python
 send_message("What is Apple's stock ticker?")
 ```
 
-    Score similarity to query: 100%|██████████| 10/10 [00:01<00:00,  9.60it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Apple's stock ticker is AAPL.
-
-
-
 
 ```python
-send_message("What is the current price of Amazon stock? Display the result as a json object.")
+send_message("What is the current price of Amazon stock? Display the result as a json string in markdown.")
 ```
-
-    Generate quote embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-```json
-{
-"c": 244.41,
-"d": 1.37,
-"dp": 0.5637,
-"h": 244.9,
-"l": 238.49,
-"o": 242.9,
-"pc": 243.04,
-"t": 1762549200
-}
-```
-
 
 
 ```python
@@ -3155,209 +3533,26 @@ send_message("""Show me Apple's basic financials and help me understand key perf
 How has the stock performed?""")
 ```
 
-    api.generation_fail.next_model: model is now  gemini-2.0-flash-exp
-
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Here's an overview of Apple's financial performance based on the data you requested:
-
-**Key Financial Metrics and Insights:**
-
-*   **Profitability:**
-    *   **Net Profit Margin (TTM):** 26.92% - Apple is very profitable, keeping over 26 cents of every dollar in revenue as profit.
-    *   **Operating Margin (TTM):** 31.97% - This shows strong operational efficiency.
-    *   **Gross Margin (TTM):** 46.91% - Apple maintains a strong gross margin.
-*   **Revenue Growth:**
-    *   **Revenue Growth (TTM YoY):** 6.43% - Apple is still growing its revenue.
-*   **Earnings Per Share (EPS):**
-    *   **EPS (TTM):** \\$7.4593 - Indicates the company's profitability on a per-share basis.
-    *   **EPS Growth (TTM YoY):** 22.89% - Apple's earnings per share are growing significantly.
-*   **Valuation:**
-    *   **Price-to-Earnings Ratio (P/E TTM):** 35.4165 - This suggests investors are willing to pay a premium for Apple's earnings.
-    *   **Forward P/E:** 32.7219 - Suggests analysts expect continued earnings growth.
-    *   **PEG Ratio (TTM):** 1.5799 - A bit high, suggesting the stock price may be growing faster than earnings.
-    *   **Price-to-Sales Ratio (P/S TTM):** 9.5324 - Relatively high, reflecting Apple's brand strength and market dominance.
-    *   **Price-to-Book Ratio (P/B):** 53.8023 - High, indicating the market values Apple significantly above its book value.
-*   **Return on Equity (ROE):**
-    *   **ROE (TTM):** 164.05% - Extremely high, indicating Apple is very efficient at generating profits from shareholders' equity.
-*   **Debt & Liquidity:**
-    *   **Total Debt/Equity (Annual):** 1.338 - Apple uses a moderate amount of debt relative to equity.
-    *   **Current Ratio (Annual):** 0.8933 - Apple's current liabilities are slightly more than its current assets.
-    *   **Quick Ratio (Annual):** 0.8588 - A bit below 1, suggesting Apple might have some short-term liquidity challenges.
-*   **Stock Performance:**
-    *   **52-Week Price Return Daily:** 20.5415%
-    *   **52 Week High:** 277.32
-    *   **52 Week Low:** 169.2101
-
-**Additional Considerations:**
-
-*   **Financial Health:** While profitable, Apple's current and quick ratios suggest monitoring its short-term liquidity.
-*   **Growth:** Apple continues to demonstrate revenue and earnings growth, although revenue growth is slowing.
-*   **Market Valuation:** Apple's valuation metrics (P/E, P/S, P/B) are high, reflecting its status as a premium brand and market leader.
-*   **Shareholder Returns:** Apple provides returns to shareholders through dividends, with a current dividend yield of 0.3887%.
-
-
-
-
 
 ```python
 send_message("I need Apple's daily candlestick from 2025-05-05")
 ```
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-On 2025-05-05, Apple's stock (AAPL) had the following daily candlestick data:
-*   Open: 203.1
-*   High: 204.1
-*   Low: 198.21
-*   Close: 198.89
-*   Volume: 69018452
-*   Pre-Market: 205.0
-*   After-Hours: 198.6
-
 
 
 ```python
 send_message("Tell me who are Apple's peers?")
 ```
 
-    Score similarity to query: 100%|██████████| 5/5 [00:00<00:00, 19.71it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.95it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.97it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 5/5 [00:00<00:00, 19.84it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.65it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.74it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.94it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 2/2 [00:00<00:00,  8.05it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 2/2 [00:00<00:00,  7.88it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.29it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  4.05it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Generate peers embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Apple's peers include: DELL TECHNOLOGIES -C (DELL), WESTERN DIGITAL CORP (WDC), SANDISK CORP (SNDK), HEWLETT PACKARD ENTERPRISE (HPE), PURE STORAGE INC - CLASS A (PSTG), HP INC (HPQ), SUPER MICRO COMPUTER INC (SMCI), NETAPP INC (NTAP), IONQ INC (IONQ), COMPOSECURE INC-A (CMPO), and QUANTUM COMPUTING INC (QUBT).
-
-
-
 
 ```python
 send_message("Tell me who are Amazon's peers?")
 ```
-
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  4.11it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 2/2 [00:00<00:00,  8.19it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.97it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 5/5 [00:00<00:00, 19.57it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 2/2 [00:00<00:00,  7.98it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 11/11 [00:00<00:00, 44.55it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.96it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.75it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  4.03it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Score similarity to query: 100%|██████████| 1/1 [00:00<00:00,  3.90it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-    Generate peers embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Amazon's peers include COUPANG INC (CPNG), EBAY INC (EBAY), DILLARDS INC-CL A (DDS), OLLIE'S BARGAIN OUTLET HOLDI (OLLI), ETSY INC (ETSY), MACY'S INC (M), PATTERN GROUP INC-CL A (PTRN), KOHLS CORP (KSS), SAVERS VALUE VILLAGE INC (SVV), and GROUPON INC (GRPN).
-
-
 
 
 ```python
 send_message("""Locate Apple's stock ticker, then download recommendation trends of all Apple's peers by sub-industry, 
 and then finally compare them.""")
 ```
-
-    api.zero_error: model is now  gemini-2.0-flash
-
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-    api.generation_fail.next_model: model is now  gemini-2.0-flash-exp
-
-
-
-#### Natural language response
-
-
-
-Okay, I have downloaded the recommendation trends for Apple's peers in the sub-industry. Here's a comparison based on the latest data (2025-11-01):
-
-*   **DELL:** Buy: 18, Hold: 6, Sell: 0, Strong Buy: 8, Strong Sell: 0
-*   **WDC:** Buy: 19, Hold: 7, Sell: 0, Strong Buy: 6, Strong Sell: 0
-*   **SNDK:** Buy: 10, Hold: 8, Sell: 0, Strong Buy: 7, Strong Sell: 0
-*   **HPE:** Buy: 8, Hold: 12, Sell: 0, Strong Buy: 6, Strong Sell: 0
-*   **PSTG:** Buy: 13, Hold: 7, Sell: 1, Strong Buy: 6, Strong Sell: 0
-*   **HPQ:** Buy: 3, Hold: 16, Sell: 1, Strong Buy: 2, Strong Sell: 0
-*   **SMCI:** Buy: 10, Hold: 11, Sell: 3, Strong Buy: 2, Strong Sell: 0
-*   **NTAP:** Buy: 9, Hold: 15, Sell: 0, Strong Buy: 3, Strong Sell: 0
-*   **IONQ:** Buy: 10, Hold: 3, Sell: 0, Strong Buy: 2, Strong Sell: 0
-*   **CMPO:** Buy: 8, Hold: 1, Sell: 1, Strong Buy: 2, Strong Sell: 0
-*   **QUBT:** Buy: 5, Hold: 2, Sell: 0, Strong Buy: 2, Strong Sell: 0
-
-**Summary:**
-
-*   **Highest Buy Recommendations:** WDC leads with 19 "buy" recommendations.
-*   **Highest Strong Buy Recommendations:** DELL leads with 8 "strong buy" recommendations.
-*   **Most Hold Recommendations:** HPQ has the most "hold" recommendations at 16.
-*   **Sell Recommendations:** SMCI and CMPO have the most "sell" recommendations with 3 and 1 respectively.
-
-
-
 
 
 ```python
@@ -3369,203 +3564,30 @@ Discuss and provide details about any patterns you notice in the price data.
 Correlate recent patterns with news over the same date range.""")
 ```
 
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Here's Amazon's current share price and candlestick data for the past month, along with a brief analysis:
-
-**Current Share Price:**
-
-*   As of November 7, 2025, at 16:00 Eastern Time, Amazon's current share price is \$244.41.
-*   The change today is \$1.37, which represents a 0.56% increase.
-*   The high price of the day was \$244.9, and the low was \$238.49.
-*   The previous close price was \$243.04.
-
-**Candlestick Data (Last Month):**
-
-I am presenting the candlestick data in descending order by date.
-
-| Date        | Open    | High    | Low     | Close   | Volume    |
-| ----------- | ------- | ------- | ------- | ------- | --------- |
-| 2025-11-07  | \$242.90 | \$244.90 | \$238.49 | \$244.41 | 46,374,294|
-| 2025-11-06  | \$249.16 | \$250.38 | \$242.17 | \$243.04 | 46,004,201|
-| 2025-11-05  | \$249.03 | \$251.00 | \$246.16 | \$250.20 | 40,552,285|
-| 2025-11-04  | \$250.38 | \$257.01 | \$248.66 | \$249.32 | 51,546,311|
-| 2025-11-03  | \$255.36 | \$258.60 | \$252.90 | \$254.00 | 95,997,714|
-| 2025-10-31  | \$250.10 | \$250.50 | \$243.98 | \$244.22 | 166,340,683|
-| 2025-10-30  | \$227.06 | \$228.44 | \$222.75 | \$222.86 | 102,252,888|
-| 2025-10-29  | \$231.67 | \$232.82 | \$227.76 | \$230.30 | 52,035,936|
-| 2025-10-28  | \$228.22 | \$231.49 | \$226.21 | \$229.25 | 47,099,924|
-| 2025-10-27  | \$227.66 | \$228.40 | \$225.54 | \$226.97 | 38,266,995|
-| 2025-10-24  | \$221.97 | \$225.40 | \$221.90 | \$224.21 | 38,684,853|
-| 2025-10-23  | \$219.00 | \$221.30 | \$218.18 | \$221.09 | 31,539,699|
-| 2025-10-22  | \$219.30 | \$220.01 | \$216.52 | \$217.95 | 44,308,538|
-| 2025-10-21  | \$218.43 | \$223.32 | \$217.99 | \$222.03 | 50,494,565|
-| 2025-10-20  | \$213.88 | \$216.69 | \$213.59 | \$216.48 | 38,882,819|
-| 2025-10-17  | \$214.56 | \$214.80 | \$211.03 | \$213.04 | 45,986,944|
-| 2025-10-16  | \$215.67 | \$218.59 | \$212.81 | \$214.47 | 42,414,591|
-| 2025-10-15  | \$216.62 | \$217.71 | \$212.66 | \$215.57 | 45,909,469|
-| 2025-10-14  | \$215.56 | \$219.32 | \$212.60 | \$216.39 | 45,665,580|
-| 2025-10-13  | \$217.70 | \$220.68 | \$217.04 | \$220.07 | 37,809,650|
-| 2025-10-10  | \$226.21 | \$228.25 | \$216.00 | \$216.37 | 72,367,511|
-| 2025-10-09  | \$224.99 | \$228.21 | \$221.75 | \$227.74 | 46,412,122|
-| 2025-10-08  | \$222.92 | \$226.73 | \$221.19 | \$225.22 | 46,685,985|
-| 2025-10-07  | \$220.88 | \$222.89 | \$220.17 | \$221.78 | 31,194,678|
-
-**Observations and Recent News Correlation:**
-
-*   **Late October Surge:**  There was a significant surge in price and volume around the end of October. News from that period indicates positive sentiment around Amazon's Q3 earnings, growth in AWS, and strategic AI partnerships, particularly with OpenAI. The \$38 billion OpenAI deal and strong AWS growth appear to be major drivers.
-*   **Early November Dip and Recovery:** Early November saw a dip, followed by a partial recovery. News suggests a broader tech stock downturn ("Magnificent Seven Wiped Out") and concerns about AI investment sustainability may have contributed. However, positive news regarding Amazon's continued strength in AWS and AI investments likely supported the recovery.
-*   **Volatility:** The candlestick data shows considerable volatility throughout the month. This aligns with news articles discussing market corrections, AI investment uncertainties, and shifting investor sentiment.
-*   **AI Focus:**  Throughout the month, news consistently highlights Amazon's focus on AI, both in its AWS cloud services and its internal operations. This is a key theme influencing investor perceptions.
-*   **Workforce Reductions:**  It's worth noting that news of planned workforce reductions also surfaced during this period. While this might initially seem negative, some analysts interpreted it as a strategic move to improve efficiency and prepare for an AI-driven future.
-
-**Disclaimer:** I am an AI and cannot provide financial advice. This analysis is for informational purposes only.
-
-
-
 
 ```python
 send_message("What is Apple's ticker overview")
 ```
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Here is an overview of Apple Inc. (AAPL):
-*   **Name:** Apple Inc.
-*   **Market:** stocks
-*   **Locale:** us
-*   **Primary Exchange:** XNAS
-*   **CIK:** 0000320193
-*   **Composite FIGI:** BBG000B9XRY4
-*   **Share Class FIGI:** BBG001S5N8V8
-*   **Market Capitalization:** \$3,967,007,489,910.0005
-*   **Phone Number:** (408) 996-1010
-*   **Address:** ONE APPLE PARK WAY, CUPERTINO, CA 95014
-*   **Description:** Apple is among the largest companies in the world, with a broad portfolio of hardware and software products targeted at consumers and businesses. Apple's iPhone makes up a majority of the firm sales, and Apple's other products like Mac, iPad, and Watch are designed around the iPhone as the focal point of an expansive software ecosystem. Apple has progressively worked to add new applications, like streaming video, subscription bundles, and augmented reality. The firm designs its own software and semiconductors while working with subcontractors like Foxconn and TSMC to build its products and chips. Slightly less than half of Apple's sales come directly through its flagship stores, with a majority of sales coming indirectly through partnerships and distribution.
-*   **SIC Code:** 3571 (ELECTRONIC COMPUTERS)
-*   **Homepage URL:** https://www.apple.com
-*   **Total Employees:** 166,000
-*   **List Date:** 1980-12-12
-*   **Branding:**
-    *   **Logo URL:** https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_logo.svg
-    *   **Icon URL:** https://api.polygon.io/v1/reference/company-branding/YXBwbGUuY29t/images/2025-04-04_icon.png
-*   **Share Class Shares Outstanding:** 14,840,390,000
-*   **Weighted Shares Outstanding:** 14,776,353,000
-*   **Round Lot:** 100
-
-
-
-
-```python
-send_message("Tell me about Amazon's historical and current recommendation trends")
-```
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Here are the recommendation trends for Amazon:
-In November 2025, there were 22 strong buy, 54 buy, 2 hold, 0 sell, and 0 strong sell recommendations.
-In October 2025, there were 23 strong buy, 52 buy, 3 hold, 0 sell, and 0 strong sell recommendations.
-In September 2025, there were 23 strong buy, 52 buy, 4 hold, 0 sell, and 0 strong sell recommendations.
-In August 2025, there were 24 strong buy, 51 buy, 4 hold, 0 sell, and 0 strong sell recommendations.
-
 
 
 ```python
 send_message("What is Google's stock ticker symbol?")
 ```
 
-    Score wiki search by similarity to topic: 0it [00:00, ?it/s]
-
-
-    api.zero_error: model is now  gemini-2.0-flash
-
-
-    Generate wiki embeddings: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Google's shares are listed on the NASDAQ stock exchange under the ticker symbols GOOGL and GOOG. It is also listed on the Frankfurt Stock Exchange under the ticker symbol GGQ1. These ticker symbols now refer to Alphabet Inc., Google's holding company.
-
-
-
 
 ```python
 send_message("What is MGM Studio's stock symbol?")
 ```
-
-    Score wiki search by similarity to topic: 0it [00:00, ?it/s]
-    Generate wiki embeddings: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-I am unable to find the stock symbol for MGM Studios.
-
 
 
 ```python
 send_message("What is MGM Studio's owner company stock symbol?")
 ```
 
-    Score similarity to query: 100%|██████████| 2/2 [00:00<00:00,  3.82it/s]
-    Generate api embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-MGM Studios is owned by Amazon, and its stock symbol is AMZN.
-
-
-
 
 ```python
 send_message("What is Facebook's stock ticker symbol?")
 ```
-
-    api.generation_fail.next_model: model is now  gemini-2.0-flash-exp
-
-
-    Score wiki search by similarity to topic: 0it [00:00, ?it/s]
-    Generate wiki embeddings: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Facebook's stock ticker symbol is META.
-
-
 
 
 ```python
@@ -3574,48 +3596,6 @@ Include a discussion of recommendation trends, and sentiment analysis of news fr
 Discuss any patterns or correlations you find.""")
 ```
 
-    Add chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Between October 1, 2025, and November 8, 2025, here's a comparison of bullish versus bearish predictions for Amazon, incorporating recommendation trends and sentiment analysis of news:
-
-**Recommendation Trends:**
-
-Based on analyst recommendation trends, the sentiment leans bullish.
-*   August 1, 2025: Buy (51), Hold (4), Sell (0), Strong Buy (24)
-*   September 1, 2025: Buy (52), Hold (4), Sell (0), Strong Buy (23)
-*   October 1, 2025: Buy (52), Hold (3), Sell (0), Strong Buy (23)
-*   November 1, 2025: Buy (54), Hold (2), Sell (0), Strong Buy (22)
-
-The number of "Buy" recommendations increased from August to November, while "Hold" recommendations fluctuated slightly. There were no "Sell" recommendations during this period.
-
-**Sentiment Analysis of News:**
-
-The news articles from October 1, 2025, to November 8, 2025, present a mixed sentiment regarding Amazon:
-
-*   **Positive Sentiments:** Many articles highlight Amazon's growth in AWS, AI innovations, and strategic partnerships, particularly with OpenAI. Several analysts project a potential 50% stock price increase.
-*   **Neutral Sentiments:** Some articles present a neutral stance, mentioning Amazon in the context of broader market trends, partnerships, or as a sales platform for various products.
-*   **Negative Sentiments:** Some articles point out concerns such as job cuts, high AI infrastructure spending eroding free cash flow, and increased competition in the cloud computing market.
-
-**Patterns and Correlations:**
-
-1.  **AI Focus:** A recurring theme is Amazon's investment and involvement in AI. Positive sentiment often correlates with news of AI partnerships, AWS growth driven by AI, and potential for AI to improve operational efficiency.
-2.  **Cloud Computing:** Amazon's AWS continues to be a significant driver of positive sentiment. Accelerating growth in AWS is frequently mentioned as a reason for investor optimism.
-3.  **Job Cuts:** The announcement of job cuts is a recurring negative theme, potentially impacting consumer confidence and indicating cost-cutting measures.
-4.  **Market Conditions:** Broader market conditions and economic trends also influence sentiment. For example, concerns about a potential AI bubble or market correction can negatively impact sentiment towards Amazon.
-5.  **Stock Splits:** Articles discuss potential stock splits, which tend to generate positive sentiment due to increased accessibility for investors.
-
-**Overall:**
-
-While analyst recommendations remain largely bullish, the news sentiment is more nuanced. The positive sentiment is driven by Amazon's strong position in cloud computing and AI, while negative sentiment arises from concerns about cost management, competition, and broader market conditions.
-
-
-
 
 ```python
 send_message("""Compare Google's bullish versus bearish predictions from Oct 01 2025 until today. 
@@ -3623,228 +3603,15 @@ Include a discussion of recommendation trends, and sentiment analysis of news fr
 Discuss any patterns or correlations you find.""")
 ```
 
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-
-
-    api.zero_error: model is now  gemini-2.0-flash
-
-
-
-#### Natural language response
-
-
-
-Between October 1, 2025, and November 8, 2025, here's a comparison of Google's bullish versus bearish predictions:
-
-**Recommendation Trends:**
-*   The recommendation trends for Google (GOOGL) show a consistent bullish sentiment from analysts. In October 2025, there were 39 buy, 13 hold, 21 strong buy, and 0 sell recommendations. In November 2025, the numbers shifted slightly to 41 buy, 12 hold, 21 strong buy, and 0 sell recommendations. This indicates a stable and positive outlook from analysts.
-
-**Sentiment Analysis of News:**
-*   The news articles from October 1, 2025, to November 8, 2025, show a generally positive sentiment towards Google. Many articles highlight Google's strong position in AI, cloud computing, and digital advertising. There are also mentions of Google's innovative AI technologies, such as the Gemini AI model, and its strategic partnerships with other companies.
-*   However, there are also some articles with neutral or negative sentiment. Some articles discuss potential challenges to Google's market dominance from competitors like OpenAI and the impact of broader market trends.
-
-**Patterns and Correlations:**
-*   There appears to be a correlation between positive news sentiment and analyst recommendations. The consistently bullish recommendation trends align with the generally positive news coverage of Google's AI initiatives and financial performance.
-*   The news articles suggest that Google's success is closely tied to its ability to innovate in AI and maintain its competitive edge in key markets. Any potential challenges or negative news events could impact analyst sentiment and stock performance.
-
-In summary, the overall outlook for Google between October 1, 2025, and November 8, 2025, appears to be positive, with strong analyst recommendations and generally favorable news sentiment. However, it's important to consider potential challenges and monitor market trends to assess the company's long-term prospects.
-
-
-
 
 ```python
 send_message("""How is the outlook for Apple based on trends and news sentiment from July 01 2025 until today? 
 Perform the same analysis on all peers by sub-industry. Then compare Apple result to it's peers.""")
 ```
 
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-
-
-    api.refill_rpm  15
-
-
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-
-
-    limited 4/min, waiting 11.212908029556274s
-    api.refill_rpm  15
-
-
-    Add chunks embedding: 0it [00:00, ?it/s]
-    Add chunks embedding: 0it [00:00, ?it/s]
-
-
-
-#### Natural language response
-
-
-
-Based on the analysis of analyst recommendation trends and news sentiment from July 01 2025 until today (November 8, 2025), here's an outlook for Apple and its peers by sub-industry:
-
-**Apple (AAPL):**
-
-*   **Recommendation Trends:** Analyst recommendations for Apple are consistently positive, with a majority of analysts rating the stock as a "Buy" or "Strong Buy" throughout the period from August to November 2025.
-*   **News Sentiment:** News sentiment is mixed. Some articles highlight Apple's strong iPhone 17 sales and potential in AI, while others express concerns about its AI strategy, trade tensions, and high valuation. Warren Buffett has also been reducing his stake in Apple.
-
-**Peers (by Sub-Industry):**
-
-Here's an analysis of Apple's peers in the sub-industry, focusing on recommendation trends and news sentiment:
-
-*   **Dell Technologies (DELL):**
-    *   **Recommendation Trends:** Analyst recommendations are mostly positive, with a majority rating the stock as "Buy" or "Strong Buy".
-    *   **News Sentiment:** News sentiment is positive, highlighting strong AI server demand, growing backlog, and increased operating profit margins.
-*   **Western Digital (WDC):**
-    *   **Recommendation Trends:** Analyst recommendations are mostly positive, with a majority rating the stock as "Buy" or "Strong Buy".
-    *   **News Sentiment:** News sentiment is positive, driven by expansion in data storage demand and AI infrastructure growth.
-*   **Hewlett Packard Enterprise (HPE):**
-    *   **Recommendation Trends:** Analyst recommendations are mixed, with a significant number of "Hold" ratings.
-    *   **News Sentiment:** News sentiment is mixed, with some articles highlighting strategic collaborations and AI initiatives, while others point to strategic restructuring costs compressing profit margins.
-*   **Super Micro Computer (SMCI):**
-    *   **Recommendation Trends:** Analyst recommendations are mixed, with a significant number of "Hold" ratings.
-    *   **News Sentiment:** News sentiment is mixed, with some articles highlighting strong AI order backlog but declining margins and negative cash flow.
-*   **NetApp (NTAP):**
-    *   **Recommendation Trends:** Analyst recommendations are mixed, with a significant number of "Hold" ratings.
-    *   **News Sentiment:** News sentiment is neutral, with limited news coverage during the specified period.
-*   **IonQ (IONQ):**
-    *   **Recommendation Trends:** Analyst recommendations are mostly positive, with a majority rating the stock as "Buy" or "Strong Buy".
-    *   **News Sentiment:** News sentiment is mixed, with some articles highlighting the company's technological advancements and potential in quantum computing, while others express concerns about its high valuation and lack of commercial viability.
-*   **CompoSecure (CMPO):**
-    *   **Recommendation Trends:** Analyst recommendations are mostly positive, with a majority rating the stock as "Buy" or "Strong Buy".
-    *   **News Sentiment:** News sentiment is positive, highlighting the company's planned business combination with Husky Technologies.
-*   **Quantum Computing Inc (QUBT):**
-    *   **Recommendation Trends:** Analyst recommendations are mixed, with a significant number of "Hold" ratings.
-    *   **News Sentiment:** News sentiment is negative, highlighting the company's declining revenue, rising operating costs, and minimal sales.
-
-**Comparison:**
-
-*   Apple's recommendation trends are generally positive, but its news sentiment is more mixed compared to some of its peers like Dell and Western Digital.
-*   Several peers, particularly those involved in AI infrastructure (e.g., Dell, Super Micro Computer), are experiencing strong growth and positive news sentiment.
-*   Quantum computing stocks (e.g., IonQ, Quantum Computing Inc.) are highly speculative, with significant potential but also substantial risks.
-
-**Overall:**
-
-The outlook for Apple is cautiously optimistic, with a need to address AI concerns and navigate trade tensions. Some peers in AI infrastructure are showing stronger growth potential, while quantum computing stocks are highly speculative.
-
-
-
-    api.refill_rpm  15
-
-
 
 ```python
-api.push_default_model("gemini-2.5-flash")
 send_message("""What does the recent news say about Apple and the impact of tariffs? From 2025-09-01 up to today. 
 Also locate candlestick data for the same dates. 
 Discuss in detail any correlations in patterns between the candlestick and news data. Ignore duplicate news entry.""")
 ```
-
-    Upsert chunks embedding: 0it [00:00, ?it/s]
-    WARNING:google_genai.types:Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
-
-
-
-#### Natural language response
-
-
-
-Here's a detailed look at the recent news regarding Apple and the impact of tariffs, along with candlestick data for the same period (2025-09-01 to 2025-11-08), and an analysis of their correlations:
-
-**Recent News on Apple and Tariffs (2025-09-01 to 2025-11-08):**
-
-The news from this period indicates a mixed but generally cautious sentiment surrounding Apple and the impact of tariffs.
-
-*   **Negative Impacts and Concerns:**
-    *   **October 26, 2025:** News highlighted potential significant challenges for Apple due to US-China trade tensions, specifically mentioning rare earth element export restrictions that could disrupt iPhone component supply chains by November 1st.
-    *   **October 13, 2025:** Reports indicated that Apple's stock performance was being impacted by escalating trade barriers between the United States and China.
-    *   **October 10, 2025:** President Trump's renewed tariff threats against China triggered a significant market selloff, with tech stocks, including Apple, experiencing substantial losses.
-    *   **September 4, 2025:** Apple was noted as facing potential tariff threats.
-    *   **October 9, 2025:** While not directly about Apple's tariffs, news of Apple losing smartphone market leadership to Huawei in China could be an indirect consequence of trade tensions.
-    *   **November 6, 2025:** US stock futures fell after the Supreme Court raised doubts about Trump's tariff authority, creating market uncertainty that could affect Apple.
-
-*   **Mitigation Strategies and Positive Adaptations:**
-    *   **October 28, 2025:** Apple was reported to have successfully navigated Trump's tariff policies by making strategic U.S. investments, relocating iPhone production, and securing exemptions from Chinese and Indian tariffs.
-    *   **October 31, 2025:** Apple invested \$500 million in MP Materials for rare earth magnet recycling, a proactive step to address supply chain risks stemming from China's export controls on rare earth magnets.
-    *   **September 17, 2025:** Apple was noted for its large-scale investments in Vietnam to expand production capacity, a move likely aimed at diversifying its supply chain and mitigating tariff impacts.
-    *   **September 4, September 12, October 6, October 16, 2025:** Multiple reports highlighted Apple's involvement in transformative deals with MP Materials to secure a domestic supply of rare earth materials, further demonstrating its efforts to reduce reliance on potentially tariff-affected regions.
-    *   **October 6, 2025:** Apple was mentioned as striking side deals to mitigate tariff impacts.
-    *   **September 30, 2025:** Apple contributed to chip industry investments, which could be part of a broader strategy to strengthen its domestic supply chain and reduce tariff exposure.
-
-**Candlestick Data for Apple (AAPL) from 2025-09-01 to 2025-11-08:**
-
-Here's a summary of Apple's daily open, high, low, and close prices during the specified period:
-
-| Date         | Open    | High    | Low     | Close   |
-| :----------- | :------ | :------ | :------ | :------ |
-| Sep 1, 2025  | 229.25  | 230.85  | 226.97  | 229.72  |
-| Sep 2, 2025  | 237.21  | 238.85  | 234.36  | 238.47  |
-| Sep 3, 2025  | 238.45  | 239.90  | 236.74  | 239.78  |
-| Sep 4, 2025  | 240.00  | 241.32  | 238.49  | 239.69  |
-| Sep 5, 2025  | 239.30  | 240.15  | 236.34  | 237.88  |
-| Sep 8, 2025  | 237.00  | 238.78  | 233.36  | 234.35  |
-| Sep 9, 2025  | 232.19  | 232.42  | 225.95  | 226.79  |
-| Sep 10, 2025 | 226.88  | 230.45  | 226.65  | 230.03  |
-| Sep 11, 2025 | 229.22  | 234.51  | 229.02  | 234.07  |
-| Sep 12, 2025 | 237.00  | 238.19  | 235.03  | 236.70  |
-| Sep 15, 2025 | 237.18  | 241.22  | 236.32  | 238.15  |
-| Sep 16, 2025 | 238.97  | 240.10  | 237.73  | 238.99  |
-| Sep 17, 2025 | 239.97  | 241.20  | 236.65  | 237.88  |
-| Sep 18, 2025 | 241.23  | 246.30  | 240.21  | 245.50  |
-| Sep 19, 2025 | 248.30  | 256.64  | 248.12  | 256.08  |
-| Sep 22, 2025 | 255.88  | 257.34  | 253.58  | 254.43  |
-| Sep 23, 2025 | 255.22  | 255.74  | 251.04  | 252.31  |
-| Sep 24, 2025 | 253.21  | 257.17  | 251.71  | 256.87  |
-| Sep 25, 2025 | 254.10  | 257.60  | 253.78  | 255.46  |
-| Sep 26, 2025 | 254.56  | 255.00  | 253.01  | 254.43  |
-| Sep 29, 2025 | 254.86  | 255.92  | 253.11  | 254.63  |
-| Sep 30, 2025 | 255.04  | 258.79  | 254.93  | 255.45  |
-| Oct 1, 2025  | 256.58  | 258.18  | 254.15  | 257.13  |
-| Oct 2, 2025  | 254.67  | 259.24  | 253.95  | 258.02  |
-| Oct 3, 2025  | 257.99  | 259.07  | 255.05  | 256.69  |
-| Oct 6, 2025  | 256.81  | 257.40  | 255.43  | 256.48  |
-| Oct 7, 2025  | 256.52  | 258.52  | 256.11  | 258.06  |
-| Oct 8, 2025  | 257.81  | 258.00  | 253.14  | 254.04  |
-| Oct 9, 2025  | 254.94  | 256.38  | 244.00  | 245.27  |
-| Oct 10, 2025 | 249.38  | 249.69  | 245.56  | 247.66  |
-| Oct 13, 2025 | 246.60  | 248.85  | 244.70  | 247.77  |
-| Oct 14, 2025 | 249.49  | 251.82  | 247.47  | 249.34  |
-| Oct 15, 2025 | 248.25  | 249.04  | 245.13  | 247.45  |
-| Oct 16, 2025 | 248.02  | 253.38  | 247.27  | 252.29  |
-| Oct 17, 2025 | 255.89  | 264.38  | 255.63  | 262.24  |
-| Oct 20, 2025 | 261.88  | 265.29  | 261.83  | 262.77  |
-| Oct 21, 2025 | 262.65  | 262.85  | 255.43  | 258.45  |
-| Oct 22, 2025 | 259.94  | 260.62  | 258.01  | 259.58  |
-| Oct 23, 2025 | 261.19  | 264.13  | 259.18  | 262.82  |
-| Oct 24, 2025 | 264.88  | 269.12  | 264.65  | 268.81  |
-| Oct 27, 2025 | 268.99  | 269.89  | 268.15  | 269.00  |
-| Oct 28, 2025 | 269.28  | 271.41  | 267.11  | 269.70  |
-| Oct 29, 2025 | 271.99  | 274.14  | 268.48  | 271.40  |
-| Oct 30, 2025 | 276.99  | 277.32  | 269.16  | 270.37  |
-| Oct 31, 2025 | 270.42  | 270.85  | 266.25  | 269.05  |
-| Nov 3, 2025  | 268.33  | 271.49  | 267.62  | 270.04  |
-| Nov 4, 2025  | 268.61  | 271.70  | 266.93  | 270.14  |
-| Nov 5, 2025  | 267.89  | 273.40  | 267.89  | 269.77  |
-| Nov 6, 2025  | 269.80  | 272.29  | 266.77  | 268.47  |
-
-**Correlations in Patterns between Candlestick and News Data:**
-
-Several correlations can be observed between the tariff-related news and Apple's stock movements:
-
-*   **Early September Surge (Sep 2-4):** Apple's stock experienced a notable upward trend, with the closing price increasing from \$229.72 to \$239.69. This period coincided with positive news on September 3rd about Alphabet dodging antitrust remedies, which generally boosted tech stocks, and on September 4th, news of Apple's involvement in a transformative deal with MP Materials, signaling proactive steps to mitigate tariff impacts.
-*   **Mid-September Drop (Sep 9):** The stock saw a significant drop from \$234.35 to \$226.79. This aligns with news on September 9th highlighting Apple facing challenges with AI features and potential tariffs, contributing to negative sentiment.
-*   **Mid-September Rally (Sep 18-19):** Apple's stock showed strong gains, jumping from \$237.88 to \$256.08 over two days. This period followed news on September 17th about Apple investing in Vietnam for production capacity expansion (a tariff mitigation strategy) and positive reports on September 18th about strong early sales for the new iPhone lineup.
-*   **Early October Decline (Oct 9-10):** The stock experienced a significant drop from \$254.04 to \$245.27 on October 9th, and continued to decline slightly on October 10th. This downturn aligns with the broader market selloff triggered by President Trump's renewed tariff threats on October 10th. Additionally, news on October 9th about Apple losing smartphone market leadership in China (potentially tariff-related) and general market concerns about tariffs likely contributed to the negative pressure.
-*   **Late October Volatility (Oct 26-31):** The stock showed some volatility, with a significant drop after an opening high on October 30th. This period saw news on October 26th about Apple potentially being hit hard by tariffs, which could have contributed to the negative sentiment. However, positive news on October 28th about Apple successfully navigating tariff policies and on October 31st about its investment in rare earth magnets for supply chain security might have helped to temper further declines or set the stage for a rebound.
-*   **Early November Slight Dip (Nov 6):** A slight dip in the stock price on November 6th coincided with news that US stock futures fell due to doubts about Trump's tariff authority, indicating ongoing market sensitivity to tariff-related uncertainties.
-
-In conclusion, there is a discernible correlation between news regarding tariffs and Apple's stock performance during this period. Positive news about Apple's strategies to mitigate tariff impacts or broader market optimism tended to coincide with stock price increases, while renewed tariff threats or concerns about their impact often led to declines or increased volatility. However, it's crucial to remember that multiple factors influence stock prices, and these correlations highlight the significant role that tariff-related developments played in shaping investor sentiment for Apple.
-
-
-    api.refill_rpm  10
-
