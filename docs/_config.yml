@@ -1,5 +1,5 @@
 theme: jekyll-theme-hacker
-layout: default
+layout: agents
 show_downloads: false
 title: kaggle-agents-2025
 description: "StockChat: Agents Edition"
