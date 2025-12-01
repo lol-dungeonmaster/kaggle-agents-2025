@@ -49,7 +49,7 @@
         {
           "rubric_id": "summary_called",
           "rubric_content": {
-            "text_property": "The agent calls `sc2_summary` last only after using a tool."
+            "text_property": "The agent calls `sc2_summary` last when used."
           }
         },
         {
