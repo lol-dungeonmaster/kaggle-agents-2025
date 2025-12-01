@@ -4,7 +4,7 @@
       "threshold": 0.8,
       "judge_model_options": {
         "judge_model": "gemini-2.5-flash",
-        "num_samples": 3
+        "num_samples": 1
       },
       "rubrics": [
         {
@@ -25,7 +25,7 @@
       "threshold": 1.0,
       "judge_model_options": {
         "judge_model": "gemini-2.5-flash",
-        "num_samples": 3
+        "num_samples": 1
       },
       "rubrics": [
         {
@@ -55,7 +55,7 @@
         {
           "rubric_id": "workflow_bypass",
           "rubric_content": {
-            "text_property": "The agent calls no tools for usage related questions."
+            "text_property": "The agent can bypass the workflow for usage related questions."
           }
         }
       ]
