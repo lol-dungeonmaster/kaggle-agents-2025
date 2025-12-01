@@ -1,6 +1,3 @@
----
-layout: default
----
 <div class="collapsible-code">
 <button type="button">Environment Setup</button>
 <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c1"># Setup the notebook based on running environment.
