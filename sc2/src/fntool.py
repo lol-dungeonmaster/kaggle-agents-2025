@@ -22,7 +22,7 @@ scored_news = FunctionTool(func=RGT.get_news_with_sentiment_2)
 wiki_grounding = FunctionTool(func=WGT.get_wiki_grounding)
 search_grounding = FunctionTool(func=SGT.get_search_grounding)
 
-finance_tools = [
+fn_tools = [
     symbol_search, filter_symbols, symbol_name, symbol_quote,
     market_status, market_session, symbol_peers, local_datetime,
     last_market_close, all_exchange_codes, exchange_code, basic_financials,

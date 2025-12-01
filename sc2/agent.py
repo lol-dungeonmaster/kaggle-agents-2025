@@ -52,7 +52,7 @@ fnplan_agent = Agent(
     ```
 
     """,
-    tools=finance_tools,
+    tools=fn_tools,
     output_key="interest_fnplan"
 )
 
@@ -74,7 +74,7 @@ fncall_agent = Agent(
     RULE#5: Always incorporate as much useful information from tools and functions in your response.
     
     """,
-    tools=finance_tools,
+    tools=fn_tools,
     output_key="interest_result"
 )
 
@@ -164,8 +164,8 @@ root_agent = Agent(
     The user may tell you profile data or ask you questions within your field of expertise.
     You must identify if the user is telling you their profile or asking a question within your field.
     Your goal is to store profile data with `sc2_prefs` or answer the user's question by orchestrating 
-    a workflow. You can skip the workflow for usage-related questions or terms you already know. Questions 
-    related to `fncall_pipeline` can be answered by tool `sc2_fnplan`.
+    a workflow. You can skip the workflow for usage-related questions or terms you already know. The 
+    registered functions of `fncall_pipeline` are the same as `sc2_fnplan`.
     Otherwise follow this workflow:
     
     1. First, call the `sc2_memory` tool to find relevant information on the topic.
@@ -175,7 +175,7 @@ root_agent = Agent(
     5. Finally, present the final summary clearly to the user as your response.
     
     """,
-    tools=[AgentTool(agent=memory_agent), AgentTool(agent=prefs_agent),
+    tools=[AgentTool(agent=memory_agent), AgentTool(agent=prefs_agent), 
            AgentTool(agent=fncall_pipe), AgentTool(agent=fnplan_agent), 
            AgentTool(agent=terms_agent), AgentTool(agent=summary_agent)],
     output_key="user_interest"
