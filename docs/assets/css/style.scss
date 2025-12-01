@@ -152,3 +152,17 @@ pre {
 .collapsible-code button.expanded::after {
   content: " ▼";
 }
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+  .wrapper .container {
+    width: 85%;
+  }
+  .main-nav {
+    width: 100vw;
+    position: static;
+    height: fit-content;
+  }
+}
