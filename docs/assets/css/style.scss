@@ -12,6 +12,24 @@ header {
   margin: 0 auto;
 }
 
+.btn-github .icon {
+	opacity: 0.8;
+}
+
+.btn-github .kaggle {
+  opacity: 0.8;
+	background: url("../icons/kaggle.png") 0 0 no-repeat;
+  background-size: contain;
+}
+
+.btn .kaggle {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin: 1px 8px 0 0;
+	float: left;
+}
+
 body {
   color: #fff7f3;
   background: #00312b;
