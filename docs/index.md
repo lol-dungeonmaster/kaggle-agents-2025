@@ -428,9 +428,9 @@ The stock symbol for its parent company, Amazon, is AMZN.
 
 <p>While big and capable, StockChat (SC1) became limited by it’s single agent design.</p>
 <ul>
-  <li>There’s no parallelism or asynchronous operation because parallel function calling is agent-wide. Some of the functions may have unmet dependencies when run parallel (by an LLM). In other cases the degree of parallelism is determined by whether you have paid for finance api access. As I’m building a toy I wanted to keep free-tier as an option. SC1 is essentially an LLM-guided loop of serial operations, with a single rest api request at a time. It makes SC1 stable at the cost of performance.</li>
-  <li>The lack of context management means SC1 can handle months worth of pre-scored news data. Although as a synchronous operation.</li>
-  <li>There’s a single vector store with all acquired data, requiring metadata management to compensate.</li>
+  <li>There’s no parallelism or asynchronous operation because parallel function-calling is agent-wide. Some of the functions may have unmet dependencies when run parallel (by an LLM). In other cases the degree of parallelism is determined by whether you have paid for finance api access. As I’m building a toy I wanted to keep free-tier as an option. SC1 is essentially an LLM-guided loop of serial operations, along with a single rest api request at a time. It makes SC1 stable at the cost of performance and responsiveness.</li>
+  <li>The lack of context management means SC1 can handle months worth of pre-scored news data. The context is shared by all tools while answering a user question. Meaning tools which are called last are limited by, sometimes large, unrelated context generated earlier.</li>
+  <li>There's a single vector store with all acquired data, requiring metadata management to compensate. The store is optimized for document search, and only uses similarity optimizations for temporary vectors.</li>
   <li>SC1 has no facility to determine user interest. It's a giant cache of previously searched finance data.</li>
   <li>There's no systematic evaluation except to run baseline queries.</li>
 </ul>
@@ -440,16 +440,16 @@ The stock symbol for its parent company, Amazon, is AMZN.
   <li>SC2 uses async runners while maintaining minimal thread synchronization on shared data.</li>
   <li>LLM-assisted context compaction runs at regular intervals.</li>
   <li>All the sub-tools have their own vector stores.</li>
-  <li>A memory tool stores long-term memories with semantic meaning preserved. Each memory is tagged with date of creation.</li>
+  <li>A memory tool stores long-term memories with semantic meaning and date of creation.</li>
   <li>A user profile expert extracts user attributes and preferences for long-term memory.</li>
-  <li>Session state keys are used to pass user interest along to other agents.</li>
+  <li>Session state keys share points-of-view without the entirety of each agent's context.</li>
   <li>A summary writing expert ensures large generations aren't blemished by erratic formatting.</li>
   <li>The ADK CLI is used to run an evaluation suite with LLM-as-judge.</li>
 </ul>
 
 <h2 id="setup-working-directory">Setup working directory</h2>
 
-<p>On Kaggle the working directory for ADK runner’s differs from notebook location. To work around this I use git with spare-checkout to pull in SC2’s updated source. Then I setup the Kaggle runner environment and define the async runner.</p>
+<p>On Kaggle, the working directory for <code class="language-plaintext highlighter-rouge">google.adk.runners.Runner</code> differs from notebook location. To work around this I use git with sparse-checkout to pull in SC2's updated source. Then I setup the Kaggle runner environment and define the async runner.</p>
 
 <div class="collapsible-code">
 <button type="button">Setup working directory</button>
@@ -646,7 +646,7 @@ INFO     [root] MODEL &gt; Okay, I've noted that you live in Brooklyn, New York.
 
 <h2 id="test-long-term-memory">Test Long-term Memory</h2>
 
-<p>Testing long-term memory is as easy as creating a new <code class="language-plaintext highlighter-rouge">BaseSessionService</code>. As this Memory is a custom implementation it must be specified as a tool during user query.</p>
+<p>Testing long-term memory is as easy as creating a new <code class="language-plaintext highlighter-rouge">BaseSessionService</code>. As this Memory is a custom implementation it must be specified as a tool during user query. That's because the objective of knowing user profile data is secondary to the goal of being a capable finance assistant. A new root agent which checks Memory and question context before delegation can fix this (if needed) in future refinements.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Use long-term memory from a new session.
 </span><span class="n">s_svc2</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>
@@ -670,7 +670,7 @@ INFO     [root] MODEL &gt; SC's phone number is 212-736-2001.
 
 <h2 id="check-for-compaction">Check for compaction</h2>
 
-<p>One of the features of SC2 that I’m looking forward to working with more is the LLM-assisted context compaction. In this implementation I’ve opted for zero-overlap to avoid re-summarizing past events. At this point no events are dropped from the context. The LLM is known to become confused with statement repetition, so let’s avoid that complication. A delightful feature of LLM-compaction is the use of an LLM-as-judge to assess the summary quality with impartiality. It’ll note neat things for you like when the tools fail completely or when parts of a user query remain unanswered.</p>
+<p>One of the features of SC2 that I’m looking forward to working with more is the LLM-assisted context compaction. In this implementation I’ve opted for zero-overlap to avoid re-summarizing past events. At this point no events are dropped from the context. The LLM is known to become confused with statement repetition, so let’s avoid that complication. A delightful feature of LLM-compaction is the use of an LLM-as-judge to assess the context's quality with impartiality. It’ll note neat things for you like when the tools fail completely or when parts of a user query remain unanswered. That leaves further room for improvements in context management. We can prune events that describe failures or reflect and correct on them.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Display context compaction output.
 </span><span class="k">await</span> <span class="nf">check_compaction</span><span class="p">(</span><span class="n">s_svc</span><span class="p">,</span> <span class="n">show_llm</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -1087,7 +1087,7 @@ connector: &lt;aiohttp.connector.TCPConnector object at 0x7b392a778e90&gt;
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>In applying Google's ADK to SC1, the result is a more capable SC2 which is ready to grow beyond it's first edition roots. Unresolved issues from SC1 remain. Parallelism will enable large work loads, like a stack of news requiring analysis, or background processes to drive self-improvement. This will result in a better user experience when local models are employed to scale futher. With the addition of agentic capabilities StockChat has room to grow again.</p>
+<p>In applying Google's ADK to SC1, the result is a more capable SC2 which is ready to scale beyond it's first edition roots. Unresolved issues from SC1 remain. The introduced improvements will enable large work loads, like a stack of news requiring analysis, or background processes to drive self-improvement. This will result in a faster and more responsive user experience. SC2 will benefit when local models are employed, with fewer and more specific tasks delegated to them. With the addition of agentic capabilities StockChat has room to grow again.</p>
 
 <p><strong>I hope you’ll stick around to see how far the project gets! Thanks for taking the time to check out my notebook!</strong></p>
 
